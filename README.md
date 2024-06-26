@@ -6,12 +6,14 @@ Things to do before release:
 - [ ] Add [Anki algorithm](https://faqs.ankiweb.net/what-spaced-repetition-algorithm.html)
 - [ ] Add functionality of creating and recalling custom decks
 - [ ] Add recall view
-  - [ ] Add empty view
+  - [x] Add empty view
   - [ ] Add view for selecting decks
+  - [ ] Add view for managing decks
   - [ ] Add view for recalling notes
   - [ ] Use Anki algorithm to recall notes
-- [ ] Add ribbon icon which opens the created Decks
-  - [ ] Add UI and functionality for managing decks (including notes)
+- [x] Add create modal for creating decks
+- [x] Add ribbon icon which opens the recall view
+- [ ] Add data integration
 - [ ] Add settings view for customizing Anki algorithm parameters
 
 ## Development
