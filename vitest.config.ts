@@ -1,14 +1,13 @@
-import { resolve } from "path";
-import { defineConfig } from "vitest/config";
+import { resolve } from 'path';
+import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   test: {
-    setupFiles: ["./src/test-setup.ts"],
-    environment: "happy-dom",
+    environment: 'happy-dom',
     coverage: {
       all: false,
-      reporter: ["text", "json-summary", "json"],
-      provider: "istanbul",
+      reporter: ['text', 'json-summary', 'json'],
+      provider: 'istanbul',
       thresholds: {
         lines: 80,
         branches: 80,
@@ -18,6 +17,6 @@ export default defineConfig({
     },
   },
   resolve: {
-    alias: [{ find: "@app", replacement: resolve(__dirname, "./src") }],
+    alias: [{ find: '@app', replacement: resolve(__dirname, './src') }],
   },
 });
