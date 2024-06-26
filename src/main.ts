@@ -1,4 +1,5 @@
 import { Plugin } from "obsidian";
+import { registerCommands } from "./commands";
 import { BetterRecallSettings, DEFAULT_SETTINGS } from "./settings/data";
 import { FILE_VIEW_TYPE, RecallView } from "./ui/recall-view";
 
@@ -11,17 +12,10 @@ export default class BetterRecallPlugin extends Plugin {
     await this.loadSettings();
 
     this.registerView(FILE_VIEW_TYPE, (leaf) => new RecallView(this, leaf));
-    this.addCommand({
-      id: "better-recall-recall-view",
-      name: "Recall",
-      callback: () => {
-        const leaf = this.app.workspace.getLeaf(false);
-        leaf.setViewState({
-          type: FILE_VIEW_TYPE,
-          state: {},
-        });
-        this.app.workspace.setActiveLeaf(leaf);
-      },
+    registerCommands(this);
+
+    this.addRibbonIcon("wallet-cards", "Open Decks", () => {
+      // TODO: Add functionality.
     });
   }
 
@@ -30,7 +24,7 @@ export default class BetterRecallPlugin extends Plugin {
   }
 
   /**
-   * Loads and initializes settings for the plugin.
+   * Loads and initializes the settings for the plugin.
    * First, it loads the existing data from the plugin and then checks for any missing
    * settings and applies default values where necessary.
    * Finally, it populates the `data` property with this loaded data.
