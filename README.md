@@ -3,7 +3,7 @@
 *WIP*
 
 Things to do before release:
-- [ ] Add [Anki algorithm](https://faqs.ankiweb.net/what-spaced-repetition-algorithm.html)
+- [x] Add [Anki algorithm](https://faqs.ankiweb.net/what-spaced-repetition-algorithm.html)
 - [ ] Add functionality of creating and recalling custom decks
 - [ ] Add recall view
   - [x] Add empty view
