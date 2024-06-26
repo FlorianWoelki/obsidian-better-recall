@@ -2,6 +2,16 @@
 
 *WIP*
 
+Things to do before release:
+- [ ] Add [Anki algorithm](https://faqs.ankiweb.net/what-spaced-repetition-algorithm.html)
+- [ ] Add functionality of creating and recalling custom decks
+- [ ] Add recall view
+  - [ ] Add view for selecting decks
+  - [ ] Add view for recalling notes
+  - [ ] Use Anki algorithm to recall notes
+- [ ] Add settings view for managing decks (including notes)
+- [ ] Add settings view for customizing Anki algorithm parameters
+
 ## Development
 
 To customize this project for your needs, you can clone it and then install all dependencies:
