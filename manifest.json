@@ -1,0 +1,10 @@
+{
+  "id": "better-recall",
+  "name": "Better Recall",
+  "version": "0.0.1",
+  "minAppVersion": "0.9.12",
+  "description": "A better spaced repetition and recall plugin.",
+  "author": "Florian Woelki",
+  "authorUrl": "https://florianwoelki.com",
+  "isDesktopOnly": false
+}
