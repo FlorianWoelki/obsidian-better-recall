@@ -22,7 +22,7 @@ export class RecallView extends FileView {
     }
 
     this.rootEl = viewContent.createDiv('better-recall-recall-view');
-    this.emptyView = new EmptyView(this);
+    this.emptyView = new EmptyView(plugin, this);
   }
 
   protected async onOpen(): Promise<void> {

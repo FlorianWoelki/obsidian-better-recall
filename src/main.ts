@@ -15,12 +15,24 @@ export default class BetterRecallPlugin extends Plugin {
     registerCommands(this);
 
     this.addRibbonIcon('wallet-cards', 'Open Decks', () => {
-      // TODO: Add functionality.
+      this.openRecallView();
     });
   }
 
   onunload() {
     console.log('unloading better recall');
+  }
+
+  /**
+   * Opens the recall view of the plugin which displays all possible decks.
+   */
+  public openRecallView(): void {
+    const leaf = this.app.workspace.getLeaf(false);
+    leaf.setViewState({
+      type: FILE_VIEW_TYPE,
+      state: {},
+    });
+    this.app.workspace.setActiveLeaf(leaf);
   }
 
   /**

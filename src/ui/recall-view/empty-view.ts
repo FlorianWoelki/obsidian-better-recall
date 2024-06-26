@@ -1,12 +1,8 @@
-import { RecallView } from '.';
+import { CreateDeckModal } from '../modals/create-deck-modal';
 import { RecallSubView } from './sub-view';
 
 export class EmptyView extends RecallSubView {
   private rootEl: HTMLElement;
-
-  constructor(public readonly recallView: RecallView) {
-    super(recallView);
-  }
 
   public render(): void {
     this.rootEl = this.recallView.rootEl.createDiv('better-recall-empty-view');
@@ -29,7 +25,8 @@ export class EmptyView extends RecallSubView {
       actionListContainerEl.createDiv('empty-state-action');
     createNewDeckActionEl.setText('Create new Deck');
     createNewDeckActionEl.onClickEvent(() => {
-      // TODO: Add functionality.
+      const modal = new CreateDeckModal(this.plugin);
+      modal.open();
     });
   }
 }
