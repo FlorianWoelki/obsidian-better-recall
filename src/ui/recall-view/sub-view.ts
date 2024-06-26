@@ -1,4 +1,4 @@
-import { RecallView } from ".";
+import { RecallView } from '.';
 
 export abstract class RecallSubView {
   constructor(public readonly recallView: RecallView) {}

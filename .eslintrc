@@ -2,7 +2,7 @@
 	"root": true,
 	"parser": "@typescript-eslint/parser",
 	"env": { "node": true },
-	"plugins": ["@typescript-eslint"],
+	"plugins": ["@typescript-eslint", "prettier"],
 	"extends": [
 		"eslint:recommended",
 		"plugin:@typescript-eslint/eslint-recommended",
@@ -12,7 +12,6 @@
 		"sourceType": "module"
 	},
 	"rules": {
-		"quotes": [0, "single"],
 		"no-unused-vars": "off",
 		"@typescript-eslint/no-unused-vars": ["error", { "args": "none" }],
 		"@typescript-eslint/ban-ts-comment": "off",

@@ -1,26 +1,26 @@
-import { Plugin } from "obsidian";
-import { registerCommands } from "./commands";
-import { BetterRecallSettings, DEFAULT_SETTINGS } from "./settings/data";
-import { FILE_VIEW_TYPE, RecallView } from "./ui/recall-view";
+import { Plugin } from 'obsidian';
+import { registerCommands } from './commands';
+import { BetterRecallSettings, DEFAULT_SETTINGS } from './settings/data';
+import { FILE_VIEW_TYPE, RecallView } from './ui/recall-view';
 
 export default class BetterRecallPlugin extends Plugin {
   private data: Record<string, BetterRecallSettings>;
 
   async onload() {
-    console.log("loading better recall");
+    console.log('loading better recall');
 
     await this.loadSettings();
 
     this.registerView(FILE_VIEW_TYPE, (leaf) => new RecallView(this, leaf));
     registerCommands(this);
 
-    this.addRibbonIcon("wallet-cards", "Open Decks", () => {
+    this.addRibbonIcon('wallet-cards', 'Open Decks', () => {
       // TODO: Add functionality.
     });
   }
 
   onunload() {
-    console.log("unloading better recall");
+    console.log('unloading better recall');
   }
 
   /**

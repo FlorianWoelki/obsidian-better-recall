@@ -1,8 +1,8 @@
-import { FileView, ViewStateResult, WorkspaceLeaf } from "obsidian";
-import BetterRecallPlugin from "../../main";
-import { EmptyView } from "./empty-view";
+import { FileView, ViewStateResult, WorkspaceLeaf } from 'obsidian';
+import BetterRecallPlugin from '../../main';
+import { EmptyView } from './empty-view';
 
-export const FILE_VIEW_TYPE = "recall-view";
+export const FILE_VIEW_TYPE = 'recall-view';
 
 export class RecallView extends FileView {
   public readonly rootEl: HTMLElement;
@@ -16,12 +16,12 @@ export class RecallView extends FileView {
     super(leaf);
     this.allowNoFile = true;
 
-    const viewContent = this.containerEl.querySelector(".view-content");
+    const viewContent = this.containerEl.querySelector('.view-content');
     if (!viewContent) {
       return;
     }
 
-    this.rootEl = viewContent.createDiv("better-recall-recall-view");
+    this.rootEl = viewContent.createDiv('better-recall-recall-view');
     this.emptyView = new EmptyView(this);
   }
 
@@ -40,7 +40,7 @@ export class RecallView extends FileView {
   }
 
   getDisplayText(): string {
-    return "Recall";
+    return 'Recall';
   }
 
   getViewType(): string {
