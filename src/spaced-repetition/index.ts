@@ -17,16 +17,29 @@ export interface SpacedRepetitionItem {
   stepIndex: number;
 }
 
-export abstract class SpacedRepetitionAlgorithm {
+export abstract class SpacedRepetitionAlgorithm<T> {
   protected items: SpacedRepetitionItem[];
   protected queuedItems: SpacedRepetitionItem[];
   protected sessionEndTime: Date;
 
-  constructor() {
+  protected parameters: T;
+
+  constructor(parameters: Partial<T> = {}) {
     this.items = [];
     this.queuedItems = [];
     this.sessionEndTime = this.getEndOfDay(new Date());
+
+    this.parameters = {
+      ...this.getDefaultValues(),
+      parameters,
+    };
   }
+
+  /**
+   * Returns the default values for the algorithm.
+   * @returns An object which contains the default values for the algorithm.
+   */
+  public abstract getDefaultValues(): T;
 
   /**
    * Schedules the next review for a given item.
@@ -71,22 +84,48 @@ export abstract class SpacedRepetitionAlgorithm {
     }
   }
 
+  public setParameters(parameters: Partial<T>): void {
+    this.parameters = {
+      ...this.parameters,
+      ...parameters,
+    };
+  }
+
   public getItemCount(): number {
     return this.items.length;
   }
 
+  public getParameters(): T {
+    return this.parameters;
+  }
+
+  /**
+   * Starts a new review session.
+   * This function resets the session end time to the end of the current day,
+   * clears the queue of items to be reviewed, and refreshes the queue with
+   * items due for review today.
+   */
   public startNewSession(): void {
     this.sessionEndTime = this.getEndOfDay(new Date());
     this.queuedItems = [];
     this.refreshQueue();
   }
 
+  /**
+   * Adds an item to the queue if it is due for review today.
+   * @param item The item to potentially add to the queue.
+   */
   protected addToQueueIfDueToday(item: SpacedRepetitionItem): void {
     if (this.isDueToday(item) && !this.queuedItems.includes(item)) {
       this.queuedItems.push(item);
     }
   }
 
+  /**
+   * Checks if an item is due for review today.
+   * @param item The item to check.
+   * @returns True if the item is due today, false otherwise.
+   */
   protected isDueToday(item: SpacedRepetitionItem): boolean {
     const now = new Date();
     return (
@@ -97,6 +136,11 @@ export abstract class SpacedRepetitionAlgorithm {
     );
   }
 
+  /**
+   * Refreshes the queue of items to be reviewed.
+   * This method checks all items and adds those due for review today
+   * to the queue.
+   */
   protected refreshQueue(): void {
     this.items.forEach((item) => this.addToQueueIfDueToday(item));
   }

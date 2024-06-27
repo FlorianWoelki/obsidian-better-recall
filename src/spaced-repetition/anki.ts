@@ -7,24 +7,35 @@ export enum PerformanceResponse {
   EASY,
 }
 
-const lapseInterval = 0.5;
-const easyInterval = 4;
-const easyBonus = 1.3;
-const graduatingInterval = 1;
-const minEaseFactor = 1.3;
-const easeFactorDecrement = 0.2;
-const easeFactorIncrement = 0.15;
-const hardIntervalMultiplier = 1.2;
-const learningSteps = [1, 10];
-const millisecondsPerDay = 24 * 60 * 60 * 1000;
-const relearningSteps = [10];
+const MILLISECONDS_PER_DAY = 24 * 60 * 60 * 1000;
 
-export class AnkiAlgorithm extends SpacedRepetitionAlgorithm {
-  private calculateNextReviewDate(interval: number, inMinutes = false): Date {
-    const now = new Date();
-    const milliseconds =
-      interval * (inMinutes ? 60 * 1000 : millisecondsPerDay);
-    return new Date(now.getTime() + milliseconds);
+interface AnkiParameters {
+  lapseInterval: number;
+  easyInterval: number;
+  easyBonus: number;
+  graduatingInterval: number;
+  minEaseFactor: number;
+  easeFactorDecrement: number;
+  easeFactorIncrement: number;
+  hardIntervalMultiplier: number;
+  learningSteps: number[];
+  relearningSteps: number[];
+}
+
+export class AnkiAlgorithm extends SpacedRepetitionAlgorithm<AnkiParameters> {
+  public getDefaultValues(): AnkiParameters {
+    return {
+      lapseInterval: 0.5,
+      easyInterval: 4,
+      easyBonus: 1.3,
+      graduatingInterval: 1,
+      minEaseFactor: 1.3,
+      easeFactorDecrement: 0.2,
+      easeFactorIncrement: 0.15,
+      hardIntervalMultiplier: 1.2,
+      learningSteps: [1, 10],
+      relearningSteps: [10],
+    };
   }
 
   public scheduleReview(item: SpacedRepetitionItem): void {
@@ -35,7 +46,9 @@ export class AnkiAlgorithm extends SpacedRepetitionAlgorithm {
       item.state === CardState.RELEARNING
     ) {
       const steps =
-        item.state === CardState.LEARNING ? learningSteps : relearningSteps;
+        item.state === CardState.LEARNING
+          ? this.parameters.learningSteps
+          : this.parameters.relearningSteps;
       if (item.stepIndex < steps.length) {
         item.nextReviewDate = this.calculateNextReviewDate(
           steps[item.stepIndex],
@@ -65,8 +78,8 @@ export class AnkiAlgorithm extends SpacedRepetitionAlgorithm {
     const updateStrategies = {
       [PerformanceResponse.AGAIN]: () => {
         item.easeFactor = Math.max(
-          minEaseFactor,
-          item.easeFactor - easeFactorDecrement,
+          this.parameters.minEaseFactor,
+          item.easeFactor - this.parameters.easeFactorDecrement,
         );
         if (item.state === CardState.REVIEW) {
           item.state = CardState.RELEARNING;
@@ -74,12 +87,12 @@ export class AnkiAlgorithm extends SpacedRepetitionAlgorithm {
         } else {
           item.stepIndex = 0;
         }
-        return item.interval * lapseInterval;
+        return item.interval * this.parameters.lapseInterval;
       },
       [PerformanceResponse.HARD]: () => {
         item.easeFactor = Math.max(
-          minEaseFactor,
-          item.easeFactor - easeFactorIncrement,
+          this.parameters.minEaseFactor,
+          item.easeFactor - this.parameters.easeFactorIncrement,
         );
         if (
           item.state === CardState.LEARNING ||
@@ -88,7 +101,7 @@ export class AnkiAlgorithm extends SpacedRepetitionAlgorithm {
           item.stepIndex += 1;
         }
         return Math.max(
-          item.interval * hardIntervalMultiplier,
+          item.interval * this.parameters.hardIntervalMultiplier,
           item.interval + 1,
         );
       },
@@ -100,10 +113,12 @@ export class AnkiAlgorithm extends SpacedRepetitionAlgorithm {
         ) {
           item.stepIndex += 1;
           const steps =
-            item.state === CardState.LEARNING ? learningSteps : relearningSteps;
+            item.state === CardState.LEARNING
+              ? this.parameters.learningSteps
+              : this.parameters.relearningSteps;
           if (item.stepIndex >= steps.length) {
             item.state = CardState.REVIEW;
-            return graduatingInterval;
+            return this.parameters.graduatingInterval;
           }
 
           return 0;
@@ -111,17 +126,17 @@ export class AnkiAlgorithm extends SpacedRepetitionAlgorithm {
         return Math.max(item.interval * item.easeFactor, item.interval + 1);
       },
       [PerformanceResponse.EASY]: () => {
-        item.easeFactor += easeFactorIncrement;
+        item.easeFactor += this.parameters.easeFactorIncrement;
         if (
           item.state === CardState.NEW ||
           item.state === CardState.LEARNING ||
           item.state === CardState.RELEARNING
         ) {
           item.state = CardState.REVIEW;
-          return easyInterval;
+          return this.parameters.easyInterval;
         }
 
-        return item.interval * item.easeFactor * easyBonus;
+        return item.interval * item.easeFactor * this.parameters.easyBonus;
       },
     };
 
@@ -134,5 +149,12 @@ export class AnkiAlgorithm extends SpacedRepetitionAlgorithm {
     item.iteration += 1;
 
     this.scheduleReview(item);
+  }
+
+  private calculateNextReviewDate(interval: number, inMinutes = false): Date {
+    const now = new Date();
+    const milliseconds =
+      interval * (inMinutes ? 60 * 1000 : MILLISECONDS_PER_DAY);
+    return new Date(now.getTime() + milliseconds);
   }
 }
