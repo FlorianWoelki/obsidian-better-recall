@@ -1,3 +1,10 @@
+export enum CardState {
+  NEW,
+  LEARNING,
+  REVIEW,
+  RELEARNING,
+}
+
 export interface SpacedRepetitionItem {
   id: string;
   content: string;
@@ -6,13 +13,19 @@ export interface SpacedRepetitionItem {
   easeFactor: number;
   interval: number;
   iteration: number;
+  state: CardState;
+  stepIndex: number;
 }
 
 export abstract class SpacedRepetitionAlgorithm {
-  protected items: Array<SpacedRepetitionItem>;
+  protected items: SpacedRepetitionItem[];
+  protected queuedItems: SpacedRepetitionItem[];
+  protected sessionEndTime: Date;
 
   constructor() {
     this.items = [];
+    this.queuedItems = [];
+    this.sessionEndTime = this.getEndOfDay(new Date());
   }
 
   /**
@@ -62,26 +75,35 @@ export abstract class SpacedRepetitionAlgorithm {
     return this.items.length;
   }
 
-  public async runReviewSession(
-    maxItems = 10,
-    reviewItem: (item: SpacedRepetitionItem) => Promise<number>,
-  ): Promise<void> {
-    let reviewedCount = 0;
-    while (reviewedCount < maxItems) {
-      const item = this.getNextReviewItem();
-      if (!item) {
-        // No more items to review.
-        break;
-      }
+  public startNewSession(): void {
+    this.sessionEndTime = this.getEndOfDay(new Date());
+    this.queuedItems = [];
+    this.refreshQueue();
+  }
 
-      try {
-        const performance = await reviewItem(item);
-        this.updateItemAfterReview(item, performance);
-        reviewedCount++;
-      } catch (error) {
-        console.error('Error reviewing item:', error);
-        break;
-      }
+  protected addToQueueIfDueToday(item: SpacedRepetitionItem): void {
+    if (this.isDueToday(item) && !this.queuedItems.includes(item)) {
+      this.queuedItems.push(item);
     }
+  }
+
+  protected isDueToday(item: SpacedRepetitionItem): boolean {
+    const now = new Date();
+    return (
+      item.state === CardState.NEW ||
+      (!!item.nextReviewDate &&
+        item.nextReviewDate <= this.sessionEndTime &&
+        item.nextReviewDate >= now)
+    );
+  }
+
+  protected refreshQueue(): void {
+    this.items.forEach((item) => this.addToQueueIfDueToday(item));
+  }
+
+  protected getEndOfDay(date: Date): Date {
+    const endOfDate = new Date(date);
+    endOfDate.setHours(23, 59, 59, 999);
+    return endOfDate;
   }
 }
