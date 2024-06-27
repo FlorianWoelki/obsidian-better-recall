@@ -3,6 +3,7 @@ import { registerCommands } from './commands';
 import { BetterRecallSettings, DEFAULT_SETTINGS } from './settings/data';
 import { FILE_VIEW_TYPE, RecallView } from './ui/recall-view';
 import { DecksManager } from './data/manager/decks-manager';
+import { EventEmitter } from './data/event';
 
 export default class BetterRecallPlugin extends Plugin {
   public readonly decksManager = new DecksManager(
@@ -11,9 +12,11 @@ export default class BetterRecallPlugin extends Plugin {
   );
 
   private data: Record<string, BetterRecallSettings>;
+  private eventEmitter: EventEmitter;
 
   async onload() {
     console.log('loading better recall');
+    this.eventEmitter = new EventEmitter();
 
     await this.decksManager.load();
 
@@ -60,6 +63,10 @@ export default class BetterRecallPlugin extends Plugin {
       });
     }
     this.data = Object.assign({ settings: { ...DEFAULT_SETTINGS } }, {}, data);
+  }
+
+  public getEventEmitter(): EventEmitter {
+    return this.eventEmitter;
   }
 
   public getSettings(): BetterRecallSettings {

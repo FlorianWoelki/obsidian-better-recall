@@ -71,10 +71,13 @@ export class CreateDeckModal extends Modal {
 
   private async createDeck(): Promise<void> {
     this.createButtonComp.setDisabled(true);
-    await this.plugin.decksManager.create(
+    const createdDeck = await this.plugin.decksManager.create(
       this.deckNameInputComp.getValue(),
       this.deckDescriptionInputComp.getValue(),
     );
+    this.plugin
+      .getEventEmitter()
+      .emit({ type: 'addDeck', payload: { deck: createdDeck } });
     this.close();
   }
 

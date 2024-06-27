@@ -36,7 +36,7 @@ export class DecksManager {
     });
   }
 
-  public async create(deckName: string, description: string): Promise<void> {
+  public async create(deckName: string, description: string): Promise<Deck> {
     deckName = deckName.trim();
     if (!this.isValidFileName(deckName)) {
       throw new Error(`Invalid deck name: ${deckName}`);
@@ -61,6 +61,7 @@ export class DecksManager {
       join(DECKS_PATH, `${deckName}.json`),
       deckData,
     );
+    return deckData;
   }
 
   public async delete(deckName: string): Promise<void> {

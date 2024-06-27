@@ -32,6 +32,10 @@ export class RecallView extends FileView {
     this.rootEl.empty();
     // this.reviewView.render();
     this.emptyView.render();
+
+    this.plugin.getEventEmitter().on('addDeck', (payload) => {
+      console.log(payload);
+    });
   }
 
   async setState(state: any, result: ViewStateResult): Promise<void> {
