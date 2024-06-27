@@ -2,12 +2,20 @@ import { Plugin } from 'obsidian';
 import { registerCommands } from './commands';
 import { BetterRecallSettings, DEFAULT_SETTINGS } from './settings/data';
 import { FILE_VIEW_TYPE, RecallView } from './ui/recall-view';
+import { DecksManager } from './data/manager/decks-manager';
 
 export default class BetterRecallPlugin extends Plugin {
+  public readonly decksManager = new DecksManager(
+    this.app.vault,
+    'obsidian-better-recall',
+  );
+
   private data: Record<string, BetterRecallSettings>;
 
   async onload() {
     console.log('loading better recall');
+
+    await this.decksManager.load();
 
     await this.loadSettings();
 
@@ -42,7 +50,7 @@ export default class BetterRecallPlugin extends Plugin {
    * Finally, it populates the `data` property with this loaded data.
    * @returns Promise that resolves when the settings have been loaded and initialized.
    */
-  public async loadSettings(): Promise<void> {
+  private async loadSettings(): Promise<void> {
     const data = await this.loadData();
     if (data) {
       Object.entries(DEFAULT_SETTINGS).forEach(([key, value]) => {

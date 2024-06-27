@@ -25,13 +25,13 @@ export class RecallView extends FileView {
 
     this.rootEl = viewContent.createDiv('better-recall-recall-view');
     this.reviewView = new ReviewView(plugin, this);
-    // this.emptyView = new EmptyView(plugin, this);
+    this.emptyView = new EmptyView(plugin, this);
   }
 
   protected async onOpen(): Promise<void> {
     this.rootEl.empty();
-    this.reviewView.render();
-    // this.emptyView.render();
+    // this.reviewView.render();
+    this.emptyView.render();
   }
 
   async setState(state: any, result: ViewStateResult): Promise<void> {
