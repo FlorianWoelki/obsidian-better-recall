@@ -1,6 +1,7 @@
 import { FileView, ViewStateResult, WorkspaceLeaf } from 'obsidian';
 import BetterRecallPlugin from '../../main';
 import { EmptyView } from './empty-view';
+import { ReviewView } from './review-view';
 
 export const FILE_VIEW_TYPE = 'recall-view';
 
@@ -8,6 +9,7 @@ export class RecallView extends FileView {
   public readonly rootEl: HTMLElement;
 
   private emptyView: EmptyView;
+  private reviewView: ReviewView;
 
   constructor(
     private plugin: BetterRecallPlugin,
@@ -22,12 +24,14 @@ export class RecallView extends FileView {
     }
 
     this.rootEl = viewContent.createDiv('better-recall-recall-view');
-    this.emptyView = new EmptyView(plugin, this);
+    this.reviewView = new ReviewView(plugin, this);
+    // this.emptyView = new EmptyView(plugin, this);
   }
 
   protected async onOpen(): Promise<void> {
     this.rootEl.empty();
-    this.emptyView.render();
+    this.reviewView.render();
+    // this.emptyView.render();
   }
 
   async setState(state: any, result: ViewStateResult): Promise<void> {
