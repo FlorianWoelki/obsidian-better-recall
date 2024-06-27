@@ -1,6 +1,5 @@
 import { describe, it, vi, expect, beforeEach } from 'vitest';
 import { EventEmitter } from './';
-import { AddDeckEvent } from './events';
 
 describe('EventEmitter', () => {
   let emitter: EventEmitter;
@@ -11,7 +10,7 @@ describe('EventEmitter', () => {
 
   it('should register and emit event listeners', () => {
     const listener = vi.fn();
-    emitter.on<AddDeckEvent>('addDeck', listener);
+    emitter.on('addDeck', listener);
 
     emitter.emit({ type: 'addDeck' });
 
@@ -21,8 +20,8 @@ describe('EventEmitter', () => {
 
   it('should unregister event listeners', () => {
     const listener = vi.fn();
-    emitter.on<AddDeckEvent>('addDeck', listener);
-    emitter.off<AddDeckEvent>('addDeck', listener);
+    emitter.on('addDeck', listener);
+    emitter.off('addDeck', listener);
 
     emitter.emit({ type: 'addDeck' });
 
@@ -31,7 +30,7 @@ describe('EventEmitter', () => {
 
   it('should support once-only event listeners', () => {
     const listener = vi.fn();
-    emitter.once<AddDeckEvent>('addDeck', listener);
+    emitter.once('addDeck', listener);
 
     emitter.emit({ type: 'addDeck' });
     emitter.emit({ type: 'addDeck' });
@@ -45,9 +44,9 @@ describe('EventEmitter', () => {
     const listener2 = vi.fn();
     const listener3 = vi.fn();
 
-    emitter.on<AddDeckEvent>('addDeck', listener1, 1);
-    emitter.on<AddDeckEvent>('addDeck', listener2, 2);
-    emitter.on<AddDeckEvent>('addDeck', listener3, 3);
+    emitter.on('addDeck', listener1, 1);
+    emitter.on('addDeck', listener2, 2);
+    emitter.on('addDeck', listener3, 3);
 
     emitter.emit({ type: 'addDeck' });
 

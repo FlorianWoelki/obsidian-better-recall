@@ -1,7 +1,7 @@
 import { Deck } from '../manager/decks-manager';
 import { Event } from './';
 
-export interface AddDeckEvent extends Event {
-  type: 'addDeck';
-  payload: { deck: Deck };
-}
+export type EventType = 'addDeck';
+export type EventMap = {
+  addDeck: Event<{ deck: Deck }>;
+};
