@@ -29,17 +29,7 @@ export class CreateDeckModal extends Modal {
     this.deckNameInputComp.onChange((value) => {
       this.createButtonComp.setDisabled(value.length === 0);
     });
-    this.deckNameInputComp.inputEl.addEventListener('keypress', (event) => {
-      setTimeout(() => {
-        const isEmpty = (event.target as HTMLInputElement).value.length === 0;
-
-        if (event.key !== 'Enter' || isEmpty) {
-          return;
-        }
-
-        this.createDeck();
-      }, 1);
-    });
+    this.addKeyEnterAction(this.deckNameInputComp.inputEl);
 
     // Creates the deck description input field.
     descriptionEl = this.createDescriptionEl(
@@ -52,6 +42,7 @@ export class CreateDeckModal extends Modal {
     this.deckDescriptionInputComp.setPlaceholder(
       'A lovely CS learning experience.',
     );
+    this.addKeyEnterAction(this.deckDescriptionInputComp.inputEl);
 
     // Creates the button bar.
     const buttonsBarEl = this.contentEl.createDiv('better-recall-buttons-bar');
@@ -93,7 +84,29 @@ export class CreateDeckModal extends Modal {
     return descriptionEl;
   }
 
+  private onEnterPress(event: KeyboardEvent): void {
+    setTimeout(() => {
+      const isEmpty = this.deckNameInputComp.getValue().length === 0;
+
+      if (event.key !== 'Enter' || isEmpty) {
+        return;
+      }
+
+      this.createDeck();
+    }, 1);
+  }
+
+  private addKeyEnterAction(inputEl: HTMLInputElement): void {
+    inputEl.addEventListener('keypress', this.onEnterPress.bind(this));
+  }
+
+  private removeKeyEnterAction(inputEl: HTMLInputElement): void {
+    inputEl.removeEventListener('keypress', this.onEnterPress.bind(this));
+  }
+
   onClose(): void {
+    this.removeKeyEnterAction(this.deckNameInputComp.inputEl);
+    this.removeKeyEnterAction(this.deckDescriptionInputComp.inputEl);
     super.onClose();
     this.contentEl.empty();
   }

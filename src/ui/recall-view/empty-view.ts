@@ -1,4 +1,3 @@
-import { CreateDeckModal } from '../modals/create-deck-modal';
 import { RecallSubView } from './sub-view';
 
 export class EmptyView extends RecallSubView {
@@ -25,8 +24,7 @@ export class EmptyView extends RecallSubView {
       actionListContainerEl.createDiv('empty-state-action');
     createNewDeckActionEl.setText('Create new Deck');
     createNewDeckActionEl.onClickEvent(() => {
-      const modal = new CreateDeckModal(this.plugin);
-      modal.open();
+      this.openDeckModal();
     });
   }
 }

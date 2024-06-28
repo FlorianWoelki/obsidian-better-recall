@@ -1,8 +1,19 @@
 import { ButtonComponent } from 'obsidian';
 import { RecallSubView } from './sub-view';
+import BetterRecallPlugin from 'src/main';
+import { RecallView } from '.';
 
 export class DecksView extends RecallSubView {
   private rootEl: HTMLElement;
+
+  constructor(plugin: BetterRecallPlugin, recallView: RecallView) {
+    super(plugin, recallView);
+
+    this.plugin.getEventEmitter().on('addDeck', () => {
+      this.rootEl.empty();
+      this.render();
+    });
+  }
 
   public render(): void {
     this.rootEl = this.recallView.rootEl.createDiv('better-recall-decks-view');
@@ -41,5 +52,9 @@ export class DecksView extends RecallSubView {
     const createDeckButton = new ButtonComponent(buttonsBarEl);
     createDeckButton.setButtonText('Create Deck');
     createDeckButton.setCta();
+    createDeckButton.onClick(() => {
+      console.log(123);
+      this.openDeckModal();
+    });
   }
 }

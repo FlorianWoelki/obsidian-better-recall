@@ -34,8 +34,12 @@
 }
 
 .better-recall-deck-table td {
-  padding: 10px;
+  padding: 12px 10px 0 10px;
   text-align: left;
+}
+
+.better-recall-deck-table tr:nth-child(2) td {
+  padding: 16px 10px 0 10px;
 }
 
 .better-recall-deck-table th {

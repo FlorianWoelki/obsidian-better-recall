@@ -73,6 +73,10 @@ export class DecksManager {
     return deckData;
   }
 
+  public async save(): Promise<void> {
+    // TODO
+  }
+
   public async delete(deckName: string): Promise<void> {
     if (!(deckName in this.decks)) {
       throw new Error(`Deck name does not exist: ${deckName}`);
