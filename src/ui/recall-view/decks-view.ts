@@ -53,7 +53,6 @@ export class DecksView extends RecallSubView {
     createDeckButton.setButtonText('Create Deck');
     createDeckButton.setCta();
     createDeckButton.onClick(() => {
-      console.log(123);
       this.openDeckModal();
     });
   }
