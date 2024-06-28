@@ -1,7 +1,9 @@
-import { ButtonComponent } from 'obsidian';
+import { ButtonComponent, getIcon } from 'obsidian';
 import { RecallSubView } from './sub-view';
 import BetterRecallPlugin from 'src/main';
 import { RecallView } from '.';
+
+const visibleClass = 'better-recall-deck-action--visible';
 
 export class DecksView extends RecallSubView {
   private rootEl: HTMLElement;
@@ -10,7 +12,7 @@ export class DecksView extends RecallSubView {
     super(plugin, recallView);
 
     this.plugin.getEventEmitter().on('addDeck', () => {
-      this.rootEl.empty();
+      this.recallView.rootEl.empty();
       this.render();
     });
   }
@@ -20,6 +22,30 @@ export class DecksView extends RecallSubView {
 
     this.renderDecks();
     this.renderButtons();
+  }
+
+  private handleDeckRowMouseEnter(event: MouseEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+
+    const target = event.target as HTMLElement | undefined;
+    if (!target || !target.parentElement) {
+      return;
+    }
+
+    target.addClass(visibleClass);
+  }
+
+  private handleDeckRowMouseLeave(event: MouseEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+
+    const target = event.target as HTMLElement | null;
+    if (!target) {
+      return;
+    }
+
+    target?.removeClass(visibleClass);
   }
 
   private renderDecks(): void {
@@ -36,8 +62,21 @@ export class DecksView extends RecallSubView {
 
     this.plugin.decksManager.decksArray.forEach((deck) => {
       const deckRowEl = tableEl.createEl('tr', { cls: 'better-recall-deck' });
-      const deckDataEl = deckRowEl.createEl('td');
-      deckDataEl.createEl('a', { text: deck.name });
+      const deckDataEl = deckRowEl.createEl('td', {
+        cls: 'better-recall-deck-name',
+      });
+      deckRowEl.addEventListener('mouseenter', this.handleDeckRowMouseEnter);
+      deckRowEl.addEventListener('mouseleave', this.handleDeckRowMouseLeave);
+
+      deckDataEl.createEl('a', {
+        text: deck.name,
+        title: deck.description,
+      });
+
+      const penIcon = getIcon('pen');
+      if (penIcon) {
+        deckDataEl.appendChild(penIcon);
+      }
 
       deckRowEl.createEl('td', { text: '1' });
       deckRowEl.createEl('td', { text: '0' });
@@ -54,6 +93,14 @@ export class DecksView extends RecallSubView {
     createDeckButton.setCta();
     createDeckButton.onClick(() => {
       this.openDeckModal();
+    });
+  }
+
+  public onClose(): void {
+    const deckRowEls = this.rootEl.querySelectorAll('.better-recall-deck');
+    deckRowEls.forEach((deckRowEl) => {
+      deckRowEl.removeEventListener('mouseenter', this.handleDeckRowMouseEnter);
+      deckRowEl.removeEventListener('mouseleave', this.handleDeckRowMouseLeave);
     });
   }
 }

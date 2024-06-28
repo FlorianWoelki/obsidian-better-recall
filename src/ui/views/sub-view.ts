@@ -10,6 +10,8 @@ export abstract class RecallSubView {
 
   public abstract render(): void;
 
+  public onClose() {}
+
   protected openDeckModal(): void {
     const modal = new CreateDeckModal(this.plugin);
     modal.open();

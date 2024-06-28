@@ -3,6 +3,7 @@ import BetterRecallPlugin from '../../main';
 import { EmptyView } from './empty-view';
 import { ReviewView } from './review-view';
 import { DecksView } from './decks-view';
+import { RecallSubView } from './sub-view';
 
 export const FILE_VIEW_TYPE = 'recall-view';
 
@@ -15,6 +16,7 @@ enum ViewMode {
 export class RecallView extends FileView {
   public readonly rootEl: HTMLElement;
 
+  private currentView?: RecallSubView;
   private emptyView: EmptyView;
   private reviewView: ReviewView;
   private decksView: DecksView;
@@ -27,11 +29,6 @@ export class RecallView extends FileView {
   ) {
     super(leaf);
     this.allowNoFile = true;
-    this.setViewMode(
-      plugin.decksManager.decksArray.length === 0
-        ? ViewMode.Empty
-        : ViewMode.Decks,
-    );
 
     const viewContent = this.containerEl.querySelector('.view-content');
     if (!viewContent) {
@@ -42,6 +39,12 @@ export class RecallView extends FileView {
     this.reviewView = new ReviewView(plugin, this);
     this.emptyView = new EmptyView(plugin, this);
     this.decksView = new DecksView(plugin, this);
+
+    this.setViewMode(
+      plugin.decksManager.decksArray.length === 0
+        ? ViewMode.Empty
+        : ViewMode.Decks,
+    );
   }
 
   protected async onOpen(): Promise<void> {
@@ -56,26 +59,33 @@ export class RecallView extends FileView {
   }
 
   private setViewMode(viewMode: ViewMode): void {
+    this.currentView?.onClose();
     this.viewMode = viewMode;
-  }
-
-  private renderView(): void {
-    this.rootEl.empty();
     switch (this.viewMode) {
       case ViewMode.Empty:
-        this.emptyView.render();
+        this.currentView = this.emptyView;
         break;
       case ViewMode.Decks:
-        this.decksView.render();
+        this.currentView = this.decksView;
         break;
       case ViewMode.Review:
-        this.reviewView.render();
+        this.currentView = this.reviewView;
         break;
     }
   }
 
+  private renderView(): void {
+    this.rootEl.empty();
+    this.currentView?.render();
+  }
+
   async setState(state: any, result: ViewStateResult): Promise<void> {
     await super.setState(state, result);
+  }
+
+  protected async onClose(): Promise<void> {
+    this.currentView?.onClose();
+    await super.onClose();
   }
 
   getState() {

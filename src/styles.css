@@ -34,12 +34,16 @@
 }
 
 .better-recall-deck-table td {
-  padding: 12px 10px 0 10px;
+  padding: 6px 10px 6px 10px;
   text-align: left;
 }
 
 .better-recall-deck-table tr:nth-child(2) td {
-  padding: 16px 10px 0 10px;
+  padding: 16px 10px 6px 10px;
+}
+
+.better-recall-deck-table tr:last-child td {
+  padding: 6px 10px 16px 10px;
 }
 
 .better-recall-deck-table th {
@@ -50,4 +54,21 @@
 
 .better-recall-deck-table tr th:first-child {
   width: 50%;
+}
+
+.better-recall-deck-name {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.better-recall-deck-name .svg-icon {
+  display: none;
+  color: var(--text-muted);
+  opacity: 0.4;
+  width: var(--size-4-4);
+}
+
+.better-recall-deck-action--visible .svg-icon {
+  display: block;
 }

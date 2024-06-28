@@ -1,7 +1,7 @@
 import { Plugin } from 'obsidian';
 import { registerCommands } from './commands';
 import { BetterRecallSettings, DEFAULT_SETTINGS } from './settings/data';
-import { FILE_VIEW_TYPE, RecallView } from './ui/recall-view';
+import { FILE_VIEW_TYPE, RecallView } from './ui/views';
 import { DecksManager } from './data/manager/decks-manager';
 import { EventEmitter } from './data/event';
 
