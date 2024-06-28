@@ -126,7 +126,7 @@ export abstract class SpacedRepetitionAlgorithm<T> {
    * @param item The item to check.
    * @returns True if the item is due today, false otherwise.
    */
-  protected isDueToday(item: SpacedRepetitionItem): boolean {
+  public isDueToday(item: SpacedRepetitionItem): boolean {
     const now = new Date();
     return (
       item.state === CardState.NEW ||

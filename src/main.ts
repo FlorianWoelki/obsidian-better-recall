@@ -4,10 +4,13 @@ import { BetterRecallSettings, DEFAULT_SETTINGS } from './settings/data';
 import { FILE_VIEW_TYPE, RecallView } from './ui/views';
 import { DecksManager } from './data/manager/decks-manager';
 import { EventEmitter } from './data/event';
+import { AnkiAlgorithm } from './spaced-repetition/anki';
 
 export default class BetterRecallPlugin extends Plugin {
+  public readonly algorithm = new AnkiAlgorithm();
   public readonly decksManager = new DecksManager(
     this.app.vault,
+    this.algorithm,
     'obsidian-better-recall',
   );
 

@@ -1,30 +1,23 @@
 import { Vault } from 'obsidian';
-import { v4 as uuidv4 } from 'uuid';
 import { JsonFileManager } from '../json';
+import { Deck, DecksJsonStructure, jsonObjectToDeck } from '../deck';
+import { SpacedRepetitionAlgorithm } from 'src/spaced-repetition';
 
 const DECKS_FILE = 'decks.json';
-
-export interface DecksJsonStructure {
-  decks: Deck[];
-}
-
-export interface Deck {
-  id: string;
-  name: string;
-  description: string;
-  createdAt: Date;
-  updatedAt: Date;
-  items: any[];
-  settings: any;
-}
 
 export class DecksManager {
   protected jsonFileManager: JsonFileManager;
   private decks: Record<string, Deck>;
+  private algorithm: SpacedRepetitionAlgorithm<unknown>;
 
-  constructor(vault: Vault, pluginId: string) {
+  constructor(
+    vault: Vault,
+    algorithm: SpacedRepetitionAlgorithm<unknown>,
+    pluginId: string,
+  ) {
     this.jsonFileManager = new JsonFileManager(vault, pluginId);
     this.decks = {};
+    this.algorithm = algorithm;
   }
 
   public async load(): Promise<void> {
@@ -41,7 +34,7 @@ export class DecksManager {
     }
 
     data.decks.forEach((deck) => {
-      this.decks[deck.name] = deck;
+      this.decks[deck.name] = jsonObjectToDeck(this.algorithm, deck);
     });
   }
 
@@ -55,15 +48,7 @@ export class DecksManager {
       throw new Error(`Deck name already exists: ${deckName}`);
     }
 
-    const deckData: Deck = {
-      id: uuidv4(),
-      name: deckName,
-      description,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      items: [],
-      settings: {},
-    };
+    const deckData = new Deck(this.algorithm, deckName, description);
     this.decks[deckName] = deckData;
 
     await this.jsonFileManager.writeJsonFile(
@@ -99,7 +84,8 @@ export class DecksManager {
   }
 
   private toJsonStructure(): DecksJsonStructure {
-    return { decks: this.decksArray };
+    const decks = this.decksArray.map((deck) => deck.toJsonObject());
+    return { decks };
   }
 
   private isValidFileName(fileName: string): boolean {
