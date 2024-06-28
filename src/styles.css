@@ -4,3 +4,46 @@
   justify-content: flex-end;
   gap: 0.75rem;
 }
+
+.better-recall-decks-view {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  inset-inline-start: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.better-recall-card {
+  background-color: var(--background-primary);
+  padding: var(--size-4-5);
+  cursor: var(--cursor);
+  border-radius: var(--radius-m);
+  border: 1px solid var(--background-modifier-border);
+  width: 100%;
+  max-width: 38rem;
+}
+
+.better-recall-deck-table {
+  table-layout: fixed;
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.better-recall-deck-table td {
+  padding: 10px;
+  text-align: left;
+}
+
+.better-recall-deck-table th {
+  padding: 10px;
+  text-align: left;
+  border-bottom: 1px solid var(--background-modifier-border);
+}
+
+.better-recall-deck-table tr th:first-child {
+  width: 50%;
+}

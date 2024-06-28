@@ -75,6 +75,15 @@ export class DecksManager {
     );
   }
 
+  public get decksArray(): Deck[] {
+    // Drops the keys because we don't necessarily need them.
+    return Object.values(this.decks);
+  }
+
+  public getDecks(): Record<string, Deck> {
+    return this.decks;
+  }
+
   private isValidFileName(fileName: string): boolean {
     if (!fileName) {
       return false;
