@@ -19,7 +19,9 @@ export class JsonFileManager {
    * @param relativePath The path to the JSON file, relative to the plugin directory.
    * @returns The parsed JSON data.
    */
-  public async readJsonFile(relativePath: string): Promise<any> {
+  public async readJsonFile<T extends object>(
+    relativePath: string,
+  ): Promise<T> {
     const fullPath = this.getFullPath(relativePath);
     const content = await this.vault.adapter.read(fullPath);
     return JSON.parse(content);
@@ -30,12 +32,12 @@ export class JsonFileManager {
    * @param relativePath The path to the JSON file, relative to the plugin directory.
    * @param data The data to write.
    */
-  public async writeJsonFile(relativePath: string, data: any): Promise<void> {
+  public async writeJsonFile<T extends object>(
+    relativePath: string,
+    data: T,
+  ): Promise<void> {
     const fullPath = this.getFullPath(relativePath);
-    const existingData = await this.vault.adapter.read(relativePath);
-    const existingJsonData = JSON.parse(existingData);
-    const newData = JSON.stringify({ ...existingJsonData, ...data });
-    await this.vault.adapter.append(fullPath, newData);
+    await this.vault.adapter.write(fullPath, JSON.stringify(data));
   }
 
   /**

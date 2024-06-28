@@ -1,9 +1,12 @@
 import { Vault } from 'obsidian';
 import { v4 as uuidv4 } from 'uuid';
 import { JsonFileManager } from '../json';
-import { join } from 'path';
 
-const DECKS_PATH = 'decks';
+const DECKS_FILE = 'decks.json';
+
+export interface DecksJsonStructure {
+  decks: Deck[];
+}
 
 export interface Deck {
   id: string;
@@ -25,14 +28,20 @@ export class DecksManager {
   }
 
   public async load(): Promise<void> {
-    // Creates decks directory, if it does not already exist.
-    await this.jsonFileManager.createDirectory(DECKS_PATH);
+    const decksFileExists = await this.jsonFileManager.exists(DECKS_FILE);
+    if (!decksFileExists) {
+      await this.jsonFileManager.createJsonFile(DECKS_FILE);
+      return;
+    }
 
-    const existingDecks =
-      await this.jsonFileManager.readAllJsonFilesInDirectory(DECKS_PATH);
+    const data =
+      await this.jsonFileManager.readJsonFile<DecksJsonStructure>(DECKS_FILE);
+    if (!data.decks) {
+      return;
+    }
 
-    Object.entries(existingDecks).forEach(([deckName, value]) => {
-      this.decks[deckName] = value;
+    data.decks.forEach((deck) => {
+      this.decks[deck.name] = deck;
     });
   }
 
@@ -57,9 +66,9 @@ export class DecksManager {
     };
     this.decks[deckName] = deckData;
 
-    await this.jsonFileManager.createJsonFile(
-      join(DECKS_PATH, `${deckName}.json`),
-      deckData,
+    await this.jsonFileManager.writeJsonFile(
+      DECKS_FILE,
+      this.toJsonStructure(),
     );
     return deckData;
   }
@@ -70,8 +79,9 @@ export class DecksManager {
     }
 
     delete this.decks[deckName];
-    await this.jsonFileManager.deleteJsonFile(
-      join(DECKS_PATH, `${deckName}.json`),
+    await this.jsonFileManager.writeJsonFile<DecksJsonStructure>(
+      DECKS_FILE,
+      this.toJsonStructure(),
     );
   }
 
@@ -82,6 +92,10 @@ export class DecksManager {
 
   public getDecks(): Record<string, Deck> {
     return this.decks;
+  }
+
+  private toJsonStructure(): DecksJsonStructure {
+    return { decks: this.decksArray };
   }
 
   private isValidFileName(fileName: string): boolean {
