@@ -4,6 +4,7 @@ import BetterRecallPlugin from 'src/main';
 import { RecallView } from '.';
 import { EditDeckModal } from '../modals/edit-deck-modal';
 import { Deck } from 'src/data/deck';
+import { AddCardModal } from '../modals/add-card-modal';
 
 const visibleClass = 'better-recall-deck-action--visible';
 
@@ -99,9 +100,9 @@ export class DecksView extends RecallSubView {
 
       this.renderEditButton(deckDataEl, deck);
 
-      deckRowEl.createEl('td', { text: '1' });
-      deckRowEl.createEl('td', { text: '0' });
-      deckRowEl.createEl('td', { text: '0' });
+      deckRowEl.createEl('td', { text: `${deck.newItems.length}` });
+      deckRowEl.createEl('td', { text: `${deck.learnItems.length}` });
+      deckRowEl.createEl('td', { text: `${deck.dueItems.length}` });
     });
   }
 
@@ -126,12 +127,16 @@ export class DecksView extends RecallSubView {
     const buttonsBarEl = this.rootEl.createDiv('better-recall-buttons-bar');
     buttonsBarEl.style.marginTop = '1rem';
 
-    const createDeckButton = new ButtonComponent(buttonsBarEl);
-    createDeckButton.setButtonText('Create Deck');
-    createDeckButton.setCta();
-    createDeckButton.onClick(() => {
-      this.openDeckModal();
-    });
+    new ButtonComponent(buttonsBarEl)
+      .setButtonText('Create Deck')
+      .onClick(this.openDeckModal.bind(this));
+
+    new ButtonComponent(buttonsBarEl)
+      .setButtonText('Add Card')
+      .setCta()
+      .onClick(() => {
+        new AddCardModal(this.plugin).open();
+      });
   }
 
   public onClose(): void {

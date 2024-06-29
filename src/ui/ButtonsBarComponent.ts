@@ -5,6 +5,7 @@ const BUTTONS_BAR_CLASS = 'better-recall-buttons-bar';
 export class ButtonsBarComponent extends Component {
   private submitButtonComp: ButtonComponent;
   private cancelButtonComp: ButtonComponent;
+  public buttonsBarEl: HTMLDivElement;
 
   constructor(private contentEl: HTMLElement) {
     super();
@@ -23,12 +24,12 @@ export class ButtonsBarComponent extends Component {
 
   private render(): void {
     // Creates the button bar.
-    const buttonsBarEl = this.contentEl.createDiv(BUTTONS_BAR_CLASS);
+    this.buttonsBarEl = this.contentEl.createDiv(BUTTONS_BAR_CLASS);
 
     // Creates the buttons for the button bar.
-    this.cancelButtonComp = new ButtonComponent(buttonsBarEl);
+    this.cancelButtonComp = new ButtonComponent(this.buttonsBarEl);
     this.cancelButtonComp.setButtonText('Cancel');
-    this.submitButtonComp = new ButtonComponent(buttonsBarEl);
+    this.submitButtonComp = new ButtonComponent(this.buttonsBarEl);
     this.submitButtonComp.setCta();
     this.submitButtonComp.setButtonText('Save');
     this.submitButtonComp.setDisabled(true);

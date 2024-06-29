@@ -77,3 +77,9 @@
 .better-recall-deck-action--visible .svg-icon {
   display: block;
 }
+
+.better-recall-card__add-options {
+  display: flex;
+  align-items: center;
+  gap: var(--size-2-3);
+}
