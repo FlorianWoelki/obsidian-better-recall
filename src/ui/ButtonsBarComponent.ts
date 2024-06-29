@@ -35,7 +35,7 @@ export class ButtonsBarComponent extends Component {
   }
 
   public setSubmitButtonDisabled(disabled: boolean): ButtonsBarComponent {
-    this.submitButtonComp.setDisabled(true);
+    this.submitButtonComp.setDisabled(disabled);
     return this;
   }
 

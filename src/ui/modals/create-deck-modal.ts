@@ -1,10 +1,11 @@
-import { Modal, TextComponent } from 'obsidian';
+import { Modal } from 'obsidian';
 import BetterRecallPlugin from 'src/main';
 import { ButtonsBarComponent } from '../ButtonsBarComponent';
+import { InputFieldComponent } from '../InputFieldComponent';
 
 export class CreateDeckModal extends Modal {
-  private deckNameInputComp: TextComponent;
-  private deckDescriptionInputComp: TextComponent;
+  private deckNameInputComp: InputFieldComponent;
+  private deckDescriptionInputComp: InputFieldComponent;
   private buttonsBarComp: ButtonsBarComponent;
 
   constructor(private plugin: BetterRecallPlugin) {
@@ -19,32 +20,33 @@ export class CreateDeckModal extends Modal {
 
   private render(): void {
     // Creates the deck name input field.
-    let descriptionEl = this.createDescriptionEl(
-      this.contentEl,
-      'New deck name:',
-    );
-    descriptionEl.style.marginTop = '0';
-    this.deckNameInputComp = new TextComponent(this.contentEl);
-    this.deckNameInputComp.inputEl.style.width = '100%';
-    this.deckNameInputComp.setPlaceholder('Algorithms & Datastructures');
-    this.deckNameInputComp.onChange((value) => {
-      this.buttonsBarComp.setSubmitButtonDisabled(value.length === 0);
-    });
-    this.addKeyEnterAction(this.deckNameInputComp.inputEl);
+    this.deckNameInputComp = new InputFieldComponent(this.contentEl, {
+      description: 'New deck name:',
+    })
+      .setPlaceholder('Algorithms & Datastructures')
+      .onChange((value) => {
+        this.buttonsBarComp.setSubmitButtonDisabled(value.length === 0);
+      });
+    this.deckNameInputComp.onEnter = () => {
+      this.createDeck();
+    };
+    this.deckNameInputComp.descriptionEl.style.marginTop = '0';
 
     // Creates the deck description input field.
-    descriptionEl = this.createDescriptionEl(
-      this.contentEl,
-      'Description (optional):',
-    );
-    descriptionEl.style.marginTop = 'var(--size-2-3)';
-    this.deckDescriptionInputComp = new TextComponent(this.contentEl);
-    this.deckDescriptionInputComp.inputEl.style.width = '100%';
-    this.deckDescriptionInputComp.setPlaceholder(
-      'A lovely CS learning experience.',
-    );
-    this.addKeyEnterAction(this.deckDescriptionInputComp.inputEl);
+    this.deckDescriptionInputComp = new InputFieldComponent(this.contentEl, {
+      description: 'Description (optional):',
+    }).setPlaceholder('A lovely CS learning experience.');
+    this.deckDescriptionInputComp.onEnter = () => {
+      if (this.deckNameInputComp.getValue().length === 0) {
+        return;
+      }
 
+      this.createDeck();
+    };
+    this.deckDescriptionInputComp.descriptionEl.style.marginTop =
+      'var(--size-2-3)';
+
+    // Creates the buttons bar.
     this.buttonsBarComp = new ButtonsBarComponent(this.contentEl)
       .setSubmitText('Create')
       .setSubmitButtonDisabled(true)
@@ -66,41 +68,9 @@ export class CreateDeckModal extends Modal {
     this.close();
   }
 
-  private createDescriptionEl(
-    container: HTMLElement,
-    text: string,
-  ): HTMLElement {
-    const descriptionEl = container.createEl('p', {
-      text,
-      cls: 'setting-item-description',
-    });
-    descriptionEl.style.marginBottom = 'var(--size-2-2)';
-    return descriptionEl;
-  }
-
-  private onEnterPress(event: KeyboardEvent): void {
-    setTimeout(() => {
-      const isEmpty = this.deckNameInputComp.getValue().length === 0;
-
-      if (event.key !== 'Enter' || isEmpty) {
-        return;
-      }
-
-      this.createDeck();
-    }, 1);
-  }
-
-  private addKeyEnterAction(inputEl: HTMLInputElement): void {
-    inputEl.addEventListener('keypress', this.onEnterPress.bind(this));
-  }
-
-  private removeKeyEnterAction(inputEl: HTMLInputElement): void {
-    inputEl.removeEventListener('keypress', this.onEnterPress.bind(this));
-  }
-
   onClose(): void {
-    this.removeKeyEnterAction(this.deckNameInputComp.inputEl);
-    this.removeKeyEnterAction(this.deckDescriptionInputComp.inputEl);
+    this.deckNameInputComp.cleanup();
+    this.deckDescriptionInputComp.cleanup();
     super.onClose();
     this.contentEl.empty();
   }
