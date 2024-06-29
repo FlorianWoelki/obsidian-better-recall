@@ -17,6 +17,23 @@ export class DecksView extends RecallSubView {
       this.recallView.rootEl.empty();
       this.render();
     });
+    this.plugin.getEventEmitter().on('editDeck', ({ payload }) => {
+      if (!payload) {
+        return;
+      }
+
+      const { deck } = payload;
+
+      const deckNameEl = this.recallView.rootEl.querySelector(
+        `[data-deck-id="${deck.id}"] a`,
+      ) as HTMLElement | null;
+      if (!deckNameEl) {
+        return;
+      }
+
+      deckNameEl.setText(deck.getName());
+      deckNameEl.title = deck.getDescription();
+    });
   }
 
   public render(): void {
@@ -63,7 +80,12 @@ export class DecksView extends RecallSubView {
     headerRow.createEl('th', { text: 'Due' });
 
     this.plugin.decksManager.decksArray.forEach((deck) => {
-      const deckRowEl = tableEl.createEl('tr', { cls: 'better-recall-deck' });
+      const deckRowEl = tableEl.createEl('tr', {
+        cls: 'better-recall-deck',
+        attr: {
+          'data-deck-id': deck.id,
+        },
+      });
       const deckDataEl = deckRowEl.createEl('td', {
         cls: 'better-recall-deck-name',
       });
@@ -71,8 +93,8 @@ export class DecksView extends RecallSubView {
       deckRowEl.addEventListener('mouseleave', this.handleDeckRowMouseLeave);
 
       deckDataEl.createEl('a', {
-        text: deck.name,
-        title: deck.description,
+        text: deck.getName(),
+        title: deck.getDescription(),
       });
 
       this.renderEditButton(deckDataEl, deck);

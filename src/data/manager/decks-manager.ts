@@ -34,7 +34,7 @@ export class DecksManager {
     }
 
     data.decks.forEach((deck) => {
-      this.decks[deck.name] = jsonObjectToDeck(this.algorithm, deck);
+      this.decks[deck.id] = jsonObjectToDeck(this.algorithm, deck);
     });
   }
 
@@ -44,12 +44,12 @@ export class DecksManager {
       throw new Error(`Invalid deck name: ${deckName}`);
     }
 
-    if (deckName in this.decks) {
+    if (this.decksArray.find((item) => item.getName() === deckName)) {
       throw new Error(`Deck name already exists: ${deckName}`);
     }
 
     const deckData = new Deck(this.algorithm, deckName, description);
-    this.decks[deckName] = deckData;
+    this.decks[deckData.id] = deckData;
 
     await this.jsonFileManager.writeJsonFile(
       DECKS_FILE,
@@ -58,16 +58,37 @@ export class DecksManager {
     return deckData;
   }
 
-  public async save(): Promise<void> {
-    // TODO
-  }
-
-  public async delete(deckName: string): Promise<void> {
-    if (!(deckName in this.decks)) {
-      throw new Error(`Deck name does not exist: ${deckName}`);
+  public async updateInformation(
+    id: string,
+    newName: string,
+    newDescription: string,
+  ): Promise<Deck> {
+    newName = newName.trim();
+    if (!this.isValidFileName(newName)) {
+      throw new Error(`Invalid deck name: ${newName}`);
     }
 
-    delete this.decks[deckName];
+    if (!(id in this.decks)) {
+      throw new Error(`Deck with ID does not exist: ${id}`);
+    }
+
+    this.decks[id].setName(newName);
+    this.decks[id].setDescription(newDescription);
+    await this.jsonFileManager.writeJsonFile(
+      DECKS_FILE,
+      this.toJsonStructure(),
+    );
+    return this.decks[id];
+  }
+
+  public async save(): Promise<void> {}
+
+  public async delete(id: string): Promise<void> {
+    if (!(id in this.decks)) {
+      throw new Error(`Deck name does not exist: ${id}`);
+    }
+
+    delete this.decks[id];
     await this.jsonFileManager.writeJsonFile<DecksJsonStructure>(
       DECKS_FILE,
       this.toJsonStructure(),

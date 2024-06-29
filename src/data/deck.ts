@@ -38,8 +38,8 @@ export function jsonObjectToDeck(
 export class Deck {
   constructor(
     private readonly algorithm: SpacedRepetitionAlgorithm<unknown>,
-    public readonly name: string,
-    public readonly description: string,
+    private name: string,
+    private description: string,
     public readonly id: string = uuidv4(),
     public readonly createdAt: Date = new Date(),
     public readonly updatedAt: Date = new Date(),
@@ -90,5 +90,21 @@ export class Deck {
 
       return acc;
     }, []);
+  }
+
+  public setName(name: string): void {
+    this.name = name;
+  }
+
+  public setDescription(description: string): void {
+    this.description = description;
+  }
+
+  public getName(): string {
+    return this.name;
+  }
+
+  public getDescription(): string {
+    return this.description;
   }
 }
