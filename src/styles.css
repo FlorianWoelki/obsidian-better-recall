@@ -62,11 +62,16 @@
   justify-content: space-between;
 }
 
-.better-recall-deck-name .svg-icon {
+.better-recall-deck__edit-button .svg-icon {
+  cursor: var(--cursor-link);
   display: none;
   color: var(--text-muted);
   opacity: 0.4;
   width: var(--size-4-4);
+  transition: opacity 100ms ease-in-out;
+}
+.better-recall-deck__edit-button .svg-icon:hover {
+  opacity: 1;
 }
 
 .better-recall-deck-action--visible .svg-icon {

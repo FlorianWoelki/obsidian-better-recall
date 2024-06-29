@@ -2,6 +2,8 @@ import { ButtonComponent, getIcon } from 'obsidian';
 import { RecallSubView } from './sub-view';
 import BetterRecallPlugin from 'src/main';
 import { RecallView } from '.';
+import { EditDeckModal } from '../modals/edit-deck-modal';
+import { Deck } from 'src/data/deck';
 
 const visibleClass = 'better-recall-deck-action--visible';
 
@@ -73,14 +75,28 @@ export class DecksView extends RecallSubView {
         title: deck.description,
       });
 
-      const penIcon = getIcon('pen');
-      if (penIcon) {
-        deckDataEl.appendChild(penIcon);
-      }
+      this.renderEditButton(deckDataEl, deck);
 
       deckRowEl.createEl('td', { text: '1' });
       deckRowEl.createEl('td', { text: '0' });
       deckRowEl.createEl('td', { text: '0' });
+    });
+  }
+
+  private renderEditButton(el: HTMLElement, deck: Deck): void {
+    const buttonEl = el.createEl('div', {
+      cls: 'better-recall-deck__edit-button',
+      attr: {
+        role: 'button',
+        tabindex: '0',
+      },
+    });
+    const penIcon = getIcon('pen');
+    if (penIcon) {
+      buttonEl.appendChild(penIcon);
+    }
+    buttonEl.onClickEvent(() => {
+      new EditDeckModal(this.plugin, deck).open();
     });
   }
 

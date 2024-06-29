@@ -1,10 +1,11 @@
-import { ButtonComponent, Modal, TextComponent } from 'obsidian';
+import { Modal, TextComponent } from 'obsidian';
 import BetterRecallPlugin from 'src/main';
+import { ButtonsBarComponent } from '../ButtonsBarComponent';
 
 export class CreateDeckModal extends Modal {
   private deckNameInputComp: TextComponent;
   private deckDescriptionInputComp: TextComponent;
-  private createButtonComp: ButtonComponent;
+  private buttonsBarComp: ButtonsBarComponent;
 
   constructor(private plugin: BetterRecallPlugin) {
     super(plugin.app);
@@ -27,7 +28,7 @@ export class CreateDeckModal extends Modal {
     this.deckNameInputComp.inputEl.style.width = '100%';
     this.deckNameInputComp.setPlaceholder('Algorithms & Datastructures');
     this.deckNameInputComp.onChange((value) => {
-      this.createButtonComp.setDisabled(value.length === 0);
+      this.buttonsBarComp.setSubmitButtonDisabled(value.length === 0);
     });
     this.addKeyEnterAction(this.deckNameInputComp.inputEl);
 
@@ -44,24 +45,17 @@ export class CreateDeckModal extends Modal {
     );
     this.addKeyEnterAction(this.deckDescriptionInputComp.inputEl);
 
-    // Creates the button bar.
-    const buttonsBarEl = this.contentEl.createDiv('better-recall-buttons-bar');
-
-    // Creates the buttons for the button bar.
-    const cancelButtonComp = new ButtonComponent(buttonsBarEl);
-    cancelButtonComp.setButtonText('Cancel');
-    cancelButtonComp.onClick(() => this.close());
-    this.createButtonComp = new ButtonComponent(buttonsBarEl);
-    this.createButtonComp.setCta();
-    this.createButtonComp.setButtonText('Create');
-    this.createButtonComp.setDisabled(true);
-    this.createButtonComp.onClick(async () => {
-      await this.createDeck();
-    });
+    this.buttonsBarComp = new ButtonsBarComponent(this.contentEl)
+      .setSubmitText('Create')
+      .setSubmitButtonDisabled(true)
+      .onClose(this.close.bind(this))
+      .onSubmit(async () => {
+        await this.createDeck();
+      });
   }
 
   private async createDeck(): Promise<void> {
-    this.createButtonComp.setDisabled(true);
+    this.buttonsBarComp.setSubmitButtonDisabled(true);
     const createdDeck = await this.plugin.decksManager.create(
       this.deckNameInputComp.getValue(),
       this.deckDescriptionInputComp.getValue(),
