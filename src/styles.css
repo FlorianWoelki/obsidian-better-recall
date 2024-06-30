@@ -119,18 +119,16 @@
   display: none;
 }
 
-.better-recall-review-card__recall-action {
+.better-recall-review-card__answer-buttons-bar button {
   display: flex;
   flex-direction: column;
-  padding: 0;
-  width: calc(var(--input-height) * 2.5);
   height: calc(var(--input-height) * 2.5);
+  width: unset;
+  max-width: calc(var(--input-height) * 5);
+  min-width: calc(var(--input-height) * 2.5);
+  padding: 0 var(--size-4-4);
 }
 
-.better-recall-review-card__recall-action span:first-child {
+.better-recall-review-card__answer-buttons-bar button span:first-child {
   font-size: var(--size-4-5);
-}
-
-.better-recall-review-card__answer-buttons-bar {
-  height: calc(var(--input-height) * 2.5);
 }

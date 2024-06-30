@@ -41,14 +41,13 @@ export class RecallView extends FileView {
     this.emptyView = new EmptyView(plugin, this);
     this.decksView = new DecksView(plugin, this);
 
-    // TODO: Reset to last functionality, just for testing purposes.
-    this.reviewView.setDeck(plugin.decksManager.decksArray[0]);
-    this.setViewMode(ViewMode.Review);
-    // this.setViewMode(
-    //   plugin.decksManager.decksArray.length === 0
-    //     ? ViewMode.Empty
-    //     : ViewMode.Decks,
-    // );
+    // this.reviewView.setDeck(plugin.decksManager.decksArray[0]);
+    // this.setViewMode(ViewMode.Review);
+    this.setViewMode(
+      plugin.decksManager.decksArray.length === 0
+        ? ViewMode.Empty
+        : ViewMode.Decks,
+    );
   }
 
   protected async onOpen(): Promise<void> {
@@ -90,7 +89,7 @@ export class RecallView extends FileView {
     this.renderView();
   }
 
-  public goToDecksView(): void {
+  public openDecksView(): void {
     this.setViewMode(ViewMode.Decks);
     this.renderView();
   }
