@@ -7,6 +7,12 @@ import { Deck } from 'src/data/deck';
 import { AddCardModal } from '../modals/add-card-modal';
 
 const visibleClass = 'better-recall-deck-action--visible';
+const rowAttributes = {
+  newCardsCount: {
+    plain: 'data-new-cards-count',
+    attr: '[data-new-cards-count]',
+  },
+};
 
 export class DecksView extends RecallSubView {
   private rootEl: HTMLElement;
@@ -25,8 +31,9 @@ export class DecksView extends RecallSubView {
 
       const { deck } = payload;
 
-      const deckNameEl = this.recallView.rootEl.querySelector(
-        `[data-deck-id="${deck.id}"] a`,
+      // Updates the information based in the first column of the table.
+      const deckNameEl = this.getDeckRowEl(deck.id)?.querySelector(
+        'a',
       ) as HTMLElement | null;
       if (!deckNameEl) {
         return;
@@ -35,6 +42,39 @@ export class DecksView extends RecallSubView {
       deckNameEl.setText(deck.getName());
       deckNameEl.title = deck.getDescription();
     });
+    this.plugin.getEventEmitter().on('addItem', ({ payload }) => {
+      if (!payload) {
+        return;
+      }
+
+      const { deckId } = payload;
+
+      // Update items count in `new cards` column.
+      const deckRowEl = this.getDeckRowEl(deckId);
+      if (!deckRowEl) {
+        return;
+      }
+
+      const newCardsCountEl = this.getNewCardsCountEl(deckRowEl);
+      if (!newCardsCountEl) {
+        return;
+      }
+
+      const currentCountValue = newCardsCountEl.getAttribute(
+        rowAttributes.newCardsCount.plain,
+      );
+      if (!currentCountValue) {
+        return;
+      }
+
+      const currentCount = parseInt(currentCountValue);
+      const newCount = currentCount + 1;
+      newCardsCountEl.setText(String(newCount));
+      newCardsCountEl.setAttribute(
+        rowAttributes.newCardsCount.plain,
+        String(newCount),
+      );
+    });
   }
 
   public render(): void {
@@ -42,6 +82,14 @@ export class DecksView extends RecallSubView {
 
     this.renderDecks();
     this.renderButtons();
+  }
+
+  private getDeckRowEl(deckId: string): HTMLElement | null {
+    return this.recallView.rootEl.querySelector(`[data-deck-id="${deckId}"]`);
+  }
+
+  private getNewCardsCountEl(deckRowEl: HTMLElement): HTMLElement | null {
+    return deckRowEl.querySelector(rowAttributes.newCardsCount.attr);
   }
 
   private handleDeckRowMouseEnter(event: MouseEvent): void {
@@ -100,9 +148,18 @@ export class DecksView extends RecallSubView {
 
       this.renderEditButton(deckDataEl, deck);
 
-      deckRowEl.createEl('td', { text: `${deck.newItems.length}` });
-      deckRowEl.createEl('td', { text: `${deck.learnItems.length}` });
-      deckRowEl.createEl('td', { text: `${deck.dueItems.length}` });
+      deckRowEl.createEl('td', {
+        text: `${deck.newItems.length}`,
+        attr: { [rowAttributes.newCardsCount.plain]: deck.newItems.length },
+      });
+      deckRowEl.createEl('td', {
+        text: `${deck.learnItems.length}`,
+        attr: { 'data-learn-cards-count': deck.learnItems.length },
+      });
+      deckRowEl.createEl('td', {
+        text: `${deck.dueItems.length}`,
+        attr: { 'data-due-cards-count': deck.dueItems.length },
+      });
     });
   }
 

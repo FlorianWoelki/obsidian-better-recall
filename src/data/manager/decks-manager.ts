@@ -1,7 +1,10 @@
 import { Vault } from 'obsidian';
 import { JsonFileManager } from '../json';
 import { Deck, DecksJsonStructure, jsonObjectToDeck } from '../deck';
-import { SpacedRepetitionAlgorithm } from 'src/spaced-repetition';
+import {
+  SpacedRepetitionAlgorithm,
+  SpacedRepetitionItem,
+} from 'src/spaced-repetition';
 
 const DECKS_FILE = 'decks.json';
 
@@ -51,10 +54,7 @@ export class DecksManager {
     const deckData = new Deck(this.algorithm, deckName, description);
     this.decks[deckData.id] = deckData;
 
-    await this.jsonFileManager.writeJsonFile(
-      DECKS_FILE,
-      this.toJsonStructure(),
-    );
+    await this.save();
     return deckData;
   }
 
@@ -74,14 +74,23 @@ export class DecksManager {
 
     this.decks[id].setName(newName);
     this.decks[id].setDescription(newDescription);
+    await this.save();
+    return this.decks[id];
+  }
+
+  public addItem(id: string, item: SpacedRepetitionItem): void {
+    if (!(id in this.decks)) {
+      throw new Error(`No deck with id found: ${id}`);
+    }
+    this.decks[id].items.push(item);
+  }
+
+  public async save(): Promise<void> {
     await this.jsonFileManager.writeJsonFile(
       DECKS_FILE,
       this.toJsonStructure(),
     );
-    return this.decks[id];
   }
-
-  public async save(): Promise<void> {}
 
   public async delete(id: string): Promise<void> {
     if (!(id in this.decks)) {
@@ -89,10 +98,7 @@ export class DecksManager {
     }
 
     delete this.decks[id];
-    await this.jsonFileManager.writeJsonFile<DecksJsonStructure>(
-      DECKS_FILE,
-      this.toJsonStructure(),
-    );
+    await this.save();
   }
 
   public get decksArray(): Deck[] {

@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
-import { CardState, SpacedRepetitionItem } from '.';
+import { CardState, CardType, SpacedRepetitionItem } from '.';
 import { AnkiAlgorithm, PerformanceResponse } from './anki';
 
 let ankiAlgo: AnkiAlgorithm;
@@ -9,6 +9,7 @@ function createSpacedRepetitionItem(content: string): SpacedRepetitionItem {
   return {
     id: uuidv4(),
     content,
+    type: CardType.BASIC,
     easeFactor: 2.5,
     interval: 0,
     iteration: 0,

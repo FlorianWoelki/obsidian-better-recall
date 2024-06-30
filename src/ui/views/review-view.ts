@@ -1,9 +1,10 @@
 import { ButtonComponent } from 'obsidian';
 import BetterRecallPlugin from 'src/main';
-import { CardState, SpacedRepetitionItem } from 'src/spaced-repetition';
+import { SpacedRepetitionItem } from 'src/spaced-repetition';
 import { AnkiAlgorithm, PerformanceResponse } from 'src/spaced-repetition/anki';
 import { RecallView } from '.';
 import { RecallSubView } from './sub-view';
+import { Deck } from 'src/data/deck';
 
 export class ReviewView extends RecallSubView {
   private rootEl: HTMLElement;
@@ -11,7 +12,7 @@ export class ReviewView extends RecallSubView {
 
   private ankiAlgorithm: AnkiAlgorithm;
   private currentItem: SpacedRepetitionItem | null = null;
-  private items: SpacedRepetitionItem[] = [];
+  private deck: Deck;
 
   constructor(
     protected readonly plugin: BetterRecallPlugin,
@@ -19,37 +20,11 @@ export class ReviewView extends RecallSubView {
   ) {
     super(plugin, recallView);
     this.ankiAlgorithm = new AnkiAlgorithm();
+  }
 
-    this.items = [
-      {
-        id: '1',
-        content: 'Hello World',
-        easeFactor: 2.5,
-        interval: 0,
-        iteration: 0,
-        stepIndex: 0,
-        state: CardState.NEW,
-      },
-      {
-        id: '2',
-        content: 'Small Test',
-        easeFactor: 2.5,
-        interval: 0,
-        iteration: 0,
-        stepIndex: 0,
-        state: CardState.NEW,
-      },
-      {
-        id: '3',
-        content: 'Hello World 2.0',
-        easeFactor: 2.5,
-        interval: 0,
-        iteration: 0,
-        stepIndex: 0,
-        state: CardState.NEW,
-      },
-    ];
-    this.items.forEach((item) => this.ankiAlgorithm.addItem(item));
+  public setDeck(deck: Deck): void {
+    this.deck = deck;
+    this.deck.items.forEach((item) => this.ankiAlgorithm.addItem(item));
   }
 
   public render(): void {
@@ -79,7 +54,7 @@ export class ReviewView extends RecallSubView {
   private showNextItem(): void {
     this.currentItem = this.ankiAlgorithm.getNextReviewItem();
     if (this.currentItem) {
-      this.contentEl.setText(this.currentItem.content);
+      this.contentEl.setText(this.currentItem.content.front);
     } else {
       this.contentEl.setText('Review session complete!');
     }

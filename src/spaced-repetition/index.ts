@@ -5,9 +5,13 @@ export enum CardState {
   RELEARNING,
 }
 
-export interface SpacedRepetitionItem {
+export enum CardType {
+  BASIC,
+}
+
+export interface ISpacedRepetitionItem {
   id: string;
-  content: string;
+  type: CardType;
   lastReviewDate?: Date;
   nextReviewDate?: Date;
   easeFactor: number;
@@ -16,6 +20,16 @@ export interface SpacedRepetitionItem {
   state: CardState;
   stepIndex: number;
 }
+
+export interface BasicSpacedRepetitionItem extends ISpacedRepetitionItem {
+  type: CardType.BASIC;
+  content: {
+    front: string;
+    back: string;
+  };
+}
+
+export type SpacedRepetitionItem = BasicSpacedRepetitionItem;
 
 export abstract class SpacedRepetitionAlgorithm<T> {
   protected items: SpacedRepetitionItem[];
