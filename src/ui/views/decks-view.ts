@@ -5,6 +5,11 @@ import { RecallView } from '.';
 import { EditDeckModal } from '../modals/edit-deck-modal';
 import { Deck } from 'src/data/deck';
 import { AddCardModal } from '../modals/add-card-modal';
+import {
+  DUE_CARDS_COLOR,
+  LEARN_CARDS_COLOR,
+  NEW_CARDS_COLOR,
+} from '../classes';
 
 const visibleClass = 'better-recall-deck-action--visible';
 const rowAttributes = {
@@ -69,6 +74,9 @@ export class DecksView extends RecallSubView {
 
       const currentCount = parseInt(currentCountValue);
       const newCount = currentCount + 1;
+      if (newCount >= 0) {
+        newCardsCountEl.addClass(NEW_CARDS_COLOR);
+      }
       newCardsCountEl.setText(String(newCount));
       newCardsCountEl.setAttribute(
         rowAttributes.newCardsCount.plain,
@@ -148,17 +156,24 @@ export class DecksView extends RecallSubView {
 
       this.renderEditButton(deckDataEl, deck);
 
+      const newItemsLength = deck.newItems.length;
+      const learnItemsLength = deck.learnItems.length;
+      const dueItemsLength = deck.dueItems.length;
+
       deckRowEl.createEl('td', {
-        text: `${deck.newItems.length}`,
-        attr: { [rowAttributes.newCardsCount.plain]: deck.newItems.length },
+        text: `${newItemsLength}`,
+        attr: { [rowAttributes.newCardsCount.plain]: newItemsLength },
+        cls: newItemsLength > 0 ? NEW_CARDS_COLOR : '',
       });
       deckRowEl.createEl('td', {
-        text: `${deck.learnItems.length}`,
-        attr: { 'data-learn-cards-count': deck.learnItems.length },
+        text: `${learnItemsLength}`,
+        attr: { 'data-learn-cards-count': learnItemsLength },
+        cls: learnItemsLength > 0 ? LEARN_CARDS_COLOR : '',
       });
       deckRowEl.createEl('td', {
-        text: `${deck.dueItems.length}`,
-        attr: { 'data-due-cards-count': deck.dueItems.length },
+        text: `${dueItemsLength}`,
+        attr: { 'data-due-cards-count': dueItemsLength },
+        cls: dueItemsLength > 0 ? DUE_CARDS_COLOR : '',
       });
     });
   }

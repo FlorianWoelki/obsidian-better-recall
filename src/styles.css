@@ -83,3 +83,15 @@
   align-items: center;
   gap: var(--size-2-3);
 }
+
+.better-recall-new-cards-color {
+  color: var(--color-blue);
+}
+
+.better-recall-learn-cards-color {
+  color: var(--color-red);
+}
+
+.better-recall-due-cards-color {
+  color: var(--color-green);
+}
