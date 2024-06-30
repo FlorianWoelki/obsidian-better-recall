@@ -5,18 +5,23 @@
 Things to do before release:
 - [x] Add [Anki algorithm](https://faqs.ankiweb.net/what-spaced-repetition-algorithm.html)
 - [x] Add functionality of creating and recalling custom decks
-- [ ] Add cards via `Add Card Modal`
+- [x] Add cards via `Add Card Modal`
 - [ ] Add recall view
   - [x] Add empty view
   - [x] Add view for selecting decks
   - [ ] Add view for managing decks
-  - [ ] Add view for recalling notes
-  - [ ] Use Anki algorithm to recall notes
+  - [x] Add view for recalling notes
+  - [x] Use Anki algorithm to recall notes
 - [x] Add create modal for creating decks
 - [x] Add ribbon icon which opens the recall view
-- [ ] Add data integration
+- [x] Add data integration
 - [ ] Add settings view for customizing Anki algorithm parameters
-- [ ] Add cards via `Text`
+- [ ] Test and adapt to mobile experience
+- [ ] Change review dates to be only sensitive to date, don't save the time
+
+## Roadmap To Do
+
+- [ ] Add cards via `Text` in markdown notes
 
 ## Development
 
