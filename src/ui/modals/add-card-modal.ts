@@ -111,7 +111,7 @@ export class AddCardModal extends Modal {
     this.plugin.decksManager.addItem(deckId, card);
     this.plugin
       .getEventEmitter()
-      .emit({ type: 'addItem', payload: { deckId: deckId, item: card } });
+      .emit('addItem', { deckId: deckId, item: card });
   }
 
   onClose(): void {

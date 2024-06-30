@@ -62,9 +62,7 @@ export class CreateDeckModal extends Modal {
       this.deckNameInputComp.getValue(),
       this.deckDescriptionInputComp.getValue(),
     );
-    this.plugin
-      .getEventEmitter()
-      .emit({ type: 'addDeck', payload: { deck: createdDeck } });
+    this.plugin.getEventEmitter().emit('addDeck', { deck: createdDeck });
     this.close();
   }
 

@@ -1,5 +1,6 @@
 import { describe, it, vi, expect, beforeEach } from 'vitest';
 import { EventEmitter } from './';
+import { MOCK_DECK } from '../../mocks';
 
 describe('EventEmitter', () => {
   let emitter: EventEmitter;
@@ -12,9 +13,11 @@ describe('EventEmitter', () => {
     const listener = vi.fn();
     emitter.on('addDeck', listener);
 
-    emitter.emit({ type: 'addDeck' });
+    emitter.emit('addDeck', { deck: MOCK_DECK });
 
-    expect(listener).toHaveBeenCalledWith({ type: 'addDeck' });
+    expect(listener).toHaveBeenCalledWith({
+      payload: { deck: MOCK_DECK },
+    });
     expect(listener).toHaveBeenCalledTimes(1);
   });
 
@@ -23,7 +26,7 @@ describe('EventEmitter', () => {
     emitter.on('addDeck', listener);
     emitter.off('addDeck', listener);
 
-    emitter.emit({ type: 'addDeck' });
+    emitter.emit('addDeck', { deck: MOCK_DECK });
 
     expect(listener).not.toHaveBeenCalled();
   });
@@ -32,10 +35,12 @@ describe('EventEmitter', () => {
     const listener = vi.fn();
     emitter.once('addDeck', listener);
 
-    emitter.emit({ type: 'addDeck' });
-    emitter.emit({ type: 'addDeck' });
+    emitter.emit('addDeck', { deck: MOCK_DECK });
+    emitter.emit('addDeck', { deck: MOCK_DECK });
 
-    expect(listener).toHaveBeenCalledWith({ type: 'addDeck' });
+    expect(listener).toHaveBeenCalledWith({
+      payload: { deck: MOCK_DECK },
+    });
     expect(listener).toHaveBeenCalledTimes(1);
   });
 
@@ -48,7 +53,7 @@ describe('EventEmitter', () => {
     emitter.on('addDeck', listener2, 2);
     emitter.on('addDeck', listener3, 3);
 
-    emitter.emit({ type: 'addDeck' });
+    emitter.emit('addDeck', { deck: MOCK_DECK });
 
     expect(listener3).toHaveBeenCalled();
     expect(listener2).toHaveBeenCalled();

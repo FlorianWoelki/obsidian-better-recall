@@ -1,20 +1,19 @@
-import type { EventType, EventMap } from './events';
+import type { EventType, EventMap, AnyEvent } from './events';
 
-export interface Event<T = unknown> {
-  type: EventType;
-  payload?: T;
+export interface Event<P = unknown> {
+  payload?: P;
 }
 
-type EventListener<T extends Event> = (event: T) => void;
+type EventListener<E extends AnyEvent> = (event: E) => void;
 
-interface ListenerEntry<T extends Event> {
-  listener: EventListener<T>;
+interface ListenerEntry<E extends AnyEvent> {
+  listener: EventListener<E>;
   once: boolean;
   priority: number;
 }
 
 export class EventEmitter {
-  private listeners: { [K in EventType]?: ListenerEntry<EventMap[K]>[] } = {};
+  private listeners: { [K in EventType]?: ListenerEntry<AnyEvent>[] } = {};
 
   on<K extends EventType>(
     type: K,
@@ -49,15 +48,17 @@ export class EventEmitter {
     );
   }
 
-  emit<K extends EventType>(event: EventMap[K]): void {
-    if (!this.listeners[event.type]) {
+  emit<K extends EventType>(type: K, payload: EventMap[K]['payload']): void {
+    const listeners = this.listeners[type];
+    if (!listeners) {
       return;
     }
 
-    this.listeners[event.type]?.forEach((entry) => {
+    const event = { payload } as EventMap[K];
+    listeners.slice().forEach((entry) => {
       entry.listener(event);
       if (entry.once) {
-        this.off(event.type, entry.listener);
+        this.off(type, entry.listener);
       }
     });
   }

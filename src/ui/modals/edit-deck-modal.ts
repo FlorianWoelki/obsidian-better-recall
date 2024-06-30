@@ -61,9 +61,7 @@ export class EditDeckModal extends Modal {
       this.deckNameInputComp.getValue(),
       this.deckDescriptionInputComp.getValue(),
     );
-    this.plugin
-      .getEventEmitter()
-      .emit({ type: 'editDeck', payload: { deck: this.deck } });
+    this.plugin.getEventEmitter().emit('editDeck', { deck: this.deck });
     this.close();
   }
 
