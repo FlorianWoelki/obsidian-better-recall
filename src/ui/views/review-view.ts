@@ -36,8 +36,38 @@ export class ReviewView extends RecallSubView {
     this.deck.items.forEach((item) => this.ankiAlgorithm.addItem(item));
   }
 
+  private handleKeyInput(event: KeyboardEvent): void {
+    const isAnswerButtonsBarVisible =
+      !this.showAnswerButtonsBarComp.buttonsBarEl.hasClass(
+        'better-recall--display-none',
+      );
+    if (isAnswerButtonsBarVisible) {
+      // Key `Space` pressed.
+      if (event.key === ' ') {
+        // TODO: Check if review has ended.
+        this.showAnswer();
+      }
+    } else {
+      if (event.key === '1') {
+        // Handle again press.
+        this.handleResponse(PerformanceResponse.AGAIN);
+      } else if (event.key === '2') {
+        // Handle good press.
+        this.handleResponse(PerformanceResponse.GOOD);
+      } else if (event.key === '3') {
+        // Handle hard press.
+        this.handleResponse(PerformanceResponse.HARD);
+      } else if (event.key === '4') {
+        // Handle easy press.
+        this.handleResponse(PerformanceResponse.EASY);
+      }
+    }
+  }
+
   public render(): void {
     this.rootEl = this.recallView.rootEl.createDiv(CENTERED_VIEW);
+    document.addEventListener('keypress', this.handleKeyInput.bind(this));
+
     this.contentEl = this.rootEl.createDiv(
       'better-recall-card better-recall-review-card',
     );
@@ -57,12 +87,7 @@ export class ReviewView extends RecallSubView {
       .setSubmitText('Show answer')
       .setSubmitButtonDisabled(false)
       .onSubmit(() => {
-        this.cardBackEl.removeClass('better-recall-review-card--hidden');
-        this.dividerEl.removeClass('better-recall-review-card--hidden');
-        this.showAnswerButtonsBarComp.buttonsBarEl.addClass(
-          'better-recall--display-none',
-        );
-        this.renderRecallButtons();
+        this.showAnswer();
       })
       .onClose(this.recallView.goToDecksView.bind(this));
     this.showAnswerButtonsBarComp.buttonsBarEl.addClass(
@@ -109,6 +134,15 @@ export class ReviewView extends RecallSubView {
     easyButton.onClick(() => this.handleResponse(PerformanceResponse.EASY));
   }
 
+  private showAnswer(): void {
+    this.cardBackEl.removeClass('better-recall-review-card--hidden');
+    this.dividerEl.removeClass('better-recall-review-card--hidden');
+    this.showAnswerButtonsBarComp.buttonsBarEl.addClass(
+      'better-recall--display-none',
+    );
+    this.renderRecallButtons();
+  }
+
   private showNextItem(): void {
     if (this.recallButtonsBarEl) {
       this.recallButtonsBarEl.remove();
@@ -134,5 +168,10 @@ export class ReviewView extends RecallSubView {
       this.ankiAlgorithm.updateItemAfterReview(this.currentItem, response);
       this.showNextItem();
     }
+  }
+
+  public onClose(): void {
+    super.onClose();
+    document.removeEventListener('keypress', this.handleKeyInput.bind(this));
   }
 }
