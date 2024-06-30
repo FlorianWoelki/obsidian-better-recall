@@ -15,8 +15,7 @@ export interface DeckJsonStructure {
   id: string;
   createdAt: Date;
   updatedAt: Date;
-  settings: any;
-  items: SpacedRepetitionItem[];
+  cards: SpacedRepetitionItem[];
 }
 
 export function jsonObjectToDeck(
@@ -30,8 +29,7 @@ export function jsonObjectToDeck(
     jsonObject.id,
     jsonObject.createdAt,
     jsonObject.updatedAt,
-    jsonObject.settings,
-    jsonObject.items,
+    jsonObject.cards,
   );
 }
 
@@ -43,8 +41,7 @@ export class Deck {
     public readonly id: string = uuidv4(),
     public readonly createdAt: Date = new Date(),
     public readonly updatedAt: Date = new Date(),
-    public readonly settings: any = {},
-    public readonly items: SpacedRepetitionItem[] = [],
+    public readonly cards: SpacedRepetitionItem[] = [],
   ) {}
 
   public toJsonObject(): DeckJsonStructure {
@@ -54,13 +51,12 @@ export class Deck {
       description: this.description,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
-      settings: this.settings,
-      items: this.items,
+      cards: this.cards,
     };
   }
 
-  public get learnItems(): SpacedRepetitionItem[] {
-    return this.items.reduce<SpacedRepetitionItem[]>((acc, curr) => {
+  public get learnCards(): SpacedRepetitionItem[] {
+    return this.cards.reduce<SpacedRepetitionItem[]>((acc, curr) => {
       if (
         curr.state === CardState.LEARNING ||
         curr.state === CardState.RELEARNING
@@ -72,8 +68,8 @@ export class Deck {
     }, []);
   }
 
-  public get dueItems(): SpacedRepetitionItem[] {
-    return this.items.reduce<SpacedRepetitionItem[]>((acc, curr) => {
+  public get dueCards(): SpacedRepetitionItem[] {
+    return this.cards.reduce<SpacedRepetitionItem[]>((acc, curr) => {
       if (curr.state === CardState.REVIEW && this.algorithm.isDueToday(curr)) {
         acc.push(curr);
       }
@@ -82,8 +78,8 @@ export class Deck {
     }, []);
   }
 
-  public get newItems(): SpacedRepetitionItem[] {
-    return this.items.reduce<SpacedRepetitionItem[]>((acc, curr) => {
+  public get newCards(): SpacedRepetitionItem[] {
+    return this.cards.reduce<SpacedRepetitionItem[]>((acc, curr) => {
       if (curr.state === CardState.NEW) {
         acc.push(curr);
       }

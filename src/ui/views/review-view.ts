@@ -39,7 +39,7 @@ export class ReviewView extends RecallSubView {
 
   public setDeck(deck: Deck): void {
     this.deck = deck;
-    this.deck.items.forEach((item) => this.ankiAlgorithm.addItem(item));
+    this.deck.cards.forEach((card) => this.ankiAlgorithm.addItem(card));
     this.state = ReviewState.ONGOING;
   }
 

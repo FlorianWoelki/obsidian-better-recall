@@ -55,7 +55,7 @@ export class DecksView extends RecallSubView {
 
       const { deckId } = payload;
 
-      // Update items count in `new cards` column.
+      // Update cards count in `new cards` column.
       const deckRowEl = this.getDeckRowEl(deckId);
       if (!deckRowEl) {
         return;
@@ -160,24 +160,24 @@ export class DecksView extends RecallSubView {
 
       this.renderEditButton(deckDataEl, deck);
 
-      const newItemsLength = deck.newItems.length;
-      const learnItemsLength = deck.learnItems.length;
-      const dueItemsLength = deck.dueItems.length;
+      const newCardsLength = deck.newCards.length;
+      const learnCardsLength = deck.learnCards.length;
+      const dueCardsLength = deck.dueCards.length;
 
       deckRowEl.createEl('td', {
-        text: `${newItemsLength}`,
-        attr: { [rowAttributes.newCardsCount.plain]: newItemsLength },
-        cls: newItemsLength > 0 ? NEW_CARDS_COLOR : '',
+        text: `${newCardsLength}`,
+        attr: { [rowAttributes.newCardsCount.plain]: newCardsLength },
+        cls: newCardsLength > 0 ? NEW_CARDS_COLOR : '',
       });
       deckRowEl.createEl('td', {
-        text: `${learnItemsLength}`,
-        attr: { 'data-learn-cards-count': learnItemsLength },
-        cls: learnItemsLength > 0 ? LEARN_CARDS_COLOR : '',
+        text: `${learnCardsLength}`,
+        attr: { 'data-learn-cards-count': learnCardsLength },
+        cls: learnCardsLength > 0 ? LEARN_CARDS_COLOR : '',
       });
       deckRowEl.createEl('td', {
-        text: `${dueItemsLength}`,
-        attr: { 'data-due-cards-count': dueItemsLength },
-        cls: dueItemsLength > 0 ? DUE_CARDS_COLOR : '',
+        text: `${dueCardsLength}`,
+        attr: { 'data-due-cards-count': dueCardsLength },
+        cls: dueCardsLength > 0 ? DUE_CARDS_COLOR : '',
       });
     });
   }
