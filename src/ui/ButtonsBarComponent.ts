@@ -1,10 +1,9 @@
 import { ButtonComponent, Component } from 'obsidian';
-
-const BUTTONS_BAR_CLASS = 'better-recall-buttons-bar';
+import { BUTTONS_BAR_CLASS } from './classes';
 
 export class ButtonsBarComponent extends Component {
   private submitButtonComp: ButtonComponent;
-  private cancelButtonComp: ButtonComponent;
+  private closeButtonComp: ButtonComponent;
   public buttonsBarEl: HTMLDivElement;
 
   constructor(private contentEl: HTMLElement) {
@@ -13,7 +12,7 @@ export class ButtonsBarComponent extends Component {
   }
 
   public onClose(cb: () => void): ButtonsBarComponent {
-    this.cancelButtonComp.onClick(cb);
+    this.closeButtonComp.onClick(cb);
     return this;
   }
 
@@ -27,12 +26,17 @@ export class ButtonsBarComponent extends Component {
     this.buttonsBarEl = this.contentEl.createDiv(BUTTONS_BAR_CLASS);
 
     // Creates the buttons for the button bar.
-    this.cancelButtonComp = new ButtonComponent(this.buttonsBarEl);
-    this.cancelButtonComp.setButtonText('Cancel');
+    this.closeButtonComp = new ButtonComponent(this.buttonsBarEl);
+    this.closeButtonComp.setButtonText('Cancel');
     this.submitButtonComp = new ButtonComponent(this.buttonsBarEl);
     this.submitButtonComp.setCta();
     this.submitButtonComp.setButtonText('Save');
     this.submitButtonComp.setDisabled(true);
+  }
+
+  public setCloseButtonText(text: string): ButtonsBarComponent {
+    this.closeButtonComp.setButtonText(text);
+    return this;
   }
 
   public setSubmitButtonDisabled(disabled: boolean): ButtonsBarComponent {

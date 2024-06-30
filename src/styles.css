@@ -5,7 +5,7 @@
   gap: 0.75rem;
 }
 
-.better-recall-decks-view {
+.better-recall-centered-view {
   position: absolute;
   height: 100%;
   width: 100%;
@@ -94,4 +94,43 @@
 
 .better-recall-due-cards-color {
   color: var(--color-green);
+}
+
+.better-recall-review-card {
+  text-align: center;
+  font-size: var(--size-4-5);
+}
+
+.better-recall-review-card__divider {
+  height: 1px;
+  width: 100%;
+  background-color: var(--background-modifier-cover);
+}
+
+.better-recall-review-card__content {
+  font-weight: unset;
+}
+
+.better-recall-review-card--hidden {
+  visibility: hidden;
+}
+
+.better-recall--display-none {
+  display: none;
+}
+
+.better-recall-review-card__recall-action {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  width: calc(var(--input-height) * 2.5);
+  height: calc(var(--input-height) * 2.5);
+}
+
+.better-recall-review-card__recall-action span:first-child {
+  font-size: var(--size-4-5);
+}
+
+.better-recall-review-card__answer-buttons-bar {
+  height: calc(var(--input-height) * 2.5);
 }

@@ -4,6 +4,7 @@ import { EmptyView } from './empty-view';
 import { ReviewView } from './review-view';
 import { DecksView } from './decks-view';
 import { RecallSubView } from './sub-view';
+import { Deck } from 'src/data/deck';
 
 export const FILE_VIEW_TYPE = 'recall-view';
 
@@ -40,11 +41,14 @@ export class RecallView extends FileView {
     this.emptyView = new EmptyView(plugin, this);
     this.decksView = new DecksView(plugin, this);
 
-    this.setViewMode(
-      plugin.decksManager.decksArray.length === 0
-        ? ViewMode.Empty
-        : ViewMode.Decks,
-    );
+    // TODO: Reset to last functionality, just for testing purposes.
+    this.reviewView.setDeck(plugin.decksManager.decksArray[0]);
+    this.setViewMode(ViewMode.Review);
+    // this.setViewMode(
+    //   plugin.decksManager.decksArray.length === 0
+    //     ? ViewMode.Empty
+    //     : ViewMode.Decks,
+    // );
   }
 
   protected async onOpen(): Promise<void> {
@@ -72,6 +76,23 @@ export class RecallView extends FileView {
         this.currentView = this.reviewView;
         break;
     }
+  }
+
+  /**
+   * Starts reviewing a specific deck.
+   * This function updates the deck for the `review-view`, sets the
+   * view mode and rerenders the current view.
+   * @param deck The deck which will be reviewed.
+   */
+  public startReviewingDeck(deck: Deck): void {
+    this.reviewView.setDeck(deck);
+    this.setViewMode(ViewMode.Review);
+    this.renderView();
+  }
+
+  public goToDecksView(): void {
+    this.setViewMode(ViewMode.Decks);
+    this.renderView();
   }
 
   private renderView(): void {

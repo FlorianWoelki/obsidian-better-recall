@@ -6,6 +6,7 @@ import { EditDeckModal } from '../modals/edit-deck-modal';
 import { Deck } from 'src/data/deck';
 import { AddCardModal } from '../modals/add-card-modal';
 import {
+  CENTERED_VIEW,
   DUE_CARDS_COLOR,
   LEARN_CARDS_COLOR,
   NEW_CARDS_COLOR,
@@ -86,7 +87,7 @@ export class DecksView extends RecallSubView {
   }
 
   public render(): void {
-    this.rootEl = this.recallView.rootEl.createDiv('better-recall-decks-view');
+    this.rootEl = this.recallView.rootEl.createDiv(CENTERED_VIEW);
 
     this.renderDecks();
     this.renderButtons();
@@ -149,9 +150,12 @@ export class DecksView extends RecallSubView {
       deckRowEl.addEventListener('mouseenter', this.handleDeckRowMouseEnter);
       deckRowEl.addEventListener('mouseleave', this.handleDeckRowMouseLeave);
 
-      deckDataEl.createEl('a', {
+      const deckNameLink = deckDataEl.createEl('a', {
         text: deck.getName(),
         title: deck.getDescription(),
+      });
+      deckNameLink.onClickEvent(() => {
+        this.recallView.startReviewingDeck(deck);
       });
 
       this.renderEditButton(deckDataEl, deck);
