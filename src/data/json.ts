@@ -1,4 +1,4 @@
-import { normalizePath, Vault } from 'obsidian';
+import { normalizePath, type Vault } from 'obsidian';
 import { join, parse } from 'path';
 
 export class JsonFileManager {
@@ -73,35 +73,6 @@ export class JsonFileManager {
     const fullPath = this.getFullPath(relativePath);
     const file = await this.vault.adapter.exists(fullPath);
     return file;
-  }
-
-  /**
-   * Read all JSON files in a directory.
-   * @param relativeDirPath The path to the directory, relative to the plugin directory.
-   * @returns An object where keys are file names and values are parsed JSON contents.
-   */
-  public async readAllJsonFilesInDirectory(
-    relativeDirPath: string,
-  ): Promise<Record<string, any>> {
-    const fullDirPath = this.getFullPath(relativeDirPath);
-    const listedItems = await this.vault.adapter.list(fullDirPath);
-
-    const result: Record<string, any> = {};
-
-    await Promise.all(
-      listedItems.files.map(async (filePath) => {
-        if (!filePath.endsWith('json')) {
-          return;
-        }
-
-        const fileName = this.extractFileName(filePath);
-
-        const content = await this.vault.adapter.read(filePath);
-        result[fileName] = JSON.parse(content);
-      }),
-    );
-
-    return result;
   }
 
   /**
