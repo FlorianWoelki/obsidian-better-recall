@@ -17,7 +17,6 @@ Things to do before release:
 - [x] Add data integration
 - [ ] Add settings view for customizing Anki algorithm parameters
 - [ ] Test and adapt to mobile experience
-- [ ] Change review dates to be only sensitive to date, don't save the time
 
 ## Roadmap To Do
 
