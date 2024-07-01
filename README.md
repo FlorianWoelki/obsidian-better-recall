@@ -21,6 +21,8 @@ Things to do before release:
 ## Roadmap To Do
 
 - [ ] Add cards via `Text` in markdown notes
+- [ ] Add file over app decks saving instead of using a json file
+  - [ ] Abstract json file manager and add a new markdown manager which reads and edits a markdown file in the Vault
 
 ## Development
 
