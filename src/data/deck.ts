@@ -13,8 +13,8 @@ export interface DeckJsonStructure {
   name: string;
   description: string;
   id: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
   cards: SpacedRepetitionItem[];
 }
 
@@ -27,10 +27,22 @@ export function jsonObjectToDeck(
     jsonObject.name,
     jsonObject.description,
     jsonObject.id,
-    jsonObject.createdAt,
-    jsonObject.updatedAt,
-    jsonObject.cards,
+    convertStringToDate(jsonObject.createdAt),
+    convertStringToDate(jsonObject.updatedAt),
+    jsonObject.cards.map((card) => ({
+      ...card,
+      lastReviewDate: convertStringToDate(
+        card.lastReviewDate as unknown as string,
+      ),
+      nextReviewDate: convertStringToDate(
+        card.nextReviewDate as unknown as string,
+      ),
+    })),
   );
+}
+
+function convertStringToDate(dateStr?: string): Date | undefined {
+  return dateStr ? new Date(dateStr) : undefined;
 }
 
 export class Deck {
@@ -49,8 +61,8 @@ export class Deck {
       id: this.id,
       name: this.name,
       description: this.description,
-      createdAt: this.createdAt,
-      updatedAt: this.updatedAt,
+      createdAt: this.createdAt.toDateString(),
+      updatedAt: this.updatedAt.toDateString(),
       cards: this.cards,
     };
   }

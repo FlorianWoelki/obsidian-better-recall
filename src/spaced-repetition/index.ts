@@ -146,7 +146,7 @@ export abstract class SpacedRepetitionAlgorithm<T> {
       item.state === CardState.NEW ||
       (!!item.nextReviewDate &&
         item.nextReviewDate <= this.sessionEndTime &&
-        item.nextReviewDate >= now)
+        item.nextReviewDate?.toDateString() === now.toDateString())
     );
   }
 
