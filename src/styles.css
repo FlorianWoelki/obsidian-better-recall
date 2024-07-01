@@ -142,11 +142,10 @@
 .better-recall__cards-list {
   height: 200px;
   max-height: 200px;
-  overflow-y: visible;
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
   padding: 0; /* Reset padding from natively used better-recall card. */
-  padding-top: var(--size-2-2);
 }
 
 .better-recall__cards-list div {
