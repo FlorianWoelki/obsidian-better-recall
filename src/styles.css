@@ -62,7 +62,13 @@
   justify-content: space-between;
 }
 
-.better-recall-deck__edit-button .svg-icon {
+.better-recall-deck__buttons {
+  display: flex;
+  align-items: center;
+  gap: var(--size-2-3);
+}
+
+.better-recall-deck__button .svg-icon {
   cursor: var(--cursor-link);
   display: none;
   color: var(--text-muted);
@@ -70,7 +76,7 @@
   width: var(--size-4-4);
   transition: opacity 100ms ease-in-out;
 }
-.better-recall-deck__edit-button .svg-icon:hover {
+.better-recall-deck__button .svg-icon:hover {
   opacity: 1;
 }
 
@@ -131,4 +137,24 @@
 
 .better-recall-review-card__answer-buttons-bar button span:first-child {
   font-size: var(--size-4-5);
+}
+
+.better-recall__cards-list {
+  height: 200px;
+  max-height: 200px;
+  overflow-y: visible;
+  display: flex;
+  flex-direction: column;
+  padding: 0; /* Reset padding from natively used better-recall card. */
+  padding-top: var(--size-2-2);
+}
+
+.better-recall__cards-list div {
+  transition: backgroundColor 100ms ease-in-out;
+  cursor: pointer;
+  padding: var(--size-2-2) var(--size-4-3);
+}
+
+.better-recall__cards-list div:hover {
+  background-color: var(--color-base-25);
 }

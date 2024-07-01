@@ -11,6 +11,7 @@ import {
   LEARN_CARDS_COLOR,
   NEW_CARDS_COLOR,
 } from '../classes';
+import { EditCardsModal } from '../modals/edit-cards-modal';
 
 const visibleClass = 'better-recall-deck-action--visible';
 const rowAttributes = {
@@ -158,7 +159,7 @@ export class DecksView extends RecallSubView {
         this.recallView.startReviewingDeck(deck);
       });
 
-      this.renderEditButton(deckDataEl, deck);
+      this.renderDeckButtons(deckDataEl, deck);
 
       const newCardsLength = deck.newCards.length;
       const learnCardsLength = deck.learnCards.length;
@@ -182,9 +183,26 @@ export class DecksView extends RecallSubView {
     });
   }
 
-  private renderEditButton(el: HTMLElement, deck: Deck): void {
-    const buttonEl = el.createEl('div', {
-      cls: 'better-recall-deck__edit-button',
+  private renderDeckButtons(root: HTMLElement, deck: Deck): void {
+    const container = root.createDiv('better-recall-deck__buttons');
+
+    const cardsButtonEl = container.createEl('div', {
+      cls: 'better-recall-deck__button',
+      attr: {
+        role: 'button',
+        tabindex: '0',
+      },
+    });
+    const walletCardsIcon = getIcon('wallet-cards');
+    if (walletCardsIcon) {
+      cardsButtonEl.appendChild(walletCardsIcon);
+    }
+    cardsButtonEl.onClickEvent(() => {
+      new EditCardsModal(this.plugin, deck).open();
+    });
+
+    const editButtonEl = container.createEl('div', {
+      cls: 'better-recall-deck__button',
       attr: {
         role: 'button',
         tabindex: '0',
@@ -192,9 +210,9 @@ export class DecksView extends RecallSubView {
     });
     const penIcon = getIcon('pen');
     if (penIcon) {
-      buttonEl.appendChild(penIcon);
+      editButtonEl.appendChild(penIcon);
     }
-    buttonEl.onClickEvent(() => {
+    editButtonEl.onClickEvent(() => {
       new EditDeckModal(this.plugin, deck).open();
     });
   }
