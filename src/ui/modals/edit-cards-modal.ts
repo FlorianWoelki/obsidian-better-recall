@@ -2,7 +2,8 @@ import { Modal } from 'obsidian';
 import BetterRecallPlugin from '../../main';
 import { ButtonsBarComponent } from '../ButtonsBarComponent';
 import { Deck } from 'src/data/deck';
-import { AddCardModal } from './add-card-modal';
+import { AddCardModal } from './card-modal/add';
+import { EditCardModal } from './card-modal/edit';
 
 export class EditCardsModal extends Modal {
   private buttonsBarComp: ButtonsBarComponent;
@@ -29,7 +30,7 @@ export class EditCardsModal extends Modal {
     this.deck.cards.forEach((card) => {
       const cardEl = decksCardEl.createEl('div', { text: card.content.front });
       cardEl.onClickEvent(() => {
-        // TODO: Add edit card modal extending the add card modal.
+        new EditCardModal(this.plugin, card).open();
       });
     });
 

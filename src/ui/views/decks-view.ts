@@ -4,7 +4,7 @@ import BetterRecallPlugin from 'src/main';
 import { RecallView } from '.';
 import { EditDeckModal } from '../modals/edit-deck-modal';
 import { Deck } from 'src/data/deck';
-import { AddCardModal } from '../modals/add-card-modal';
+import { AddCardModal } from '../modals/card-modal/add';
 import {
   CENTERED_VIEW,
   DUE_CARDS_COLOR,
