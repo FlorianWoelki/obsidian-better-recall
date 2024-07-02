@@ -9,7 +9,8 @@ Things to do before release:
 - [ ] Add recall view
   - [x] Add empty view
   - [x] Add view for selecting decks
-  - [ ] Add view for managing decks
+  - [x] Add view for managing decks
+    - [ ] Add deletion of cards
   - [x] Add view for recalling notes
   - [x] Use Anki algorithm to recall notes
 - [x] Add create modal for creating decks
