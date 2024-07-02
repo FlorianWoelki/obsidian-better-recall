@@ -9,19 +9,40 @@ export interface DecksJsonStructure {
   decks: DeckJsonStructure[];
 }
 
+// We do not need the id because it's already in the key of the object.
+type CardJsonStructure = Omit<SpacedRepetitionItem, 'id'>;
+
 export interface DeckJsonStructure {
+  id: string;
   name: string;
   description: string;
-  id: string;
   createdAt: string;
   updatedAt: string;
-  cards: SpacedRepetitionItem[];
+  // Using object instead of array for performance gains.
+  cards: Record<string, CardJsonStructure>;
 }
 
 export function jsonObjectToDeck(
   algorithm: SpacedRepetitionAlgorithm<unknown>,
   jsonObject: DeckJsonStructure,
 ): Deck {
+  const cards = Object.entries(jsonObject.cards).reduce(
+    (acc, [id, card]) => {
+      acc[id] = {
+        ...card,
+        id,
+        lastReviewDate: convertStringToDate(
+          card.lastReviewDate as unknown as string,
+        ),
+        nextReviewDate: convertStringToDate(
+          card.nextReviewDate as unknown as string,
+        ),
+      };
+      return acc;
+    },
+    {} as Record<string, SpacedRepetitionItem>,
+  );
+
   return new Deck(
     algorithm,
     jsonObject.name,
@@ -29,15 +50,7 @@ export function jsonObjectToDeck(
     jsonObject.id,
     convertStringToDate(jsonObject.createdAt),
     convertStringToDate(jsonObject.updatedAt),
-    jsonObject.cards.map((card) => ({
-      ...card,
-      lastReviewDate: convertStringToDate(
-        card.lastReviewDate as unknown as string,
-      ),
-      nextReviewDate: convertStringToDate(
-        card.nextReviewDate as unknown as string,
-      ),
-    })),
+    cards,
   );
 }
 
@@ -53,7 +66,7 @@ export class Deck {
     public readonly id: string = uuidv4(),
     public readonly createdAt: Date = new Date(),
     public readonly updatedAt: Date = new Date(),
-    public readonly cards: SpacedRepetitionItem[] = [],
+    public readonly cards: Record<string, SpacedRepetitionItem> = {},
   ) {}
 
   public toJsonObject(): DeckJsonStructure {
@@ -63,12 +76,24 @@ export class Deck {
       description: this.description,
       createdAt: this.createdAt.toDateString(),
       updatedAt: this.updatedAt.toDateString(),
-      cards: this.cards,
+      // Cards which does not have the `id` in its value.
+      cards: Object.entries(this.cards).reduce<
+        Record<string, CardJsonStructure>
+      >((acc, [id, card]) => {
+        const newCard: CardJsonStructure & { id?: string } = { ...card };
+        delete newCard.id;
+        acc[id] = newCard;
+        return acc;
+      }, {}),
     };
   }
 
+  public get cardsArray(): SpacedRepetitionItem[] {
+    return Object.values(this.cards);
+  }
+
   public get learnCards(): SpacedRepetitionItem[] {
-    return this.cards.reduce<SpacedRepetitionItem[]>((acc, curr) => {
+    return this.cardsArray.reduce<SpacedRepetitionItem[]>((acc, curr) => {
       if (
         curr.state === CardState.LEARNING ||
         curr.state === CardState.RELEARNING
@@ -81,7 +106,7 @@ export class Deck {
   }
 
   public get dueCards(): SpacedRepetitionItem[] {
-    return this.cards.reduce<SpacedRepetitionItem[]>((acc, curr) => {
+    return this.cardsArray.reduce<SpacedRepetitionItem[]>((acc, curr) => {
       if (curr.state === CardState.REVIEW && this.algorithm.isDueToday(curr)) {
         acc.push(curr);
       }
@@ -91,7 +116,7 @@ export class Deck {
   }
 
   public get newCards(): SpacedRepetitionItem[] {
-    return this.cards.reduce<SpacedRepetitionItem[]>((acc, curr) => {
+    return this.cardsArray.reduce<SpacedRepetitionItem[]>((acc, curr) => {
       if (curr.state === CardState.NEW) {
         acc.push(curr);
       }

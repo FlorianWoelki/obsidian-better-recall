@@ -82,7 +82,7 @@ export class DecksManager {
     if (!(id in this.decks)) {
       throw new Error(`No deck with id found: ${id}`);
     }
-    this.decks[id].cards.push(item);
+    this.decks[id].cards[item.id] = item;
   }
 
   public async save(): Promise<void> {

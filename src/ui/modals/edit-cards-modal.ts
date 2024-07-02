@@ -27,10 +27,12 @@ export class EditCardsModal extends Modal {
       'better-recall-card better-recall__cards-list',
     );
 
-    this.deck.cards.forEach((card) => {
-      const cardEl = decksCardEl.createEl('div', { text: card.content.front });
+    this.deck.cardsArray.forEach((card) => {
+      const cardEl = decksCardEl.createEl('div', {
+        text: `${card.content.front} :: ${card.content.back}`,
+      });
       cardEl.onClickEvent(() => {
-        new EditCardModal(this.plugin, card).open();
+        new EditCardModal(this.plugin, this.deck, card).open();
       });
     });
 

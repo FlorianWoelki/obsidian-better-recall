@@ -50,10 +50,4 @@ export class AddCardModal extends CardModal {
       .getEventEmitter()
       .emit('addItem', { deckId: deckId, item: card });
   }
-
-  onClose(): void {
-    super.onClose();
-    this.plugin.decksManager.save();
-    this.contentEl.empty();
-  }
 }
