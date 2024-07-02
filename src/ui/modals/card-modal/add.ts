@@ -45,7 +45,7 @@ export class AddCardModal extends CardModal {
       iteration: 0,
       stepIndex: 0,
     };
-    this.plugin.decksManager.addItem(deckId, card);
+    this.plugin.decksManager.addCard(deckId, card);
     this.plugin
       .getEventEmitter()
       .emit('addItem', { deckId: deckId, item: card });

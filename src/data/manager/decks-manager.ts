@@ -47,7 +47,7 @@ export class DecksManager {
       throw new Error(`Invalid deck name: ${deckName}`);
     }
 
-    if (this.decksArray.find((item) => item.getName() === deckName)) {
+    if (this.decksArray.find((deck) => deck.getName() === deckName)) {
       throw new Error(`Deck name already exists: ${deckName}`);
     }
 
@@ -78,11 +78,38 @@ export class DecksManager {
     return this.decks[id];
   }
 
-  public addItem(id: string, item: SpacedRepetitionItem): void {
-    if (!(id in this.decks)) {
-      throw new Error(`No deck with id found: ${id}`);
+  public addCard(deckId: string, card: SpacedRepetitionItem): void {
+    if (!(deckId in this.decks)) {
+      throw new Error(`No deck with id found: ${deckId}`);
     }
-    this.decks[id].cards[item.id] = item;
+    this.decks[deckId].cards[card.id] = card;
+  }
+
+  public updateCardContent(
+    deckId: string,
+    updatedCard: SpacedRepetitionItem,
+  ): void {
+    if (!(deckId in this.decks)) {
+      throw new Error(`No deck with id found: ${deckId}`);
+    }
+
+    if (!(updatedCard.id in this.decks[deckId].cards)) {
+      throw new Error(`No card in deck with card id found: ${updatedCard.id}`);
+    }
+
+    this.decks[deckId].cards[updatedCard.id] = updatedCard;
+  }
+
+  public removeCard(deckId: string, cardId: string): void {
+    if (!(deckId in this.decks)) {
+      throw new Error(`No deck with id found: ${deckId}`);
+    }
+
+    if (!(cardId in this.decks[deckId].cards)) {
+      throw new Error(`No card in deck with card id found: ${cardId}`);
+    }
+
+    delete this.decks[deckId].cards[cardId];
   }
 
   public async save(): Promise<void> {

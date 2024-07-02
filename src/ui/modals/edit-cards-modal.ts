@@ -5,6 +5,10 @@ import { Deck } from 'src/data/deck';
 import { AddCardModal } from './card-modal/add';
 import { EditCardModal } from './card-modal/edit';
 
+const cardAttributes = {
+  cardId: 'data-card-id',
+};
+
 export class EditCardsModal extends Modal {
   private buttonsBarComp: ButtonsBarComponent;
 
@@ -19,6 +23,24 @@ export class EditCardsModal extends Modal {
   onOpen(): void {
     super.onOpen();
     this.render();
+
+    this.plugin.getEventEmitter().on('editItem', ({ payload }) => {
+      if (!payload) {
+        return;
+      }
+
+      const { newItem } = payload;
+
+      const cardEl = this.contentEl.querySelector(
+        `[${cardAttributes.cardId}="${newItem.id}"]`,
+      );
+      if (!cardEl) {
+        return;
+      }
+
+      this.contentEl.empty();
+      this.render();
+    });
   }
 
   private render(): void {
@@ -30,6 +52,9 @@ export class EditCardsModal extends Modal {
     this.deck.cardsArray.forEach((card) => {
       const cardEl = decksCardEl.createEl('div', {
         text: `${card.content.front} :: ${card.content.back}`,
+        attr: {
+          [cardAttributes.cardId]: card.id,
+        },
       });
       cardEl.onClickEvent(() => {
         new EditCardModal(this.plugin, this.deck, card).open();
