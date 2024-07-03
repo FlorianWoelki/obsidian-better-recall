@@ -85,13 +85,16 @@ export abstract class CardModal extends Modal {
     this.backInputComp.descriptionEl.style.marginTop = 'var(--size-2-3)';
   }
 
-  protected renderButtonsBar(submitText: string): void {
-    this.buttonsBarComp = new ButtonsBarComponent(this.contentEl)
+  protected renderButtonsBar(
+    submitText: string,
+    options: { container?: HTMLElement } = {},
+  ): void {
+    options.container ??= this.contentEl;
+    this.buttonsBarComp = new ButtonsBarComponent(options.container)
       .setSubmitButtonDisabled(true)
       .setSubmitText(submitText)
       .onSubmit(this.submit.bind(this))
       .onClose(this.close.bind(this));
-    this.buttonsBarComp.buttonsBarEl.style.paddingTop = 'var(--size-4-2)';
   }
 
   protected handleInputChange() {

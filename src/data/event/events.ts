@@ -7,6 +7,7 @@ export type EventMap = {
   editDeck: Event<{ deck: Deck }>;
   addItem: Event<{ deckId: string; item: SpacedRepetitionItem }>;
   editItem: Event<{ deckId: string; newItem: SpacedRepetitionItem }>;
+  deleteItem: Event<{ deckId: string; deletedItem: SpacedRepetitionItem }>;
 };
 
 export type EventType = keyof EventMap;

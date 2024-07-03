@@ -67,7 +67,6 @@ export class EditCardsModal extends Modal {
       .setSubmitText('Add Card')
       .onSubmit(this.openAddCardModal.bind(this))
       .onClose(this.close.bind(this));
-    this.buttonsBarComp.buttonsBarEl.style.paddingTop = 'var(--size-4-2)';
   }
 
   private openAddCardModal(): void {

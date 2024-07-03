@@ -2,6 +2,7 @@ import BetterRecallPlugin from 'src/main';
 import { CardModal } from './card-modal';
 import { SpacedRepetitionItem } from 'src/spaced-repetition';
 import { Deck } from 'src/data/deck';
+import { ButtonComponent } from 'obsidian';
 
 export class EditCardModal extends CardModal {
   constructor(
@@ -20,7 +21,23 @@ export class EditCardModal extends CardModal {
 
     this.renderBasicTypeFields(this.card.content.front, this.card.content.back);
 
-    this.renderButtonsBar('Save');
+    const buttonsContainer = this.contentEl.createDiv(
+      'better-recall__buttons-container',
+    );
+    // Create custom delete button.
+    const deleteButton = new ButtonComponent(buttonsContainer)
+      .setButtonText('Delete')
+      .onClick(() => this.deleteCard());
+    deleteButton.buttonEl.style.marginTop = 'var(--size-4-5)';
+    this.renderButtonsBar('Save', { container: buttonsContainer });
+  }
+
+  private deleteCard(): void {
+    this.plugin.decksManager.removeCard(this.deck.id, this.card.id);
+    this.plugin
+      .getEventEmitter()
+      .emit('deleteItem', { deckId: this.deck.id, deletedItem: this.card });
+    this.close();
   }
 
   protected submit(): void {

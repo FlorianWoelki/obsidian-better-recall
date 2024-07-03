@@ -1,5 +1,5 @@
 .better-recall-buttons-bar {
-  margin-top: 0.75rem;
+  margin-top: var(--size-4-5);
   display: flex;
   justify-content: flex-end;
   gap: 0.75rem;
@@ -156,4 +156,10 @@
 
 .better-recall__cards-list div:hover {
   background-color: var(--color-base-25);
+}
+
+.better-recall__buttons-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
