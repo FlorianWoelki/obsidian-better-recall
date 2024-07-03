@@ -1,7 +1,7 @@
 import { DropdownComponent, Modal } from 'obsidian';
 import BetterRecallPlugin from 'src/main';
-import { ButtonsBarComponent } from 'src/ui/ButtonsBarComponent';
-import { InputFieldComponent } from 'src/ui/InputFieldComponent';
+import { ButtonsBarComponent } from 'src/ui/components/ButtonsBarComponent';
+import { InputFieldComponent } from 'src/ui/components/InputFieldComponent';
 
 export abstract class CardModal extends Modal {
   private optionsContainerEl: HTMLElement;

@@ -1,9 +1,9 @@
 import { Modal } from 'obsidian';
 import BetterRecallPlugin from '../../main';
-import { ButtonsBarComponent } from '../ButtonsBarComponent';
+import { ButtonsBarComponent } from '../components/ButtonsBarComponent';
 import { Deck } from 'src/data/deck';
-import { AddCardModal } from './card-modal/add';
-import { EditCardModal } from './card-modal/edit';
+import { AddCardModal } from './card-modal/add-card-modal';
+import { EditCardModal } from './card-modal/edit-card-modal';
 
 const cardAttributes = {
   cardId: 'data-card-id',

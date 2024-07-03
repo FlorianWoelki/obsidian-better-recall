@@ -1,5 +1,5 @@
 import { ButtonComponent, Component } from 'obsidian';
-import { BUTTONS_BAR_CLASS } from './classes';
+import { BUTTONS_BAR_CLASS } from '../classes';
 
 export class ButtonsBarComponent extends Component {
   private submitButtonComp: ButtonComponent;
