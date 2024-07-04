@@ -10,7 +10,7 @@ export interface DecksJsonStructure {
 }
 
 // We do not need the id because it's already in the key of the object.
-type CardJsonStructure = Omit<SpacedRepetitionItem, 'id'>;
+export type CardJsonStructure = Omit<SpacedRepetitionItem, 'id'>;
 
 export interface DeckJsonStructure {
   id: string;
