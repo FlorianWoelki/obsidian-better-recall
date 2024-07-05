@@ -53,12 +53,14 @@ export class RecallView extends FileView {
   protected async onOpen(): Promise<void> {
     this.renderView();
 
-    this.plugin.getEventEmitter().on('addDeck', (payload) => {
-      if (this.viewMode === ViewMode.Empty) {
-        this.setViewMode(ViewMode.Decks);
-        this.renderView();
-      }
-    });
+    this.plugin.getEventEmitter().on('addDeck', this.handleAddDeck.bind(this));
+  }
+
+  private handleAddDeck(): void {
+    if (this.viewMode === ViewMode.Empty) {
+      this.setViewMode(ViewMode.Decks);
+      this.renderView();
+    }
   }
 
   private setViewMode(viewMode: ViewMode): void {
@@ -105,6 +107,7 @@ export class RecallView extends FileView {
 
   protected async onClose(): Promise<void> {
     this.currentView?.onClose();
+    this.plugin.getEventEmitter().off('addDeck', this.handleAddDeck.bind(this));
     await super.onClose();
   }
 

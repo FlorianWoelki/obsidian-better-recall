@@ -12,6 +12,7 @@ import {
   NEW_CARDS_COLOR,
 } from '../classes';
 import { EditCardsModal } from '../modals/edit-cards-modal';
+import { AddItemEvent, EditDeckEvent } from 'src/data/event/events';
 
 const visibleClass = 'better-recall-deck-action--visible';
 const rowAttributes = {
@@ -27,64 +28,11 @@ export class DecksView extends RecallSubView {
   constructor(plugin: BetterRecallPlugin, recallView: RecallView) {
     super(plugin, recallView);
 
-    this.plugin.getEventEmitter().on('addDeck', () => {
-      this.recallView.rootEl.empty();
-      this.render();
-    });
-    this.plugin.getEventEmitter().on('editDeck', ({ payload }) => {
-      if (!payload) {
-        return;
-      }
-
-      const { deck } = payload;
-
-      // Updates the information based in the first column of the table.
-      const deckNameEl = this.getDeckRowEl(deck.id)?.querySelector(
-        'a',
-      ) as HTMLElement | null;
-      if (!deckNameEl) {
-        return;
-      }
-
-      deckNameEl.setText(deck.getName());
-      deckNameEl.title = deck.getDescription();
-    });
-    this.plugin.getEventEmitter().on('addItem', ({ payload }) => {
-      if (!payload) {
-        return;
-      }
-
-      const { deckId } = payload;
-
-      // Update cards count in `new cards` column.
-      const deckRowEl = this.getDeckRowEl(deckId);
-      if (!deckRowEl) {
-        return;
-      }
-
-      const newCardsCountEl = this.getNewCardsCountEl(deckRowEl);
-      if (!newCardsCountEl) {
-        return;
-      }
-
-      const currentCountValue = newCardsCountEl.getAttribute(
-        rowAttributes.newCardsCount.plain,
-      );
-      if (!currentCountValue) {
-        return;
-      }
-
-      const currentCount = parseInt(currentCountValue);
-      const newCount = currentCount + 1;
-      if (newCount >= 0) {
-        newCardsCountEl.addClass(NEW_CARDS_COLOR);
-      }
-      newCardsCountEl.setText(String(newCount));
-      newCardsCountEl.setAttribute(
-        rowAttributes.newCardsCount.plain,
-        String(newCount),
-      );
-    });
+    this.plugin.getEventEmitter().on('addDeck', this.handleAddDeck.bind(this));
+    this.plugin
+      .getEventEmitter()
+      .on('editDeck', this.handleEditDeck.bind(this));
+    this.plugin.getEventEmitter().on('addItem', this.handleAddItem.bind(this));
   }
 
   public render(): void {
@@ -92,6 +40,67 @@ export class DecksView extends RecallSubView {
 
     this.renderDecks();
     this.renderButtons();
+  }
+
+  private handleAddDeck(): void {
+    this.recallView.rootEl.empty();
+    this.render();
+  }
+
+  private handleEditDeck({ payload }: EditDeckEvent): void {
+    if (!payload) {
+      return;
+    }
+
+    const { deck } = payload;
+
+    // Updates the information based in the first column of the table.
+    const deckNameEl = this.getDeckRowEl(deck.id)?.querySelector(
+      'a',
+    ) as HTMLElement | null;
+    if (!deckNameEl) {
+      return;
+    }
+
+    deckNameEl.setText(deck.getName());
+    deckNameEl.title = deck.getDescription();
+  }
+
+  private handleAddItem({ payload }: AddItemEvent): void {
+    if (!payload) {
+      return;
+    }
+
+    const { deckId } = payload;
+
+    // Update cards count in `new cards` column.
+    const deckRowEl = this.getDeckRowEl(deckId);
+    if (!deckRowEl) {
+      return;
+    }
+
+    const newCardsCountEl = this.getNewCardsCountEl(deckRowEl);
+    if (!newCardsCountEl) {
+      return;
+    }
+
+    const currentCountValue = newCardsCountEl.getAttribute(
+      rowAttributes.newCardsCount.plain,
+    );
+    if (!currentCountValue) {
+      return;
+    }
+
+    const currentCount = parseInt(currentCountValue);
+    const newCount = currentCount + 1;
+    if (newCount >= 0) {
+      newCardsCountEl.addClass(NEW_CARDS_COLOR);
+    }
+    newCardsCountEl.setText(String(newCount));
+    newCardsCountEl.setAttribute(
+      rowAttributes.newCardsCount.plain,
+      String(newCount),
+    );
   }
 
   private getDeckRowEl(deckId: string): HTMLElement | null {
@@ -234,6 +243,12 @@ export class DecksView extends RecallSubView {
   }
 
   public onClose(): void {
+    this.plugin.getEventEmitter().off('addDeck', this.handleAddDeck.bind(this));
+    this.plugin
+      .getEventEmitter()
+      .off('editDeck', this.handleEditDeck.bind(this));
+    this.plugin.getEventEmitter().off('addItem', this.handleAddItem.bind(this));
+
     const deckRowEls = this.rootEl.querySelectorAll('.better-recall-deck');
     deckRowEls.forEach((deckRowEl) => {
       deckRowEl.removeEventListener('mouseenter', this.handleDeckRowMouseEnter);
