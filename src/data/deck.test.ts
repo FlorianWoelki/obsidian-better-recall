@@ -109,6 +109,7 @@ describe('jsonObjectToDeck', () => {
   });
 
   it('should convert JSON object to Deck', () => {
+    const now = new Date();
     const jsonObject: DeckJsonStructure = {
       id: 'test-id',
       name: 'Test Deck',
@@ -118,8 +119,8 @@ describe('jsonObjectToDeck', () => {
       cards: {
         '1': {
           state: CardState.NEW,
-          lastReviewDate: new Date(),
-          nextReviewDate: new Date(),
+          lastReviewDate: now,
+          nextReviewDate: now,
         } as unknown as CardJsonStructure,
       },
     };
@@ -134,8 +135,8 @@ describe('jsonObjectToDeck', () => {
     expect(deck.cards['1']).toEqual({
       id: '1',
       state: CardState.NEW,
-      lastReviewDate: new Date(),
-      nextReviewDate: new Date(),
+      lastReviewDate: now,
+      nextReviewDate: now,
     });
   });
 });
