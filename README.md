@@ -16,7 +16,6 @@ Things to do before release:
 - [x] Add create modal for creating decks
 - [x] Add ribbon icon which opens the recall view
 - [x] Add data integration
-- [ ] Add proper reactivity for deleting and creating a card
 - [ ] Add settings view for customizing Anki algorithm parameters
 - [ ] Test and adapt to mobile experience
 

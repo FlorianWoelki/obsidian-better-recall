@@ -1,5 +1,5 @@
 import { Modal } from 'obsidian';
-import { EditItemEvent } from 'src/data/event/events';
+import { DeleteItemEvent, EditItemEvent } from 'src/data/event/events';
 import BetterRecallPlugin from '../../main';
 import { ButtonsBarComponent } from '../components/ButtonsBarComponent';
 import { Deck } from 'src/data/deck';
@@ -28,6 +28,28 @@ export class EditCardsModal extends Modal {
     this.plugin
       .getEventEmitter()
       .on('editItem', this.handleEditItem.bind(this));
+    this.plugin.getEventEmitter().on('addItem', this.handleAddItem.bind(this));
+    this.plugin
+      .getEventEmitter()
+      .on('deleteItem', this.handleDeleteItem.bind(this));
+  }
+
+  private handleDeleteItem({ payload }: DeleteItemEvent): void {
+    if (!payload) {
+      return;
+    }
+
+    const { deletedItem } = payload;
+
+    const cardEl = this.contentEl.querySelector(
+      `[${cardAttributes.cardId}="${deletedItem.id}"]`,
+    );
+    cardEl?.remove();
+  }
+
+  private handleAddItem(): void {
+    this.contentEl.empty();
+    this.render();
   }
 
   private handleEditItem({ payload }: EditItemEvent): void {
@@ -83,6 +105,10 @@ export class EditCardsModal extends Modal {
     this.plugin
       .getEventEmitter()
       .off('editItem', this.handleEditItem.bind(this));
+    this.plugin.getEventEmitter().off('addItem', this.handleAddItem.bind(this));
+    this.plugin
+      .getEventEmitter()
+      .off('deleteItem', this.handleDeleteItem.bind(this));
     this.plugin.decksManager.save();
     this.contentEl.empty();
   }
