@@ -1,5 +1,9 @@
 # Obsidian Better Recall
 
+![Preview Image](./docs/preview-image.png)
+
+## What is it?
+
 *WIP*
 
 Things to do before release:
