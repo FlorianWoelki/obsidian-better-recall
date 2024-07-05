@@ -20,12 +20,6 @@ Things to do before release:
 - [ ] Add settings view for customizing Anki algorithm parameters
 - [ ] Test and adapt to mobile experience
 
-## Roadmap To Do
-
-- [ ] Add cards via `Text` in markdown notes
-- [ ] Add file over app decks saving instead of using a json file
-  - [ ] Abstract json file manager and add a new markdown manager which reads and edits a markdown file in the Vault
-
 ## Development
 
 To customize this project for your needs, you can clone it and then install all dependencies:
