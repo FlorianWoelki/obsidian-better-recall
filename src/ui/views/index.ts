@@ -96,6 +96,11 @@ export class RecallView extends FileView {
     this.renderView();
   }
 
+  public openEmptyView(): void {
+    this.setViewMode(ViewMode.Empty);
+    this.renderView();
+  }
+
   private renderView(): void {
     this.rootEl.empty();
     this.currentView?.render();

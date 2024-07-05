@@ -44,6 +44,9 @@ export class DecksView extends RecallSubView {
     this.plugin
       .getEventEmitter()
       .on('deleteItem', this.handleDeleteItem.bind(this));
+    this.plugin
+      .getEventEmitter()
+      .on('deleteDeck', this.handleDeleteDeck.bind(this));
   }
 
   public render(): void {
@@ -51,6 +54,16 @@ export class DecksView extends RecallSubView {
 
     this.renderDecks();
     this.renderButtons();
+  }
+
+  private handleDeleteDeck(): void {
+    if (this.plugin.decksManager.decksArray.length === 0) {
+      this.recallView.openEmptyView();
+      return;
+    }
+
+    this.recallView.rootEl.empty();
+    this.render();
   }
 
   private handleAddDeck(): void {
@@ -313,6 +326,9 @@ export class DecksView extends RecallSubView {
     this.plugin
       .getEventEmitter()
       .off('deleteItem', this.handleDeleteItem.bind(this));
+    this.plugin
+      .getEventEmitter()
+      .off('deleteDeck', this.handleDeleteDeck.bind(this));
 
     const deckRowEls = this.rootEl.querySelectorAll('.better-recall-deck');
     deckRowEls.forEach((deckRowEl) => {

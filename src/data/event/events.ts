@@ -21,12 +21,17 @@ export type DeleteItemEvent = Event<{
   deletedItem: SpacedRepetitionItem;
 }>;
 
+export type DeleteDeckEvent = Event<{
+  deck: Deck;
+}>;
+
 export type EventMap = {
   addDeck: AddDeckEvent;
   editDeck: EditDeckEvent;
   addItem: AddItemEvent;
   editItem: EditItemEvent;
   deleteItem: DeleteItemEvent;
+  deleteDeck: DeleteDeckEvent;
 };
 
 export type EventType = keyof EventMap;

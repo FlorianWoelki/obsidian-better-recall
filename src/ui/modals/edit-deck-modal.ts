@@ -1,4 +1,4 @@
-import { Modal } from 'obsidian';
+import { ButtonComponent, Modal } from 'obsidian';
 import { Deck } from '../../data/deck';
 import BetterRecallPlugin from '../../main';
 import { ButtonsBarComponent } from '../components/ButtonsBarComponent';
@@ -40,8 +40,17 @@ export class EditDeckModal extends Modal {
     this.deckDescriptionInputComp.descriptionEl.style.marginTop =
       'var(--size-2-3)';
 
+    const buttonsContainer = this.contentEl.createDiv(
+      'better-recall__buttons-container',
+    );
+    // Create custom delete button.
+    const deleteButton = new ButtonComponent(buttonsContainer)
+      .setButtonText('Delete')
+      .onClick(() => this.deleteDeck());
+    deleteButton.buttonEl.style.marginTop = 'var(--size-4-5)';
+
     // Renders the button bar.
-    this.buttonsBarComp = new ButtonsBarComponent(this.contentEl)
+    this.buttonsBarComp = new ButtonsBarComponent(buttonsContainer)
       .setSubmitText('Save')
       .setSubmitButtonDisabled(false)
       .onClose(this.close.bind(this))
@@ -52,6 +61,13 @@ export class EditDeckModal extends Modal {
 
         await this.editDeck();
       });
+  }
+
+  private async deleteDeck(): Promise<void> {
+    this.buttonsBarComp.setSubmitButtonDisabled(true);
+    await this.plugin.decksManager.delete(this.deck.id);
+    this.plugin.getEventEmitter().emit('deleteDeck', { deck: this.deck });
+    this.close();
   }
 
   private async editDeck(): Promise<void> {
