@@ -19,7 +19,6 @@ Things to do before release:
 - [ ] Add proper reactivity for deleting and creating a card
 - [ ] Add settings view for customizing Anki algorithm parameters
 - [ ] Test and adapt to mobile experience
-- [ ] Unregister events when not used anymore
 
 ## Roadmap To Do
 
