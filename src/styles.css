@@ -125,6 +125,11 @@
   display: none;
 }
 
+.better-recall-review-card__answer-buttons-bar {
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
 .better-recall-review-card__answer-buttons-bar button {
   display: flex;
   flex-direction: column;

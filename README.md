@@ -17,7 +17,7 @@ Things to do before release:
 - [x] Add ribbon icon which opens the recall view
 - [x] Add data integration
 - [ ] Add settings view for customizing Anki algorithm parameters
-- [ ] Test and adapt to mobile experience
+- [x] Test and adapt to mobile experience
 
 ## Development
 

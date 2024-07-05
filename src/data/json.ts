@@ -1,5 +1,4 @@
 import { normalizePath, type Vault } from 'obsidian';
-import { join, parse } from 'path';
 
 export class JsonFileManager {
   private vault: Vault;
@@ -7,11 +6,11 @@ export class JsonFileManager {
 
   constructor(vault: Vault, pluginId: string) {
     this.vault = vault;
-    this.pluginDir = normalizePath(join('.obsidian', 'plugins', pluginId));
+    this.pluginDir = normalizePath(`.obsidian/plugins/${pluginId}`);
   }
 
   private getFullPath(relativePath: string): string {
-    return normalizePath(join(this.pluginDir, relativePath));
+    return normalizePath(`${this.pluginDir}/${relativePath}`);
   }
 
   /**
@@ -85,9 +84,5 @@ export class JsonFileManager {
     if (!doesFolderExist) {
       await this.vault.createFolder(fullDirPath);
     }
-  }
-
-  private extractFileName(filePath: string): string {
-    return parse(filePath).name;
   }
 }
