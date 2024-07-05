@@ -1,8 +1,12 @@
 import { expect, vi, it, describe, beforeEach } from 'vitest';
 import { Vault } from 'obsidian';
 import { DecksManager } from './decks-manager';
-import { SpacedRepetitionAlgorithm } from 'src/spaced-repetition';
+import {
+  SpacedRepetitionAlgorithm,
+  SpacedRepetitionItem,
+} from 'src/spaced-repetition';
 import { JsonFileManager } from '../json';
+import { Deck } from '../deck';
 
 const mocks = vi.hoisted(() => ({
   vault: {} as Vault,
@@ -51,15 +55,121 @@ describe('DecksManager', () => {
     });
   });
 
-  // describe('create', () => {});
+  describe('create', () => {
+    it('should create a new deck', async () => {
+      const spy = vi.spyOn(decksManager, 'save').mockResolvedValue();
+      const deck = await decksManager.create('New Deck', 'New Description');
+      expect(deck).toBeInstanceOf(Deck);
+      expect(spy).toHaveBeenCalled();
+    });
 
-  // describe('updateInformation', () => {});
+    it('should throw an error for invalid deck name', async () => {
+      await expect(decksManager.create('Invalid/Name', 'Test')).rejects.toThrow(
+        'Invalid deck name',
+      );
+    });
 
-  // describe('addCard', () => {});
+    it('should throw an error for existing deck name', async () => {
+      await decksManager.create('Existing Deck', 'Test');
+      await expect(
+        decksManager.create('Existing Deck', 'Test'),
+      ).rejects.toThrow('Deck name already exists');
+    });
+  });
 
-  // describe('updateCardContent', () => {});
+  describe('updateInformation', () => {
+    it('should update deck information', async () => {
+      const deck = await decksManager.create('Test Deck', 'Test Description');
+      const updatedDeck = await decksManager.updateInformation(
+        deck.id,
+        'Updated Deck',
+        'Updated Description',
+      );
+      expect(updatedDeck.getName()).toBe('Updated Deck');
+      expect(updatedDeck.getDescription()).toBe('Updated Description');
+    });
 
-  // describe('removeCard', () => {});
+    it('should throw an error for non-existent deck', async () => {
+      await expect(
+        decksManager.updateInformation(
+          'nonexistent',
+          'New Name',
+          'New Description',
+        ),
+      ).rejects.toThrow('Deck with ID does not exist');
+    });
+  });
+
+  describe('addCard', () => {
+    it('should add a card to a deck', async () => {
+      const deck = await decksManager.create('Test Deck', 'Test Description');
+      const card = {
+        id: 'card1',
+        content: { front: 'Hello', back: 'World' },
+      } as SpacedRepetitionItem;
+      decksManager.addCard(deck.id, card);
+      expect(deck.cards).toHaveProperty('card1');
+    });
+
+    it('should throw an error for non-existent deck', () => {
+      const card = {
+        id: 'card1',
+        content: { front: 'Hello', back: 'World' },
+      } as SpacedRepetitionItem;
+      expect(() => decksManager.addCard('nonexistent', card)).toThrow(
+        'No deck with id found',
+      );
+    });
+  });
+
+  describe('updateCardContent', () => {
+    it('should update card content', async () => {
+      const deck = await decksManager.create('Test Deck', 'Test Description');
+      const card = {
+        id: 'card1',
+        content: { front: 'Hello', back: 'World' },
+      } as SpacedRepetitionItem;
+      decksManager.addCard(deck.id, card);
+      const updatedCard = {
+        id: 'card1',
+        content: { front: 'foo', back: 'foo' },
+      } as SpacedRepetitionItem;
+      decksManager.updateCardContent(deck.id, updatedCard);
+      expect(deck.cards['card1'].content.front).toBe('foo');
+      expect(deck.cards['card1'].content.back).toBe('foo');
+    });
+
+    it('should throw an error for non-existent card', async () => {
+      const deck = await decksManager.create('Test Deck', 'Test Description');
+      const updatedCard = {
+        id: 'card1',
+        content: { front: 'foo', back: 'foo' },
+      } as SpacedRepetitionItem;
+      expect(() =>
+        decksManager.updateCardContent(deck.id, updatedCard),
+      ).toThrow(`No card in deck with card id found: ${updatedCard.id}`);
+    });
+  });
+
+  describe('removeCard', () => {
+    it('should remove a card from a deck', async () => {
+      const deck = await decksManager.create('Test deck', 'Test Description');
+      const card = {
+        id: 'card1',
+        content: { front: 'Hello', back: 'World' },
+      } as SpacedRepetitionItem;
+      decksManager.addCard(deck.id, card);
+      decksManager.removeCard(deck.id, 'card1');
+      expect(deck.cards).not.toHaveProperty('card1');
+    });
+
+    it('should throw an error for non-existent card', async () => {
+      const deck = await decksManager.create('Test Deck', 'Test Description');
+      expect(() => decksManager.removeCard(deck.id, 'nonexistent')).toThrow(
+        'No card in deck with card id found',
+      );
+    });
+  });
 
   describe('delete', () => {
     it('should delete a deck', async () => {
