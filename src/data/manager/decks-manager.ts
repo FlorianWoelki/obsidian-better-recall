@@ -1,42 +1,29 @@
-import { Vault } from 'obsidian';
-import { JsonFileManager } from '../json';
-import { Deck, DecksJsonStructure, jsonObjectToDeck } from '../deck';
+import { Deck, DeckJsonStructure, jsonObjectToDeck } from '../deck';
 import {
   SpacedRepetitionAlgorithm,
   SpacedRepetitionItem,
 } from 'src/spaced-repetition';
-
-const DECKS_FILE = 'decks.json';
+import BetterRecallPlugin from 'src/main';
 
 export class DecksManager {
-  protected jsonFileManager: JsonFileManager;
   private decks: Record<string, Deck>;
   private algorithm: SpacedRepetitionAlgorithm<unknown>;
 
   constructor(
-    vault: Vault,
+    private plugin: BetterRecallPlugin,
     algorithm: SpacedRepetitionAlgorithm<unknown>,
-    pluginId: string,
   ) {
-    this.jsonFileManager = new JsonFileManager(vault, pluginId);
     this.decks = {};
     this.algorithm = algorithm;
   }
 
   public async load(): Promise<void> {
-    const decksFileExists = await this.jsonFileManager.exists(DECKS_FILE);
-    if (!decksFileExists) {
-      await this.jsonFileManager.createJsonFile(DECKS_FILE);
+    const decks = this.plugin.getData().decks;
+    if (!decks) {
       return;
     }
 
-    const data =
-      await this.jsonFileManager.readJsonFile<DecksJsonStructure>(DECKS_FILE);
-    if (!data.decks) {
-      return;
-    }
-
-    data.decks.forEach((deck) => {
+    decks.forEach((deck) => {
       this.decks[deck.id] = jsonObjectToDeck(this.algorithm, deck);
     });
   }
@@ -113,10 +100,8 @@ export class DecksManager {
   }
 
   public async save(): Promise<void> {
-    await this.jsonFileManager.writeJsonFile(
-      DECKS_FILE,
-      this.toJsonStructure(),
-    );
+    this.plugin.getData().decks = this.toJsonStructure();
+    await this.plugin.savePluginData();
   }
 
   public async delete(id: string): Promise<void> {
@@ -137,9 +122,9 @@ export class DecksManager {
     return this.decks;
   }
 
-  private toJsonStructure(): DecksJsonStructure {
+  private toJsonStructure(): DeckJsonStructure[] {
     const decks = this.decksArray.map((deck) => deck.toJsonObject());
-    return { decks };
+    return decks;
   }
 
   private isValidFileName(fileName: string): boolean {

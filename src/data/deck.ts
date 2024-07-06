@@ -5,10 +5,6 @@ import {
   SpacedRepetitionItem,
 } from '../spaced-repetition';
 
-export interface DecksJsonStructure {
-  decks: DeckJsonStructure[];
-}
-
 // We do not need the id because it's already in the key of the object.
 export type CardJsonStructure = Omit<SpacedRepetitionItem, 'id'>;
 

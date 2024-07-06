@@ -1,20 +1,20 @@
 import { expect, vi, it, describe, beforeEach } from 'vitest';
-import { Vault } from 'obsidian';
 import { DecksManager } from './decks-manager';
 import {
   SpacedRepetitionAlgorithm,
   SpacedRepetitionItem,
 } from 'src/spaced-repetition';
-import { JsonFileManager } from '../json';
 import { Deck } from '../deck';
+import BetterRecallPlugin from 'src/main';
 
 const mocks = vi.hoisted(() => ({
-  vault: {} as Vault,
-  jsonFileManager: {
-    writeJsonFile: vi.fn(),
-    createJsonFile: vi.fn(),
-    readJsonFile: vi.fn(),
-    exists: vi.fn(),
+  plugin: {
+    savePluginData: vi.fn(),
+    getData: vi.fn(() => ({
+      decks: [
+        { id: 'deck1', name: 'Deck 1', description: 'Test deck', cards: {} },
+      ],
+    })),
   },
 }));
 
@@ -29,27 +29,14 @@ describe('DecksManager', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     const mockAlgorithm = {} as SpacedRepetitionAlgorithm<unknown>;
-    decksManager = new DecksManager(mocks.vault, mockAlgorithm, 'testPluginId');
-    decksManager['jsonFileManager'] =
-      mocks.jsonFileManager as unknown as JsonFileManager;
+    decksManager = new DecksManager(
+      mocks.plugin as unknown as BetterRecallPlugin,
+      mockAlgorithm,
+    );
   });
 
   describe('load', () => {
-    it('should create a new file if it does not exist', async () => {
-      mocks.jsonFileManager.exists.mockResolvedValue(false);
-      await decksManager.load();
-      expect(mocks.jsonFileManager.createJsonFile).toHaveBeenCalledWith(
-        'decks.json',
-      );
-    });
-
     it('should load existing decks', async () => {
-      mocks.jsonFileManager.exists.mockResolvedValue(true);
-      mocks.jsonFileManager.readJsonFile.mockResolvedValue({
-        decks: [
-          { id: 'deck1', name: 'Deck 1', description: 'Test deck', cards: {} },
-        ],
-      });
       await decksManager.load();
       expect(decksManager.getDecks()).toHaveProperty('deck1');
     });

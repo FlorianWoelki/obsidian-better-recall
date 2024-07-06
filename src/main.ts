@@ -1,6 +1,10 @@
 import { Plugin } from 'obsidian';
 import { registerCommands } from './commands';
-import { BetterRecallSettings, DEFAULT_SETTINGS } from './settings/data';
+import {
+  BetterRecallData,
+  BetterRecallSettings,
+  DEFAULT_SETTINGS,
+} from './settings/data';
 import { FILE_VIEW_TYPE, RecallView } from './ui/views';
 import { DecksManager } from './data/manager/decks-manager';
 import { EventEmitter } from './data/event';
@@ -8,22 +12,17 @@ import { AnkiAlgorithm } from './spaced-repetition/anki';
 
 export default class BetterRecallPlugin extends Plugin {
   public readonly algorithm = new AnkiAlgorithm();
-  public readonly decksManager = new DecksManager(
-    this.app.vault,
-    this.algorithm,
-    'obsidian-better-recall',
-  );
+  public readonly decksManager = new DecksManager(this, this.algorithm);
 
-  private data: Record<string, BetterRecallSettings>;
+  private data: BetterRecallData;
   private eventEmitter: EventEmitter;
 
   async onload() {
     console.log('loading better recall');
     this.eventEmitter = new EventEmitter();
 
+    await this.loadPluginData();
     await this.decksManager.load();
-
-    await this.loadSettings();
 
     this.registerView(FILE_VIEW_TYPE, (leaf) => new RecallView(this, leaf));
     registerCommands(this);
@@ -50,13 +49,13 @@ export default class BetterRecallPlugin extends Plugin {
   }
 
   /**
-   * Loads and initializes the settings for the plugin.
+   * Loads and initializes the data including the settings for the plugin.
    * First, it loads the existing data from the plugin and then checks for any missing
    * settings and applies default values where necessary.
    * Finally, it populates the `data` property with this loaded data.
    * @returns Promise that resolves when the settings have been loaded and initialized.
    */
-  private async loadSettings(): Promise<void> {
+  private async loadPluginData(): Promise<void> {
     const data = await this.loadData();
     if (data) {
       Object.entries(DEFAULT_SETTINGS).forEach(([key, value]) => {
@@ -76,7 +75,11 @@ export default class BetterRecallPlugin extends Plugin {
     return this.data.settings;
   }
 
-  public async saveSettings(): Promise<void> {
+  public getData(): BetterRecallData {
+    return this.data;
+  }
+
+  public async savePluginData(): Promise<void> {
     await this.saveData(this.data);
   }
 }
