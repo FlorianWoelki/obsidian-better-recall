@@ -22,7 +22,6 @@ Things to do before release:
 - [x] Add data integration
 - [ ] Add settings view for customizing Anki algorithm parameters
 - [x] Test and adapt to mobile experience
-- [ ] Adjust `decks.json` to be included in `data.json`
 
 ## Use the plugin before the release?
 
