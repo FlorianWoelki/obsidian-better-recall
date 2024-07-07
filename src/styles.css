@@ -133,10 +133,10 @@
 .better-recall-review-card__answer-buttons-bar button {
   display: flex;
   flex-direction: column;
-  height: calc(var(--input-height) * 2.5);
+  height: calc(var(--input-height) * 3);
   width: unset;
   max-width: calc(var(--input-height) * 5);
-  min-width: calc(var(--input-height) * 2.5);
+  min-width: calc(var(--input-height) * 3);
   padding: 0 var(--size-4-4);
 }
 
@@ -167,4 +167,12 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+
+.better-recall-review-card__time {
+  font-size: var(--font-smallest);
+  padding: var(--size-2-1) var(--size-2-2);
+  margin-top: var(--size-2-2);
+  border: 1px solid var(--color-base-35);
+  border-radius: var(--radius-s);
 }

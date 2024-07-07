@@ -6,6 +6,7 @@ import { RecallSubView } from './sub-view';
 import { Deck } from 'src/data/deck';
 import { BUTTONS_BAR_CLASS, CENTERED_VIEW } from '../classes';
 import { ButtonComponent } from 'obsidian';
+import { formatTimeDifference } from 'src/util';
 
 enum ReviewState {
   ONGOING,
@@ -124,33 +125,39 @@ export class ReviewView extends RecallSubView {
       `${BUTTONS_BAR_CLASS} better-recall-review-card__answer-buttons-bar`,
     );
 
-    const againButton = new ButtonComponent(this.recallButtonsBarEl);
-    const againEmojiEl = againButton.buttonEl.createSpan();
-    const againTextEl = againButton.buttonEl.createSpan();
-    againEmojiEl.setText('❌');
-    againTextEl.setText('Again');
-    againButton.onClick(() => this.handleResponse(PerformanceResponse.AGAIN));
+    this.renderButton(PerformanceResponse.AGAIN, '❌', 'Again');
 
-    const goodButton = new ButtonComponent(this.recallButtonsBarEl);
-    const goodEmojiEl = goodButton.buttonEl.createSpan();
-    const goodTextEl = goodButton.buttonEl.createSpan();
-    goodEmojiEl.setText('😬');
-    goodTextEl.setText('Good');
-    goodButton.onClick(() => this.handleResponse(PerformanceResponse.GOOD));
+    this.renderButton(PerformanceResponse.GOOD, '😬', 'Good');
 
-    const hardButton = new ButtonComponent(this.recallButtonsBarEl);
-    const hardEmojiEl = hardButton.buttonEl.createSpan();
-    const hardTextEl = hardButton.buttonEl.createSpan();
-    hardEmojiEl.setText('😰');
-    hardTextEl.setText('Hard');
-    hardButton.onClick(() => this.handleResponse(PerformanceResponse.HARD));
+    this.renderButton(PerformanceResponse.HARD, '😰', 'Hard');
 
-    const easyButton = new ButtonComponent(this.recallButtonsBarEl);
-    const easyEmojiEl = easyButton.buttonEl.createSpan();
-    const easyTextEl = easyButton.buttonEl.createSpan();
-    easyEmojiEl.setText('👑');
-    easyTextEl.setText('Easy');
-    easyButton.onClick(() => this.handleResponse(PerformanceResponse.EASY));
+    this.renderButton(PerformanceResponse.EASY, '👑', 'Easy');
+  }
+
+  private renderButton(
+    performanceResponse: PerformanceResponse,
+    emoji: string,
+    text: string,
+  ): void {
+    if (!this.currentItem) {
+      return;
+    }
+
+    const button = new ButtonComponent(this.recallButtonsBarEl);
+    const emojiEl = button.buttonEl.createSpan();
+    const textEl = button.buttonEl.createSpan();
+    const timeEl = button.buttonEl.createSpan(
+      'better-recall-review-card__time',
+    );
+    emojiEl.setText(emoji);
+    textEl.setText(text);
+
+    const nextReviewDate = this.ankiAlgorithm.calculatePotentialNextReviewDate(
+      this.currentItem,
+      performanceResponse,
+    );
+    timeEl.setText(formatTimeDifference(nextReviewDate));
+    button.onClick(() => this.handleResponse(performanceResponse));
   }
 
   private showRecallButtons(): void {

@@ -87,6 +87,106 @@ export class AnkiAlgorithm extends SpacedRepetitionAlgorithm<AnkiParameters> {
     };
   }
 
+  public calculatePotentialNextReviewDate(
+    item: SpacedRepetitionItem,
+    performanceResponse: PerformanceResponse,
+  ): Date {
+    const newItem = { ...item };
+
+    const updateStrategies = {
+      [PerformanceResponse.AGAIN]: () => {
+        newItem.easeFactor = Math.max(
+          this.parameters.minEaseFactor,
+          newItem.easeFactor - this.parameters.easeFactorDecrement,
+        );
+        if (newItem.state === CardState.REVIEW) {
+          newItem.state = CardState.RELEARNING;
+          newItem.stepIndex = 0;
+        } else {
+          newItem.stepIndex = 0;
+        }
+        return newItem.interval * this.parameters.lapseInterval;
+      },
+      [PerformanceResponse.HARD]: () => {
+        newItem.easeFactor = Math.max(
+          this.parameters.minEaseFactor,
+          newItem.easeFactor - this.parameters.easeFactorIncrement,
+        );
+        if (
+          newItem.state === CardState.LEARNING ||
+          newItem.state === CardState.RELEARNING
+        ) {
+          newItem.stepIndex += 1;
+        }
+        return Math.max(
+          newItem.interval * this.parameters.hardIntervalMultiplier,
+          newItem.interval + 1,
+        );
+      },
+      [PerformanceResponse.GOOD]: () => {
+        if (
+          newItem.state === CardState.NEW ||
+          newItem.state === CardState.LEARNING ||
+          newItem.state === CardState.RELEARNING
+        ) {
+          newItem.stepIndex += 1;
+          const steps =
+            newItem.state === CardState.LEARNING
+              ? this.parameters.learningSteps
+              : this.parameters.relearningSteps;
+          if (newItem.stepIndex >= steps.length) {
+            newItem.state = CardState.REVIEW;
+            return this.parameters.graduatingInterval;
+          }
+          return 0;
+        }
+        return Math.max(
+          newItem.interval * newItem.easeFactor,
+          newItem.interval + 1,
+        );
+      },
+      [PerformanceResponse.EASY]: () => {
+        newItem.easeFactor += this.parameters.easeFactorIncrement;
+        if (
+          newItem.state === CardState.NEW ||
+          newItem.state === CardState.LEARNING ||
+          newItem.state === CardState.RELEARNING
+        ) {
+          newItem.state = CardState.REVIEW;
+          return this.parameters.easyInterval;
+        }
+        return (
+          newItem.interval * newItem.easeFactor * this.parameters.easyBonus
+        );
+      },
+    };
+
+    if (newItem.state === CardState.NEW) {
+      newItem.state = CardState.LEARNING;
+      newItem.stepIndex = 0;
+    }
+
+    const newInterval = updateStrategies[performanceResponse]();
+
+    if (
+      (newItem.state === CardState.LEARNING ||
+        newItem.state === CardState.RELEARNING) &&
+      newItem.stepIndex <
+        (newItem.state === CardState.LEARNING
+          ? this.parameters.learningSteps
+          : this.parameters.relearningSteps
+        ).length
+    ) {
+      const steps =
+        newItem.state === CardState.LEARNING
+          ? this.parameters.learningSteps
+          : this.parameters.relearningSteps;
+      return this.calculateNextReviewDate(steps[newItem.stepIndex], true);
+    } else {
+      return this.calculateNextReviewDate(newInterval);
+    }
+  }
+
   public scheduleReview(item: SpacedRepetitionItem): void {
     item.lastReviewDate = new Date();
 
