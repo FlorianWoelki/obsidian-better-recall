@@ -8,7 +8,7 @@ let ankiAlgo: AnkiAlgorithm;
 function createSpacedRepetitionItem(content: string): SpacedRepetitionItem {
   return {
     id: uuidv4(),
-    content,
+    content: { front: content, back: content },
     type: CardType.BASIC,
     easeFactor: 2.5,
     interval: 0,

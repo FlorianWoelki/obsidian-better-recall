@@ -1,3 +1,10 @@
+/**
+ * Calculates the time difference between the passed in future date
+ * and `now` which will then be used to determine the string that
+ * will be used to show the time left until the future date.
+ * @param futureDate Date which will be used to compare with `now`.
+ * @returns String which will show the time left until the future date.
+ */
 export function formatTimeDifference(futureDate: Date): string {
   const now = new Date();
   const differenceInMillis = futureDate.getTime() - now.getTime();
