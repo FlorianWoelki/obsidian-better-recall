@@ -87,100 +87,95 @@ export class AnkiAlgorithm extends SpacedRepetitionAlgorithm<AnkiParameters> {
     };
   }
 
+  private get updateStrategies() {
+    return {
+      [PerformanceResponse.AGAIN]: (item: SpacedRepetitionItem) => {
+        item.easeFactor = Math.max(
+          this.parameters.minEaseFactor,
+          item.easeFactor - this.parameters.easeFactorDecrement,
+        );
+        if (item.state === CardState.REVIEW) {
+          item.state = CardState.RELEARNING;
+          item.stepIndex = 0;
+        } else {
+          item.stepIndex = 0;
+        }
+        return item.interval * this.parameters.lapseInterval;
+      },
+      [PerformanceResponse.HARD]: (item: SpacedRepetitionItem) => {
+        item.easeFactor = Math.max(
+          this.parameters.minEaseFactor,
+          item.easeFactor - this.parameters.easeFactorIncrement,
+        );
+        if (
+          item.state === CardState.LEARNING ||
+          item.state === CardState.RELEARNING
+        ) {
+          item.stepIndex += 1;
+        }
+        return Math.max(
+          item.interval * this.parameters.hardIntervalMultiplier,
+          item.interval + 1,
+        );
+      },
+      [PerformanceResponse.GOOD]: (item: SpacedRepetitionItem) => {
+        if (
+          item.state === CardState.NEW ||
+          item.state === CardState.LEARNING ||
+          item.state === CardState.RELEARNING
+        ) {
+          item.stepIndex += 1;
+          const steps =
+            item.state === CardState.LEARNING
+              ? this.parameters.learningSteps
+              : this.parameters.relearningSteps;
+          if (item.stepIndex >= steps.length) {
+            item.state = CardState.REVIEW;
+            return this.parameters.graduatingInterval;
+          }
+
+          return 0;
+        }
+        return Math.max(item.interval * item.easeFactor, item.interval + 1);
+      },
+      [PerformanceResponse.EASY]: (item: SpacedRepetitionItem) => {
+        item.easeFactor += this.parameters.easeFactorIncrement;
+        if (
+          item.state === CardState.NEW ||
+          item.state === CardState.LEARNING ||
+          item.state === CardState.RELEARNING
+        ) {
+          item.state = CardState.REVIEW;
+          return this.parameters.easyInterval;
+        }
+
+        return item.interval * item.easeFactor * this.parameters.easyBonus;
+      },
+    };
+  }
+
   public calculatePotentialNextReviewDate(
     item: SpacedRepetitionItem,
     performanceResponse: PerformanceResponse,
   ): Date {
     const newItem = { ...item };
 
-    const updateStrategies = {
-      [PerformanceResponse.AGAIN]: () => {
-        newItem.easeFactor = Math.max(
-          this.parameters.minEaseFactor,
-          newItem.easeFactor - this.parameters.easeFactorDecrement,
-        );
-        if (newItem.state === CardState.REVIEW) {
-          newItem.state = CardState.RELEARNING;
-          newItem.stepIndex = 0;
-        } else {
-          newItem.stepIndex = 0;
-        }
-        return newItem.interval * this.parameters.lapseInterval;
-      },
-      [PerformanceResponse.HARD]: () => {
-        newItem.easeFactor = Math.max(
-          this.parameters.minEaseFactor,
-          newItem.easeFactor - this.parameters.easeFactorIncrement,
-        );
-        if (
-          newItem.state === CardState.LEARNING ||
-          newItem.state === CardState.RELEARNING
-        ) {
-          newItem.stepIndex += 1;
-        }
-        return Math.max(
-          newItem.interval * this.parameters.hardIntervalMultiplier,
-          newItem.interval + 1,
-        );
-      },
-      [PerformanceResponse.GOOD]: () => {
-        if (
-          newItem.state === CardState.NEW ||
-          newItem.state === CardState.LEARNING ||
-          newItem.state === CardState.RELEARNING
-        ) {
-          newItem.stepIndex += 1;
-          const steps =
-            newItem.state === CardState.LEARNING
-              ? this.parameters.learningSteps
-              : this.parameters.relearningSteps;
-          if (newItem.stepIndex >= steps.length) {
-            newItem.state = CardState.REVIEW;
-            return this.parameters.graduatingInterval;
-          }
-          return 0;
-        }
-        return Math.max(
-          newItem.interval * newItem.easeFactor,
-          newItem.interval + 1,
-        );
-      },
-      [PerformanceResponse.EASY]: () => {
-        newItem.easeFactor += this.parameters.easeFactorIncrement;
-        if (
-          newItem.state === CardState.NEW ||
-          newItem.state === CardState.LEARNING ||
-          newItem.state === CardState.RELEARNING
-        ) {
-          newItem.state = CardState.REVIEW;
-          return this.parameters.easyInterval;
-        }
-        return (
-          newItem.interval * newItem.easeFactor * this.parameters.easyBonus
-        );
-      },
-    };
-
     if (newItem.state === CardState.NEW) {
       newItem.state = CardState.LEARNING;
       newItem.stepIndex = 0;
     }
 
-    const newInterval = updateStrategies[performanceResponse]();
+    const newInterval = this.updateStrategies[performanceResponse](newItem);
 
+    const steps =
+      newItem.state === CardState.LEARNING
+        ? this.parameters.learningSteps
+        : this.parameters.relearningSteps;
     if (
       (newItem.state === CardState.LEARNING ||
         newItem.state === CardState.RELEARNING) &&
-      newItem.stepIndex <
-        (newItem.state === CardState.LEARNING
-          ? this.parameters.learningSteps
-          : this.parameters.relearningSteps
-        ).length
+      newItem.stepIndex < steps.length
     ) {
-      const steps =
-        newItem.state === CardState.LEARNING
-          ? this.parameters.learningSteps
-          : this.parameters.relearningSteps;
       return this.calculateNextReviewDate(steps[newItem.stepIndex], true);
     } else {
       return this.calculateNextReviewDate(newInterval);
@@ -224,77 +219,12 @@ export class AnkiAlgorithm extends SpacedRepetitionAlgorithm<AnkiParameters> {
     item: SpacedRepetitionItem,
     performanceResponse: PerformanceResponse,
   ): void {
-    const updateStrategies = {
-      [PerformanceResponse.AGAIN]: () => {
-        item.easeFactor = Math.max(
-          this.parameters.minEaseFactor,
-          item.easeFactor - this.parameters.easeFactorDecrement,
-        );
-        if (item.state === CardState.REVIEW) {
-          item.state = CardState.RELEARNING;
-          item.stepIndex = 0;
-        } else {
-          item.stepIndex = 0;
-        }
-        return item.interval * this.parameters.lapseInterval;
-      },
-      [PerformanceResponse.HARD]: () => {
-        item.easeFactor = Math.max(
-          this.parameters.minEaseFactor,
-          item.easeFactor - this.parameters.easeFactorIncrement,
-        );
-        if (
-          item.state === CardState.LEARNING ||
-          item.state === CardState.RELEARNING
-        ) {
-          item.stepIndex += 1;
-        }
-        return Math.max(
-          item.interval * this.parameters.hardIntervalMultiplier,
-          item.interval + 1,
-        );
-      },
-      [PerformanceResponse.GOOD]: () => {
-        if (
-          item.state === CardState.NEW ||
-          item.state === CardState.LEARNING ||
-          item.state === CardState.RELEARNING
-        ) {
-          item.stepIndex += 1;
-          const steps =
-            item.state === CardState.LEARNING
-              ? this.parameters.learningSteps
-              : this.parameters.relearningSteps;
-          if (item.stepIndex >= steps.length) {
-            item.state = CardState.REVIEW;
-            return this.parameters.graduatingInterval;
-          }
-
-          return 0;
-        }
-        return Math.max(item.interval * item.easeFactor, item.interval + 1);
-      },
-      [PerformanceResponse.EASY]: () => {
-        item.easeFactor += this.parameters.easeFactorIncrement;
-        if (
-          item.state === CardState.NEW ||
-          item.state === CardState.LEARNING ||
-          item.state === CardState.RELEARNING
-        ) {
-          item.state = CardState.REVIEW;
-          return this.parameters.easyInterval;
-        }
-
-        return item.interval * item.easeFactor * this.parameters.easyBonus;
-      },
-    };
-
     if (item.state === CardState.NEW) {
       item.state = CardState.LEARNING;
       item.stepIndex = 0;
     }
 
-    item.interval = updateStrategies[performanceResponse]();
+    item.interval = this.updateStrategies[performanceResponse](item);
     item.iteration += 1;
 
     this.scheduleReview(item);
