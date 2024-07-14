@@ -26,9 +26,9 @@ export class SettingsTab extends PluginSettingTab {
 
     new Setting(this.containerEl).setName('Anki Settings').setHeading();
 
-    Object.entries(this.titleParameterMapping).forEach(([key, value]) => {
+    Object.entries(this.titleParameterMapping).forEach(([key, parameter]) => {
       let textComponent: TextComponent | null = null;
-      const pluginValue = this.plugin.getSettings().ankiParameters[value];
+      const pluginValue = this.plugin.getSettings().ankiParameters[parameter];
 
       const setting = new Setting(this.containerEl).setName(key);
 
@@ -37,10 +37,9 @@ export class SettingsTab extends PluginSettingTab {
           return;
         }
 
-        const defaultValue = DEFAULT_SETTINGS.ankiParameters[value];
+        const defaultValue = DEFAULT_SETTINGS.ankiParameters[parameter];
         this.setValue(textComponent, defaultValue);
-        this.plugin.getSettings().ankiParameters[value] =
-          defaultValue as number & number[]; // TODO: Fix this type issue here.
+        this.plugin.setAnkiParameter(parameter, defaultValue);
         await this.plugin.savePluginData();
       });
 
@@ -50,23 +49,23 @@ export class SettingsTab extends PluginSettingTab {
 
         text.onChange(async (input) => {
           input = input.trim();
-          if (Array.isArray(DEFAULT_SETTINGS.ankiParameters[value])) {
+          if (
+            parameter === 'learningSteps' ||
+            parameter === 'relearningSteps'
+          ) {
             if (!this.isStringValidArray(input)) {
               console.log('not a valid array', input);
               return;
             }
 
             const newValue = this.parseStringToArray(input);
-            this.plugin.getSettings().ankiParameters[value] =
-              newValue as number & number[];
+            this.plugin.setAnkiParameter(parameter, newValue);
           } else {
             if (isNaN(+input)) {
               return;
             }
 
-            this.plugin.getSettings().ankiParameters[value] = Number(
-              input,
-            ) as number & number[];
+            this.plugin.setAnkiParameter(parameter, Number(input));
           }
 
           await this.plugin.savePluginData();

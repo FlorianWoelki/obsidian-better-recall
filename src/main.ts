@@ -1,6 +1,7 @@
 import { Plugin } from 'obsidian';
 import { registerCommands } from './commands';
 import {
+  AnkiParameters,
   BetterRecallData,
   BetterRecallSettings,
   DEFAULT_SETTINGS,
@@ -76,6 +77,24 @@ export default class BetterRecallPlugin extends Plugin {
 
   public getSettings(): BetterRecallSettings {
     return this.data.settings;
+  }
+
+  public setAnkiParameter(
+    key: keyof AnkiParameters,
+    value: number | number[],
+  ): void {
+    if (key === 'learningSteps' || key === 'relearningSteps') {
+      if (!Array.isArray(value)) {
+        return;
+      }
+
+      this.getSettings().ankiParameters[key] = value;
+      return;
+    }
+
+    if (typeof value === 'number') {
+      this.getSettings().ankiParameters[key] = value;
+    }
   }
 
   public getData(): BetterRecallData {
