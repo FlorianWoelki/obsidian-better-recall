@@ -1,3 +1,4 @@
+import { AnkiParameters } from '../settings/data';
 import { CardState, SpacedRepetitionAlgorithm, SpacedRepetitionItem } from '.';
 
 export enum PerformanceResponse {
@@ -8,68 +9,6 @@ export enum PerformanceResponse {
 }
 
 const MILLISECONDS_PER_DAY = 24 * 60 * 60 * 1000;
-
-interface AnkiParameters {
-  /**
-   * The multiplier applied to the current interval when a card lapses
-   * (is forgotten).
-   * @default 0.5
-   */
-  lapseInterval: number;
-  /**
-   * The interval (in days) assigned to a card when rated as `easy` during
-   * learning/relearning.
-   * @default 4
-   */
-  easyInterval: number;
-  /**
-   * The multiplier applied to the interval when a review card is rated as
-   * `easy`.
-   * @default 1.3
-   */
-  easyBonus: number;
-  /**
-   * The interval (in days) assigned to a card when it graduates from
-   * learning to review.
-   * @default 1
-   */
-  graduatingInterval: number;
-  /**
-   * The minimum allowed ease factor for a card.
-   * @default 1.3
-   */
-  minEaseFactor: number;
-  /**
-   * The amount by which the ease factor is decreased when a card is
-   * rated as `again`.
-   * @default 0.2
-   */
-  easeFactorDecrement: number;
-  /**
-   * The amount by which the ease factor is increased when a card is
-   * rated as `easy`.
-   * @default 0.15
-   */
-  easeFactorIncrement: number;
-  /**
-   * The multiplier applied to the current interval when a review card
-   * is rated as `hard`.
-   * @default 1.2
-   */
-  hardIntervalMultiplier: number;
-  /**
-   * An array of step intervals (in minutes) for new cards in the learning
-   * phase.
-   * @default [1, 10]
-   */
-  learningSteps: number[];
-  /**
-   * An array of step intervals (in minutes) for cards in the relearning
-   * phase.
-   * @default [10]
-   */
-  relearningSteps: number[];
-}
 
 export class AnkiAlgorithm extends SpacedRepetitionAlgorithm<AnkiParameters> {
   public getDefaultValues(): AnkiParameters {

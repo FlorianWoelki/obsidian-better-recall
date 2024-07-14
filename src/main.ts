@@ -9,6 +9,7 @@ import { FILE_VIEW_TYPE, RecallView } from './ui/views';
 import { DecksManager } from './data/manager/decks-manager';
 import { EventEmitter } from './data/event';
 import { AnkiAlgorithm } from './spaced-repetition/anki';
+import { SettingsTab } from './ui/settings/SettingsTab';
 
 export default class BetterRecallPlugin extends Plugin {
   public readonly algorithm = new AnkiAlgorithm();
@@ -30,6 +31,8 @@ export default class BetterRecallPlugin extends Plugin {
     this.addRibbonIcon('wallet-cards', 'Open Decks', () => {
       this.openRecallView();
     });
+
+    this.addSettingTab(new SettingsTab(this));
   }
 
   onunload() {
