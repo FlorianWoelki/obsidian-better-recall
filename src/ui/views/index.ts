@@ -1,9 +1,9 @@
 import { FileView, ViewStateResult, WorkspaceLeaf } from 'obsidian';
 import BetterRecallPlugin from '../../main';
-import { EmptyView } from './empty-view';
-import { ReviewView } from './review-view';
-import { DecksView } from './decks-view';
-import { RecallSubView } from './sub-view';
+import { EmptyView } from './EmptyView';
+import { ReviewView } from './ReviewView';
+import { DecksView } from './DecksView';
+import { RecallSubView } from './SubView';
 import { Deck } from 'src/data/deck';
 
 export const FILE_VIEW_TYPE = 'recall-view';

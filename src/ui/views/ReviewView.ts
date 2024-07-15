@@ -2,7 +2,7 @@ import BetterRecallPlugin from 'src/main';
 import { SpacedRepetitionItem } from 'src/spaced-repetition';
 import { PerformanceResponse } from 'src/spaced-repetition/anki';
 import { RecallView } from '.';
-import { RecallSubView } from './sub-view';
+import { RecallSubView } from './SubView';
 import { Deck } from 'src/data/deck';
 import { BUTTONS_BAR_CLASS, CENTERED_VIEW } from '../classes';
 import { ButtonComponent } from 'obsidian';

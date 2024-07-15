@@ -1,4 +1,4 @@
-import { RecallSubView } from './sub-view';
+import { RecallSubView } from './SubView';
 
 export class EmptyView extends RecallSubView {
   private rootEl: HTMLElement;
