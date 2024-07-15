@@ -1,6 +1,6 @@
 import BetterRecallPlugin from 'src/main';
 import { SpacedRepetitionItem } from 'src/spaced-repetition';
-import { AnkiAlgorithm, PerformanceResponse } from 'src/spaced-repetition/anki';
+import { PerformanceResponse } from 'src/spaced-repetition/anki';
 import { RecallView } from '.';
 import { RecallSubView } from './sub-view';
 import { Deck } from 'src/data/deck';
@@ -25,7 +25,6 @@ export class ReviewView extends RecallSubView {
   private cardBackEl: HTMLElement;
   private showAnswerButton: ButtonComponent;
 
-  private ankiAlgorithm: AnkiAlgorithm;
   private currentItem: SpacedRepetitionItem | null = null;
   private deck: Deck;
   private state: ReviewState;
@@ -35,12 +34,11 @@ export class ReviewView extends RecallSubView {
     protected readonly recallView: RecallView,
   ) {
     super(plugin, recallView);
-    this.ankiAlgorithm = new AnkiAlgorithm();
   }
 
   public setDeck(deck: Deck): void {
     this.deck = deck;
-    this.deck.cardsArray.forEach((card) => this.ankiAlgorithm.addItem(card));
+    this.deck.cardsArray.forEach((card) => this.plugin.algorithm.addItem(card));
     this.state = ReviewState.ONGOING;
   }
 
@@ -94,7 +92,7 @@ export class ReviewView extends RecallSubView {
 
     this.renderAnswerButtons();
 
-    this.ankiAlgorithm.startNewSession();
+    this.plugin.algorithm.startNewSession();
     this.showNextItem();
   }
 
@@ -152,10 +150,11 @@ export class ReviewView extends RecallSubView {
     emojiEl.setText(emoji);
     textEl.setText(text);
 
-    const nextReviewDate = this.ankiAlgorithm.calculatePotentialNextReviewDate(
-      this.currentItem,
-      performanceResponse,
-    );
+    const nextReviewDate =
+      this.plugin.algorithm.calculatePotentialNextReviewDate(
+        this.currentItem,
+        performanceResponse,
+      );
     timeEl.setText(formatTimeDifference(nextReviewDate));
     button.onClick(() => this.handleResponse(performanceResponse));
   }
@@ -174,7 +173,7 @@ export class ReviewView extends RecallSubView {
 
     this.answerButtonsBarEl.removeClass('better-recall--display-none');
 
-    this.currentItem = this.ankiAlgorithm.getNextReviewItem();
+    this.currentItem = this.plugin.algorithm.getNextReviewItem();
 
     this.dividerEl.addClass('better-recall-review-card--hidden');
     this.cardBackEl.addClass('better-recall-review-card--hidden');
@@ -190,7 +189,7 @@ export class ReviewView extends RecallSubView {
 
   private handleResponse(response: PerformanceResponse): void {
     if (this.currentItem) {
-      this.ankiAlgorithm.updateItemAfterReview(this.currentItem, response);
+      this.plugin.algorithm.updateItemAfterReview(this.currentItem, response);
       this.showNextItem();
     }
   }

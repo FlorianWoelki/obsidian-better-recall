@@ -24,6 +24,7 @@ export default class BetterRecallPlugin extends Plugin {
     this.eventEmitter = new EventEmitter();
 
     await this.loadPluginData();
+    this.algorithm.setParameters(this.getSettings().ankiParameters);
     await this.decksManager.load();
 
     this.registerView(FILE_VIEW_TYPE, (leaf) => new RecallView(this, leaf));

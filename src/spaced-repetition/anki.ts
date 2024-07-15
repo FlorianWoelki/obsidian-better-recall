@@ -1,4 +1,4 @@
-import { AnkiParameters } from '../settings/data';
+import { AnkiParameters, DEFAULT_SETTINGS } from '../settings/data';
 import { CardState, SpacedRepetitionAlgorithm, SpacedRepetitionItem } from '.';
 
 export enum PerformanceResponse {
@@ -12,18 +12,7 @@ const MILLISECONDS_PER_DAY = 24 * 60 * 60 * 1000;
 
 export class AnkiAlgorithm extends SpacedRepetitionAlgorithm<AnkiParameters> {
   public getDefaultValues(): AnkiParameters {
-    return {
-      lapseInterval: 0.5,
-      easyInterval: 4,
-      easyBonus: 1.3,
-      graduatingInterval: 1,
-      minEaseFactor: 1.3,
-      easeFactorDecrement: 0.2,
-      easeFactorIncrement: 0.15,
-      hardIntervalMultiplier: 1.2,
-      learningSteps: [1, 10],
-      relearningSteps: [10],
-    };
+    return DEFAULT_SETTINGS.ankiParameters;
   }
 
   private get updateStrategies() {
