@@ -25,6 +25,13 @@ You can also access your created decks by executing the command `Better Recall: 
 
 With that, you can create decks and cards and start your spaced-repetition journey.
 
+## Reviewing cards
+
+By clicking on any deck you have created, you can start your spaced-repetition session (obviously you need cards in the deck).
+Based on the specific parameters, the different timings and multiplier will be adjusted accordingly.
+
+![Preview Image](./docs/recall.png)
+
 
 ## Use the plugin before the release?
 
