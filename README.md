@@ -4,24 +4,12 @@
 
 ## What is it?
 
-*WIP*
+This plugin allows you to have an Anki-like feeling in Obsidian.
+It allows you to create decks and add cards, giving you the ultimate spaced repetition experience.
 
-Things to do before release:
-- [x] Add [Anki algorithm](https://faqs.ankiweb.net/what-spaced-repetition-algorithm.html)
-- [x] Add functionality of creating and recalling custom decks
-- [x] Add cards via `Add Card Modal`
-- [x] Add recall view
-  - [x] Add empty view
-  - [x] Add view for selecting decks
-  - [x] Add view for managing decks
-    - [x] Add deletion of cards
-  - [x] Add view for recalling notes
-  - [x] Use Anki algorithm to recall notes
-- [x] Add create modal for creating decks
-- [x] Add ribbon icon which opens the recall view
-- [x] Add data integration
-- [ ] Add settings view for customizing Anki algorithm parameters
-- [x] Test and adapt to mobile experience
+The plugin integrates the following spaced-repetition algorithms:
+
+- [Anki algorithm](https://faqs.ankiweb.net/what-spaced-repetition-algorithm.html)
 
 ## Use the plugin before the release?
 
