@@ -2,6 +2,7 @@
 
 ![Preview Image](./docs/preview-image.png)
 
+
 ## What is it?
 
 This plugin allows you to have an Anki-like feeling in Obsidian.
@@ -10,6 +11,20 @@ It allows you to create decks and add cards, giving you the ultimate spaced repe
 The plugin integrates the following spaced-repetition algorithms:
 
 - [Anki algorithm](https://faqs.ankiweb.net/what-spaced-repetition-algorithm.html)
+
+
+## How to use it
+
+Although everything with the plugin should be self-explanatory, here's a quick rundown of how to get started.
+
+You can view your decks by clicking this sidebar icon:
+
+![Preview Image](./docs/decks.png)
+
+You can also access your created decks by executing the command `Better Recall: Recall`.
+
+With that, you can create decks and cards and start your spaced-repetition journey.
+
 
 ## Use the plugin before the release?
 
@@ -23,6 +38,7 @@ However, you can still use the plugin using **BRAT**:
 5. Click **Add Plugin**.
 
 *Disclaimer: Things can break while in active development. Feel free to report any issues or bugs.*
+
 
 ## Development
 
