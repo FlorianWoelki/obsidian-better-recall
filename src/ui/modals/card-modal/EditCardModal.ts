@@ -1,5 +1,5 @@
 import BetterRecallPlugin from 'src/main';
-import { CardModal } from './card-modal';
+import { CardModal } from './CardModal';
 import { SpacedRepetitionItem } from 'src/spaced-repetition';
 import { Deck } from 'src/data/deck';
 import { ButtonComponent } from 'obsidian';

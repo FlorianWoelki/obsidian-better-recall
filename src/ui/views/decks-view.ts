@@ -2,16 +2,16 @@ import { ButtonComponent, getIcon } from 'obsidian';
 import { RecallSubView } from './sub-view';
 import BetterRecallPlugin from 'src/main';
 import { RecallView } from '.';
-import { EditDeckModal } from '../modals/edit-deck-modal';
+import { EditDeckModal } from '../modals/EditDeckModal';
 import { Deck } from 'src/data/deck';
-import { AddCardModal } from '../modals/card-modal/add-card-modal';
+import { AddCardModal } from '../modals/card-modal/AddCardModal';
 import {
   CENTERED_VIEW,
   DUE_CARDS_COLOR,
   LEARN_CARDS_COLOR,
   NEW_CARDS_COLOR,
 } from '../classes';
-import { EditCardsModal } from '../modals/edit-cards-modal';
+import { EditCardsModal } from '../modals/EditCardsModal';
 import { AddItemEvent, EditDeckEvent } from 'src/data/event/events';
 
 const visibleClass = 'better-recall-deck-action--visible';

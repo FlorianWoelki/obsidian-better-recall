@@ -5,7 +5,7 @@ import {
   CardType,
   SpacedRepetitionItem,
 } from 'src/spaced-repetition';
-import { CardModal } from './card-modal';
+import { CardModal } from './CardModal';
 
 export class AddCardModal extends CardModal {
   constructor(protected plugin: BetterRecallPlugin) {

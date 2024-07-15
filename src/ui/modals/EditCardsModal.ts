@@ -3,8 +3,8 @@ import { DeleteItemEvent, EditItemEvent } from 'src/data/event/events';
 import BetterRecallPlugin from '../../main';
 import { ButtonsBarComponent } from '../components/ButtonsBarComponent';
 import { Deck } from 'src/data/deck';
-import { AddCardModal } from './card-modal/add-card-modal';
-import { EditCardModal } from './card-modal/edit-card-modal';
+import { AddCardModal } from './card-modal/AddCardModal';
+import { EditCardModal } from './card-modal/EditCardModal';
 
 const cardAttributes = {
   cardId: 'data-card-id',

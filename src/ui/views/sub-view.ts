@@ -1,6 +1,6 @@
 import BetterRecallPlugin from 'src/main';
 import { RecallView } from '.';
-import { CreateDeckModal } from '../modals/create-deck-modal';
+import { CreateDeckModal } from '../modals/CreateDeckModal';
 
 export abstract class RecallSubView {
   constructor(

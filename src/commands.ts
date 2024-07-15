@@ -1,5 +1,5 @@
 import BetterRecallPlugin from './main';
-import { AddCardModal } from './ui/modals/card-modal/add-card-modal';
+import { AddCardModal } from './ui/modals/card-modal/AddCardModal';
 
 export function registerCommands(plugin: BetterRecallPlugin): void {
   plugin.addCommand({
