@@ -3,7 +3,7 @@
   "name": "Better Recall",
   "version": "0.0.1",
   "minAppVersion": "0.9.12",
-  "description": "A better spaced repetition and recall plugin.",
+  "description": "Add anki-like spaced repetition and recall to your vault.",
   "author": "Florian Woelki",
   "authorUrl": "https://florianwoelki.com",
   "isDesktopOnly": false
