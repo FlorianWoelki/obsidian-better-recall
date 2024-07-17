@@ -44,30 +44,25 @@ export abstract class CardModal extends Modal {
     }, {});
 
     // Renders the deck dropdown.
-    const deckDropdownDescriptionEl = this.optionsContainerEl.createEl('p', {
+    this.optionsContainerEl.createEl('p', {
       text: 'Deck:',
-      cls: 'setting-item-description',
+      cls: 'setting-item-description better-recall-card-modal-description',
     });
-    deckDropdownDescriptionEl.style.paddingTop = '0';
     this.deckDropdownComp = new DropdownComponent(
       this.optionsContainerEl,
     ).addOptions(decks);
-    this.deckDropdownComp.selectEl.style.width = '100%';
+    this.deckDropdownComp.selectEl.addClass('better-recall-field');
   }
 
   protected renderCardTypeDropdown(): void {
-    const cardTypeDropdownDescriptionEl = this.optionsContainerEl.createEl(
-      'p',
-      {
-        text: 'Type:',
-        cls: 'setting-item-description',
-      },
-    );
-    cardTypeDropdownDescriptionEl.style.paddingTop = '0';
+    this.optionsContainerEl.createEl('p', {
+      text: 'Type:',
+      cls: 'setting-item-description better-recall-card-modal-description',
+    });
     const cardTypeDropdown = new DropdownComponent(this.optionsContainerEl)
       .addOptions({ basic: 'Basic' })
       .setDisabled(true);
-    cardTypeDropdown.selectEl.style.width = '100%';
+    cardTypeDropdown.selectEl.addClass('better-recall-field');
   }
 
   protected renderBasicTypeFields(front?: string, back?: string): void {
@@ -82,7 +77,7 @@ export abstract class CardModal extends Modal {
     })
       .setValue(back ?? '')
       .onChange(this.handleInputChange.bind(this));
-    this.backInputComp.descriptionEl.style.marginTop = 'var(--size-2-3)';
+    this.backInputComp.descriptionEl.addClass('better-recall-back-field');
   }
 
   protected renderButtonsBar(

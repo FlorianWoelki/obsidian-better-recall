@@ -28,7 +28,7 @@ export class EditCardModal extends CardModal {
     const deleteButton = new ButtonComponent(buttonsContainer)
       .setButtonText('Delete')
       .onClick(() => this.deleteCard());
-    deleteButton.buttonEl.style.marginTop = 'var(--size-4-5)';
+    deleteButton.buttonEl.addClass('better-recall-delete-button');
     this.renderButtonsBar('Save', { container: buttonsContainer });
   }
 

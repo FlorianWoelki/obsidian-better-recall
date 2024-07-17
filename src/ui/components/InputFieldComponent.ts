@@ -29,7 +29,7 @@ export class InputFieldComponent extends TextComponent {
       );
     }
 
-    this.inputEl.style.width = '100%';
+    this.inputEl.classList.add('better-recall-field');
     this.addKeyEnterAction(this.inputEl);
   }
 
@@ -39,9 +39,8 @@ export class InputFieldComponent extends TextComponent {
   ): HTMLElement {
     const descriptionEl = container.createEl('p', {
       text,
-      cls: 'setting-item-description',
+      cls: 'setting-item-description better-recall-description',
     });
-    descriptionEl.style.marginBottom = 'var(--size-2-2)';
     container.insertBefore(descriptionEl, this.inputEl);
     return descriptionEl;
   }

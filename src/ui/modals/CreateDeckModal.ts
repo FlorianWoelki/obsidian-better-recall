@@ -30,7 +30,9 @@ export class CreateDeckModal extends Modal {
     this.deckNameInputComp.onEnter = () => {
       this.createDeck();
     };
-    this.deckNameInputComp.descriptionEl.style.marginTop = '0';
+    this.deckNameInputComp.descriptionEl.addClass(
+      'better-recall-deck-name-field',
+    );
 
     // Creates the deck description input field.
     this.deckDescriptionInputComp = new InputFieldComponent(this.contentEl, {
@@ -43,8 +45,9 @@ export class CreateDeckModal extends Modal {
 
       this.createDeck();
     };
-    this.deckDescriptionInputComp.descriptionEl.style.marginTop =
-      'var(--size-2-3)';
+    this.deckDescriptionInputComp.descriptionEl.addClass(
+      'better-recall-deck-description-field',
+    );
 
     // Creates the buttons bar.
     this.buttonsBarComp = new ButtonsBarComponent(this.contentEl)

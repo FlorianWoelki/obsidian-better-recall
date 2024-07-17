@@ -31,14 +31,17 @@ export class EditDeckModal extends Modal {
       .onChange((value) => {
         this.buttonsBarComp.setSubmitButtonDisabled(value.length === 0);
       });
-    this.deckNameInputComp.descriptionEl.style.marginTop = '0';
+    this.deckNameInputComp.descriptionEl.addClass(
+      'better-recall-deck-name-field',
+    );
 
     // Renders the deck description input field.
     this.deckDescriptionInputComp = new InputFieldComponent(this.contentEl, {
       description: 'Deck description:',
     }).setValue(this.deck.getDescription());
-    this.deckDescriptionInputComp.descriptionEl.style.marginTop =
-      'var(--size-2-3)';
+    this.deckDescriptionInputComp.descriptionEl.addClass(
+      'better-recall-deck-description-field',
+    );
 
     const buttonsContainer = this.contentEl.createDiv(
       'better-recall__buttons-container',
@@ -47,7 +50,7 @@ export class EditDeckModal extends Modal {
     const deleteButton = new ButtonComponent(buttonsContainer)
       .setButtonText('Delete')
       .onClick(() => this.deleteDeck());
-    deleteButton.buttonEl.style.marginTop = 'var(--size-4-5)';
+    deleteButton.buttonEl.addClass('better-recall-delete-button');
 
     // Renders the button bar.
     this.buttonsBarComp = new ButtonsBarComponent(buttonsContainer)

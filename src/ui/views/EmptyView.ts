@@ -11,8 +11,9 @@ export class EmptyView extends RecallSubView {
     // Uses the `empty-state-container` class from Obsidian.
     const containerEl = this.rootEl.createDiv('empty-state-container');
     // Uses the `empty-state-title` class from Obsidian.
-    const titleContainerEl = containerEl.createDiv('empty-state-title');
-    titleContainerEl.style.marginBottom = '10px';
+    const titleContainerEl = containerEl.createDiv(
+      'empty-state-title better-recall-empty-state-title',
+    );
     titleContainerEl.setText('No available decks');
 
     // Uses the `empty-state-action-list` class from Obsidian.

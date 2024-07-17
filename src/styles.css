@@ -1,3 +1,37 @@
+.better-recall-empty-state-title {
+  margin-bottom: 0.625rem;
+}
+
+.better-recall-card-modal-description {
+  padding-top: 0;
+}
+
+.better-recall-description {
+  margin-bottom: var(--size-2-2);
+}
+
+/* Affects all the fields (dropdown, input field) */
+.better-recall-field {
+  width: 100%;
+}
+.better-recall-back-field {
+  margin-top: var(--size-2-3);
+}
+.better-recall-deck-description-field {
+  margin-top: var(--size-2-3);
+}
+.better-recall-deck-name-field {
+  margin-top: 0;
+}
+
+.better-recall-decks-view .better-recall-buttons-bar {
+  margin-top: 1rem;
+}
+
+.better-recall-delete-button {
+  margin-top: var(--size-4-5);
+}
+
 .better-recall-buttons-bar {
   margin-top: var(--size-4-5);
   display: flex;

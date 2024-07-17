@@ -50,7 +50,9 @@ export class DecksView extends RecallSubView {
   }
 
   public render(): void {
-    this.rootEl = this.recallView.rootEl.createDiv(CENTERED_VIEW);
+    this.rootEl = this.recallView.rootEl.createDiv(
+      `${CENTERED_VIEW} better-recall-decks-view`,
+    );
 
     this.renderDecks();
     this.renderButtons();
@@ -303,7 +305,6 @@ export class DecksView extends RecallSubView {
 
   private renderButtons(): void {
     const buttonsBarEl = this.rootEl.createDiv('better-recall-buttons-bar');
-    buttonsBarEl.style.marginTop = '1rem';
 
     new ButtonComponent(buttonsBarEl)
       .setButtonText('Create Deck')
