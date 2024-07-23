@@ -83,7 +83,7 @@ describe('DecksManager', () => {
           'New Name',
           'New Description',
         ),
-      ).rejects.toThrow('Deck with ID does not exist');
+      ).rejects.toThrow('Deck with id does not exist');
     });
   });
 
