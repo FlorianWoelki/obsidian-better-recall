@@ -11,7 +11,7 @@ export class EditCardModal extends CardModal {
     private card: SpacedRepetitionItem,
   ) {
     super(plugin);
-    this.setTitle('Edit Card');
+    this.setTitle('Edit card');
   }
 
   protected render(): void {

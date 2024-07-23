@@ -3,6 +3,6 @@ import { AnkiAlgorithm } from './spaced-repetition/anki';
 
 export const MOCK_DECK: Deck = new Deck(
   new AnkiAlgorithm(),
-  'Mock Deck',
-  'Mock Deck Description',
+  'Mock deck',
+  'Mock deck description',
 );

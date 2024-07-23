@@ -56,7 +56,7 @@ export class DecksManager {
     }
 
     if (!(id in this.decks)) {
-      throw new Error(`Deck with ID does not exist: ${id}`);
+      throw new Error(`Deck with id does not exist: ${id}`);
     }
 
     this.decks[id].setName(newName);

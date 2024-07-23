@@ -91,7 +91,7 @@ export class EditCardsModal extends Modal {
     // Renders buttons bar component.
     this.buttonsBarComp = new ButtonsBarComponent(this.contentEl)
       .setSubmitButtonDisabled(false)
-      .setSubmitText('Add Card')
+      .setSubmitText('Add card')
       .onSubmit(this.openAddCardModal.bind(this))
       .onClose(this.close.bind(this));
   }

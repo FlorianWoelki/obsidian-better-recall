@@ -23,7 +23,7 @@ export class EmptyView extends RecallSubView {
     // Uses the `empty-state-action` class from Obsidian.
     const createNewDeckActionEl =
       actionListContainerEl.createDiv('empty-state-action');
-    createNewDeckActionEl.setText('Create new Deck');
+    createNewDeckActionEl.setText('Create new deck');
     createNewDeckActionEl.onClickEvent(() => {
       this.openDeckModal();
     });

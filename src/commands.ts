@@ -11,7 +11,7 @@ export function registerCommands(plugin: BetterRecallPlugin): void {
   });
   plugin.addCommand({
     id: 'add-card',
-    name: 'Add Card',
+    name: 'Add card',
     callback: () => {
       new AddCardModal(plugin).open();
     },

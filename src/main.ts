@@ -30,7 +30,7 @@ export default class BetterRecallPlugin extends Plugin {
     this.registerView(FILE_VIEW_TYPE, (leaf) => new RecallView(this, leaf));
     registerCommands(this);
 
-    this.addRibbonIcon('wallet-cards', 'Open Decks', () => {
+    this.addRibbonIcon('wallet-cards', 'Open decks', () => {
       this.openRecallView();
     });
 

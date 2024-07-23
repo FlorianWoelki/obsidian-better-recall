@@ -8,51 +8,51 @@ export class SettingsTab extends PluginSettingTab {
     string,
     { description: string; parameter: keyof AnkiParameters }
   > = {
-    'Lapse Interval': {
+    'Lapse interval': {
       parameter: 'lapseInterval',
       description:
         'The multiplier applied to the current interval when a card lapses.',
     },
-    'Easy Interval': {
+    'Easy interval': {
       parameter: 'easyInterval',
       description:
         'The interval (in days) assigned to a card when rated as `easy` during learning/relearning.',
     },
-    'Easy Bonus': {
+    'Easy bonus': {
       parameter: 'easyBonus',
       description:
         'The multiplier applied to the interval when a review card is rated as `easy`.',
     },
-    'Graduating Interval': {
+    'Graduating interval': {
       parameter: 'graduatingInterval',
       description:
         'The interval (in days) assigned to a card when it graduates from learning to review.',
     },
-    'Min Ease Factor': {
+    'Min ease factor': {
       parameter: 'minEaseFactor',
       description: 'The minimum allowed ease factor for a card.',
     },
-    'Ease Factor Decrement': {
+    'Ease factor decrement': {
       parameter: 'easeFactorDecrement',
       description:
         'The amount by which the ease factor is decreased when a card is rated as `again`.',
     },
-    'Ease Factor Increment': {
+    'Ease factor increment': {
       parameter: 'easeFactorIncrement',
       description:
         'The amount by which the ease factor is increased when a card is rated as `easy`.',
     },
-    'Hard Interval Multiplier': {
+    'Hard interval multiplier': {
       parameter: 'hardIntervalMultiplier',
       description:
         'The multiplier applied to the current interval when a review card is rated as `hard`.',
     },
-    'Learning Steps': {
+    'Learning steps': {
       parameter: 'learningSteps',
       description:
         'Comma-separated step intervals (in minutes) for new cards in the learning phase.',
     },
-    'Relearning Steps': {
+    'Relearning steps': {
       parameter: 'relearningSteps',
       description:
         'Comma-separated step intervals (in minutes) for cards in the relearning phase.',
@@ -65,8 +65,6 @@ export class SettingsTab extends PluginSettingTab {
 
   display() {
     this.containerEl.empty();
-
-    new Setting(this.containerEl).setName('Anki Settings').setHeading();
 
     Object.entries(this.titleParameterMapping).forEach(
       ([key, { parameter, description }]) => {
@@ -99,7 +97,6 @@ export class SettingsTab extends PluginSettingTab {
               parameter === 'relearningSteps'
             ) {
               if (!this.isStringValidArray(input)) {
-                console.log('not a valid array', input);
                 return;
               }
 

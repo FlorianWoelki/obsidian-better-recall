@@ -10,7 +10,7 @@ import { CardModal } from './CardModal';
 export class AddCardModal extends CardModal {
   constructor(protected plugin: BetterRecallPlugin) {
     super(plugin);
-    this.setTitle('Add Card');
+    this.setTitle('Add card');
   }
 
   protected render(): void {

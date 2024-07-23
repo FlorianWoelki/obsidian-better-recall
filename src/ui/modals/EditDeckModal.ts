@@ -14,7 +14,7 @@ export class EditDeckModal extends Modal {
     private deck: Deck,
   ) {
     super(plugin.app);
-    this.setTitle(`Edit Deck "${deck.getName()}"`);
+    this.setTitle(`Edit deck "${deck.getName()}"`);
   }
 
   onOpen(): void {

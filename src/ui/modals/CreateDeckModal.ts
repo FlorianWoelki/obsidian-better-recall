@@ -10,7 +10,7 @@ export class CreateDeckModal extends Modal {
 
   constructor(private plugin: BetterRecallPlugin) {
     super(plugin.app);
-    this.setTitle('Create new Deck');
+    this.setTitle('Create new deck');
   }
 
   onOpen(): void {
@@ -23,7 +23,7 @@ export class CreateDeckModal extends Modal {
     this.deckNameInputComp = new InputFieldComponent(this.contentEl, {
       description: 'New deck name:',
     })
-      .setPlaceholder('Algorithms & Datastructures')
+      .setPlaceholder('Algorithms & datastructures')
       .onChange((value) => {
         this.buttonsBarComp.setSubmitButtonDisabled(value.length === 0);
       });
