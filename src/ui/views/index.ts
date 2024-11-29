@@ -30,6 +30,7 @@ export class RecallView extends FileView {
   ) {
     super(leaf);
     this.allowNoFile = true;
+    this.icon = 'blocks';
 
     const viewContent = this.containerEl.querySelector('.view-content');
     if (!viewContent) {
@@ -106,7 +107,7 @@ export class RecallView extends FileView {
     this.currentView?.render();
   }
 
-  async setState(state: any, result: ViewStateResult): Promise<void> {
+  async setState(state: unknown, result: ViewStateResult): Promise<void> {
     await super.setState(state, result);
   }
 
