@@ -160,8 +160,8 @@ export class ReviewView extends RecallSubView {
   }
 
   private showRecallButtons(): void {
-    this.cardBackEl.removeClass('better-recall-review-card--hidden');
-    this.dividerEl.removeClass('better-recall-review-card--hidden');
+    this.cardBackEl.removeClass('better-recall--display-none');
+    this.dividerEl.removeClass('better-recall--display-none');
     this.answerButtonsBarEl.addClass('better-recall--display-none');
     this.renderRecallButtons();
   }
@@ -175,8 +175,8 @@ export class ReviewView extends RecallSubView {
 
     this.currentItem = this.plugin.algorithm.getNextReviewItem();
 
-    this.dividerEl.addClass('better-recall-review-card--hidden');
-    this.cardBackEl.addClass('better-recall-review-card--hidden');
+    this.dividerEl.addClass('better-recall--display-none');
+    this.cardBackEl.addClass('better-recall--display-none');
     if (this.currentItem) {
       this.cardFrontEl.setText(this.currentItem.content.front);
       this.cardBackEl.setText(this.currentItem.content.back);

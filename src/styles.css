@@ -139,6 +139,7 @@
 .better-recall-review-card {
   text-align: center;
   font-size: var(--font-ui-medium);
+  white-space: pre-wrap;
 }
 
 .better-recall-review-card__divider {
@@ -149,10 +150,6 @@
 
 .better-recall-review-card__content {
   font-weight: unset;
-}
-
-.better-recall-review-card--hidden {
-  visibility: hidden;
 }
 
 .better-recall--display-none {
