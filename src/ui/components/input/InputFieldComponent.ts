@@ -1,4 +1,5 @@
 import { TextComponent } from 'obsidian';
+import { createDescriptionEl } from './utils';
 
 interface InputFieldComponentOptions {
   description?: string;
@@ -23,7 +24,7 @@ export class InputFieldComponent extends TextComponent {
 
   private render() {
     if (this.options?.description) {
-      this.descriptionEl = this.createDescriptionEl(
+      this.descriptionEl = createDescriptionEl(
         this.contentEl,
         this.options.description,
       );
@@ -31,18 +32,6 @@ export class InputFieldComponent extends TextComponent {
 
     this.inputEl.classList.add('better-recall-field');
     this.addKeyEnterAction(this.inputEl);
-  }
-
-  private createDescriptionEl(
-    container: HTMLElement,
-    text: string,
-  ): HTMLElement {
-    const descriptionEl = container.createEl('p', {
-      text,
-      cls: 'setting-item-description better-recall-description',
-    });
-    container.insertBefore(descriptionEl, this.inputEl);
-    return descriptionEl;
   }
 
   private addKeyEnterAction(inputEl: HTMLInputElement): void {

@@ -1,14 +1,14 @@
 import { DropdownComponent, Modal } from 'obsidian';
 import BetterRecallPlugin from 'src/main';
 import { ButtonsBarComponent } from 'src/ui/components/ButtonsBarComponent';
-import { InputFieldComponent } from 'src/ui/components/InputFieldComponent';
+import { InputAreaComponent } from 'src/ui/components/input/InputAreaComponent';
 
 export abstract class CardModal extends Modal {
   private optionsContainerEl: HTMLElement;
 
   protected deckDropdownComp: DropdownComponent;
-  protected frontInputComp: InputFieldComponent;
-  protected backInputComp: InputFieldComponent;
+  protected frontInputComp: InputAreaComponent;
+  protected backInputComp: InputAreaComponent;
   protected buttonsBarComp: ButtonsBarComponent;
 
   constructor(protected plugin: BetterRecallPlugin) {
@@ -66,13 +66,13 @@ export abstract class CardModal extends Modal {
   }
 
   protected renderBasicTypeFields(front?: string, back?: string): void {
-    this.frontInputComp = new InputFieldComponent(this.contentEl, {
+    this.frontInputComp = new InputAreaComponent(this.contentEl, {
       description: 'Front',
     })
       .setValue(front ?? '')
       .onChange(this.handleInputChange.bind(this));
 
-    this.backInputComp = new InputFieldComponent(this.contentEl, {
+    this.backInputComp = new InputAreaComponent(this.contentEl, {
       description: 'Back',
     })
       .setValue(back ?? '')

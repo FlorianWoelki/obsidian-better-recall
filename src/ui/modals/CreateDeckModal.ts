@@ -1,7 +1,7 @@
 import { Modal } from 'obsidian';
 import BetterRecallPlugin from 'src/main';
 import { ButtonsBarComponent } from '../components/ButtonsBarComponent';
-import { InputFieldComponent } from '../components/InputFieldComponent';
+import { InputFieldComponent } from '../components/input/InputFieldComponent';
 
 export class CreateDeckModal extends Modal {
   private deckNameInputComp: InputFieldComponent;
