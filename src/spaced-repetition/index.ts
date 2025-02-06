@@ -113,6 +113,10 @@ export abstract class SpacedRepetitionAlgorithm<T> {
     return this.parameters;
   }
 
+  public resetItems(): void {
+    this.items = [];
+  }
+
   /**
    * Starts a new review session.
    * This function resets the session end time to the end of the current day,

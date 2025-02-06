@@ -138,8 +138,11 @@
 
 .better-recall-review-card {
   text-align: center;
-  font-size: var(--font-ui-medium);
   white-space: pre-wrap;
+}
+
+.better-recall-review-card > p {
+  font-size: var(--font-ui-medium);
 }
 
 .better-recall-review-card__divider {

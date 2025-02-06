@@ -42,8 +42,6 @@ export class RecallView extends FileView {
     this.emptyView = new EmptyView(plugin, this);
     this.decksView = new DecksView(plugin, this);
 
-    // this.reviewView.setDeck(plugin.decksManager.decksArray[0]);
-    // this.setViewMode(ViewMode.Review);
     this.setViewMode(
       plugin.decksManager.decksArray.length === 0
         ? ViewMode.Empty
