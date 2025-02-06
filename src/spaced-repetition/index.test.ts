@@ -6,7 +6,7 @@ import {
   SpacedRepetitionItem,
 } from '.';
 
-class TestAlgorithm extends SpacedRepetitionAlgorithm<{}> {
+class TestAlgorithm extends SpacedRepetitionAlgorithm<unknown> {
   getDefaultValues() {
     return {};
   }
@@ -104,5 +104,13 @@ describe('isDueToday', () => {
       nextReviewDate: futureDate,
     };
     expect(algorithm.isDueToday(notDueItem)).toBe(false);
+  });
+});
+
+describe('resetItems', () => {
+  it('should reset the items data', () => {
+    algorithm.addItem(mockItem);
+    algorithm.resetItems();
+    expect(algorithm['items']).toHaveLength(0);
   });
 });
