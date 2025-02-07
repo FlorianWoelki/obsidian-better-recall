@@ -35,7 +35,7 @@
     "prettier": "^3.4.2",
     "tslib": "2.4.0",
     "typescript": "4.7.4",
-    "vitest": "^1.6.0"
+    "vitest": "^3.0.5"
   },
   "dependencies": {
     "uuid": "^10.0.0"
