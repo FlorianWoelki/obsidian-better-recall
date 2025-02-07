@@ -32,21 +32,6 @@ Based on the specific parameters, the different timings and multiplier will be a
 
 ![Preview Image](./docs/recall.png)
 
-
-## Use the plugin before the release?
-
-I am still actively developing this plugin, but I have not yet submitted it to Obsidian.
-However, you can still use the plugin using **BRAT**:
-
-1. Open Obsidian and go to the community plugins tab.
-2. Search for **BRAT** and install it.
-3. Click on the **Add Beta Plugin** button.
-4. Paste the plugin link: https://github.com/FlorianWoelki/obsidian-better-recall
-5. Click **Add Plugin**.
-
-*Disclaimer: Things can break while in active development. Feel free to report any issues or bugs.*
-
-
 ## Development
 
 To customize this project for your needs, you can clone it and then install all dependencies:
