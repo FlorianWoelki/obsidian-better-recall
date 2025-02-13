@@ -1,4 +1,5 @@
 import { TextAreaComponent } from 'obsidian';
+import { KeyboardListener } from './KeyboardListener';
 import { createDescriptionEl } from './utils';
 
 interface InputAreaComponentOptions {
@@ -8,6 +9,8 @@ interface InputAreaComponentOptions {
 export class InputAreaComponent extends TextAreaComponent {
   public descriptionEl: HTMLElement;
 
+  public keyboardListener: KeyboardListener;
+
   constructor(
     private contentEl: HTMLElement,
     private options?: InputAreaComponentOptions,
@@ -15,6 +18,7 @@ export class InputAreaComponent extends TextAreaComponent {
     super(contentEl);
     this.inputEl.rows = 5;
     this.inputEl.style.resize = 'none';
+    this.keyboardListener = new KeyboardListener(this.inputEl);
     this.render();
   }
 
@@ -28,5 +32,6 @@ export class InputAreaComponent extends TextAreaComponent {
     }
 
     this.inputEl.classList.add('better-recall-field');
+    this.keyboardListener.addKeyEnterAction();
   }
 }

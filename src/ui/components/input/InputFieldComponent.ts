@@ -1,4 +1,5 @@
 import { TextComponent } from 'obsidian';
+import { KeyboardListener } from './KeyboardListener';
 import { createDescriptionEl } from './utils';
 
 interface InputFieldComponentOptions {
@@ -8,18 +9,15 @@ interface InputFieldComponentOptions {
 export class InputFieldComponent extends TextComponent {
   public descriptionEl: HTMLElement;
 
+  public keyboardListener: KeyboardListener;
+
   constructor(
     private contentEl: HTMLElement,
     private options?: InputFieldComponentOptions,
   ) {
     super(contentEl);
+    this.keyboardListener = new KeyboardListener(this.inputEl);
     this.render();
-  }
-
-  public onEnter(): void {}
-
-  public cleanup(): void {
-    this.removeKeyEnterAction(this.inputEl);
   }
 
   private render() {
@@ -32,26 +30,6 @@ export class InputFieldComponent extends TextComponent {
     }
 
     this.inputEl.classList.add('better-recall-field');
-    this.addKeyEnterAction(this.inputEl);
-  }
-
-  private addKeyEnterAction(inputEl: HTMLInputElement): void {
-    inputEl.addEventListener('keypress', this.onEnterPress.bind(this));
-  }
-
-  private removeKeyEnterAction(inputEl: HTMLInputElement): void {
-    inputEl.removeEventListener('keypress', this.onEnterPress.bind(this));
-  }
-
-  private onEnterPress(event: KeyboardEvent): void {
-    setTimeout(() => {
-      const isEmpty = this.getValue().length === 0;
-
-      if (event.key !== 'Enter' || isEmpty) {
-        return;
-      }
-
-      this.onEnter();
-    }, 1);
+    this.keyboardListener.addKeyEnterAction();
   }
 }

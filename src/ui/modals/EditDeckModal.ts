@@ -31,6 +31,13 @@ export class EditDeckModal extends Modal {
       .onChange((value) => {
         this.buttonsBarComp.setSubmitButtonDisabled(value.length === 0);
       });
+    this.deckNameInputComp.keyboardListener.onEnter = () => {
+      if (this.saveButtonDisabled) {
+        return;
+      }
+
+      this.editDeck();
+    };
     this.deckNameInputComp.descriptionEl.addClass(
       'better-recall-deck-name-field',
     );
@@ -39,6 +46,13 @@ export class EditDeckModal extends Modal {
     this.deckDescriptionInputComp = new InputFieldComponent(this.contentEl, {
       description: 'Deck description:',
     }).setValue(this.deck.getDescription());
+    this.deckDescriptionInputComp.keyboardListener.onEnter = () => {
+      if (this.saveButtonDisabled) {
+        return;
+      }
+
+      this.editDeck();
+    };
     this.deckDescriptionInputComp.descriptionEl.addClass(
       'better-recall-deck-description-field',
     );
@@ -85,9 +99,13 @@ export class EditDeckModal extends Modal {
   }
 
   onClose(): void {
-    this.deckNameInputComp.cleanup();
-    this.deckDescriptionInputComp.cleanup();
+    this.deckNameInputComp.keyboardListener.cleanup();
+    this.deckDescriptionInputComp.keyboardListener.cleanup();
     super.onClose();
     this.contentEl.empty();
+  }
+
+  protected get saveButtonDisabled(): boolean {
+    return this.deckNameInputComp.getValue().length === 0;
   }
 }

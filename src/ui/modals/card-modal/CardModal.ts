@@ -26,6 +26,8 @@ export abstract class CardModal extends Modal {
   }
 
   onClose(): void {
+    this.frontInputComp.keyboardListener.cleanup();
+    this.backInputComp.keyboardListener.cleanup();
     super.onClose();
     this.plugin.decksManager.save();
     this.contentEl.empty();
@@ -71,6 +73,13 @@ export abstract class CardModal extends Modal {
     })
       .setValue(front ?? '')
       .onChange(this.handleInputChange.bind(this));
+    this.frontInputComp.keyboardListener.onEnter = () => {
+      if (this.disabled) {
+        return;
+      }
+
+      this.submit();
+    };
 
     this.backInputComp = new InputAreaComponent(this.contentEl, {
       description: 'Back',
@@ -78,6 +87,13 @@ export abstract class CardModal extends Modal {
       .setValue(back ?? '')
       .onChange(this.handleInputChange.bind(this));
     this.backInputComp.descriptionEl.addClass('better-recall-back-field');
+    this.backInputComp.keyboardListener.onEnter = () => {
+      if (this.disabled) {
+        return;
+      }
+
+      this.submit();
+    };
   }
 
   protected renderButtonsBar(
@@ -97,5 +113,12 @@ export abstract class CardModal extends Modal {
       this.frontInputComp.getValue().length === 0 ||
       this.backInputComp.getValue().length === 0;
     this.buttonsBarComp.setSubmitButtonDisabled(disabled);
+  }
+
+  protected get disabled(): boolean {
+    return (
+      this.frontInputComp.getValue().length === 0 ||
+      this.backInputComp.getValue().length === 0
+    );
   }
 }

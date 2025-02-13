@@ -27,7 +27,7 @@ export class CreateDeckModal extends Modal {
       .onChange((value) => {
         this.buttonsBarComp.setSubmitButtonDisabled(value.length === 0);
       });
-    this.deckNameInputComp.onEnter = () => {
+    this.deckNameInputComp.keyboardListener.onEnter = () => {
       this.createDeck();
     };
     this.deckNameInputComp.descriptionEl.addClass(
@@ -38,7 +38,7 @@ export class CreateDeckModal extends Modal {
     this.deckDescriptionInputComp = new InputFieldComponent(this.contentEl, {
       description: 'Description (optional):',
     }).setPlaceholder('A lovely CS learning experience.');
-    this.deckDescriptionInputComp.onEnter = () => {
+    this.deckDescriptionInputComp.keyboardListener.onEnter = () => {
       if (this.deckNameInputComp.getValue().length === 0) {
         return;
       }
@@ -70,8 +70,8 @@ export class CreateDeckModal extends Modal {
   }
 
   onClose(): void {
-    this.deckNameInputComp.cleanup();
-    this.deckDescriptionInputComp.cleanup();
+    this.deckNameInputComp.keyboardListener.cleanup();
+    this.deckDescriptionInputComp.keyboardListener.cleanup();
     super.onClose();
     this.contentEl.empty();
   }
