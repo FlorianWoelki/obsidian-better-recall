@@ -26,6 +26,7 @@ export class InputFieldComponent extends TextComponent {
     if (this.options?.description) {
       this.descriptionEl = createDescriptionEl(
         this.contentEl,
+        this.inputEl,
         this.options.description,
       );
     }
