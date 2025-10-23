@@ -21,8 +21,6 @@ export class KeyboardListener {
     setTimeout(() => {
       const isEmpty = this.inputEl.value.length === 0;
 
-      console.log('pressing');
-
       if (!event.altKey || event.key !== 'Enter' || isEmpty) {
         return;
       }
