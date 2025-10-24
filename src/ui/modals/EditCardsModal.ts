@@ -5,6 +5,7 @@ import { ButtonsBarComponent } from '../components/ButtonsBarComponent';
 import { Deck } from 'src/data/deck';
 import { AddCardModal } from './card-modal/AddCardModal';
 import { EditCardModal } from './card-modal/EditCardModal';
+import { CARDS_LIST_EMPTY_DECK } from '../classes';
 
 const cardAttributes = {
   cardId: 'data-card-id',
@@ -71,24 +72,32 @@ export class EditCardsModal extends Modal {
   }
 
   private render(): void {
-    // Renders the list of cards with edit buttons.
     const decksCardEl = this.contentEl.createDiv(
       'better-recall-card better-recall__cards-list',
     );
 
-    this.deck.cardsArray.forEach((card) => {
-      const cardEl = decksCardEl.createEl('div', {
-        text: `${card.content.front} :: ${card.content.back}`,
+    if (this.deck.cardsArray.length > 0) {
+      this.deck.cardsArray.forEach((card) => {
+        const cardEl = decksCardEl.createEl('div', {
+          text: `${card.content.front} :: ${card.content.back}`,
+          attr: {
+            [cardAttributes.cardId]: card.id,
+          },
+        });
+        cardEl.onClickEvent(() => {
+          new EditCardModal(this.plugin, this.deck, card).open();
+        });
+      });
+    } else {
+      decksCardEl.createEl('p', {
+        cls: CARDS_LIST_EMPTY_DECK,
+        text: 'No cards created for this deck',
         attr: {
-          [cardAttributes.cardId]: card.id,
+          [cardAttributes.cardId]: 'none',
         },
       });
-      cardEl.onClickEvent(() => {
-        new EditCardModal(this.plugin, this.deck, card).open();
-      });
-    });
+    }
 
-    // Renders buttons bar component.
     this.buttonsBarComp = new ButtonsBarComponent(this.contentEl)
       .setSubmitButtonDisabled(false)
       .setSubmitText('Add card')

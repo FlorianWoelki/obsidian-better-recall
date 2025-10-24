@@ -185,6 +185,7 @@
   display: flex;
   flex-direction: column;
   padding: 0; /* Reset padding from natively used better-recall card. */
+  position: relative; /* Used to center the text in the middle for an empty deck case. */
 }
 
 .better-recall__cards-list div {
@@ -195,6 +196,15 @@
 
 .better-recall__cards-list div:hover {
   background-color: var(--color-base-25);
+}
+
+.better-recall__cards-list p.better-recall__cards-list-empty-deck {
+  font-style: italic;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  margin: 0;
 }
 
 .better-recall__buttons-container {
