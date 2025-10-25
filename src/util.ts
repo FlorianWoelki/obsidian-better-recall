@@ -31,3 +31,15 @@ export function formatTimeDifference(futureDate: Date): string {
     return `${printedMinutes} ${printedMinutes === 1 ? 'min' : 'mins'}`;
   }
 }
+
+type ClassProp = string | number | boolean | null | undefined | ClassProp[];
+
+/**
+ * Combines multiple class names into a single string.
+ * Filters out falsy values (null, undefined, false, '').
+ * @param classes Class names to combine.
+ * @returns Combined class names separated by spaces.
+ */
+export function cn(...classes: ClassProp[]): string {
+  return classes.flat().filter(Boolean).join(' ').trim();
+}

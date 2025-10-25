@@ -4,7 +4,12 @@ import { PerformanceResponse } from 'src/spaced-repetition/anki';
 import { RecallView } from '.';
 import { RecallSubView } from './SubView';
 import { Deck } from 'src/data/deck';
-import { BUTTONS_BAR_CLASS, CENTERED_VIEW } from '../classes';
+import {
+  BUTTONS_BAR_CLASS,
+  CENTERED_VIEW,
+  REVIEW_CARD_CONTENT,
+  REVIEW_CARD_DIVIDER,
+} from '../classes';
 import { ButtonComponent, MarkdownRenderer } from 'obsidian';
 import { formatTimeDifference } from 'src/util';
 
@@ -88,13 +93,13 @@ export class ReviewView extends RecallSubView {
     );
 
     this.cardFrontEl = this.contentEl.createEl('h3', {
-      cls: 'better-recall-review-card__content',
+      cls: REVIEW_CARD_CONTENT,
     });
     this.dividerEl = this.contentEl.createEl('div', {
-      cls: 'better-recall-review-card__divider',
+      cls: REVIEW_CARD_DIVIDER,
     });
     this.cardBackEl = this.contentEl.createEl('h3', {
-      cls: 'better-recall-review-card__content',
+      cls: REVIEW_CARD_CONTENT,
     });
 
     this.renderAnswerButtons();

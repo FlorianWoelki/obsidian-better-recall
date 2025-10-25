@@ -1,3 +1,6 @@
+import { P_DESCRIPTION, SETTING_ITEM_DESCRIPTION } from 'src/ui/classes';
+import { cn } from 'src/util';
+
 export function createDescriptionEl(
   container: HTMLElement,
   inputEl: HTMLElement,
@@ -5,7 +8,7 @@ export function createDescriptionEl(
 ): HTMLElement {
   const descriptionEl = container.createEl('p', {
     text,
-    cls: 'setting-item-description better-recall-description',
+    cls: cn(SETTING_ITEM_DESCRIPTION, P_DESCRIPTION),
   });
   container.insertBefore(descriptionEl, inputEl);
   return descriptionEl;

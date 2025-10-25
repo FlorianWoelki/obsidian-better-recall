@@ -7,6 +7,10 @@ import { Deck } from 'src/data/deck';
 import { AddCardModal } from '../modals/card-modal/AddCardModal';
 import {
   CENTERED_VIEW,
+  DECK_BUTTON,
+  DECK_MAIN,
+  DECK_NAME,
+  DECK_TABLE,
   DUE_CARDS_COLOR,
   LEARN_CARDS_COLOR,
   NEW_CARDS_COLOR,
@@ -216,7 +220,7 @@ export class DecksView extends RecallSubView {
     const decksCardEl = this.rootEl.createDiv('better-recall-card');
 
     const tableEl = decksCardEl.createEl('table', {
-      cls: 'better-recall-deck-table',
+      cls: DECK_TABLE,
     });
     const headerRow = tableEl.createEl('tr');
     headerRow.createEl('th', { text: 'Deck' });
@@ -226,13 +230,13 @@ export class DecksView extends RecallSubView {
 
     this.plugin.decksManager.decksArray.forEach((deck) => {
       const deckRowEl = tableEl.createEl('tr', {
-        cls: 'better-recall-deck',
+        cls: DECK_MAIN,
         attr: {
           'data-deck-id': deck.id,
         },
       });
       const deckDataEl = deckRowEl.createEl('td', {
-        cls: 'better-recall-deck-name',
+        cls: DECK_NAME,
       });
       deckRowEl.addEventListener('mouseenter', this.handleDeckRowMouseEnter);
       deckRowEl.addEventListener('mouseleave', this.handleDeckRowMouseLeave);
@@ -273,7 +277,7 @@ export class DecksView extends RecallSubView {
     const container = root.createDiv('better-recall-deck__buttons');
 
     const cardsButtonEl = container.createEl('div', {
-      cls: 'better-recall-deck__button',
+      cls: DECK_BUTTON,
       attr: {
         role: 'button',
         tabindex: '0',
@@ -288,7 +292,7 @@ export class DecksView extends RecallSubView {
     });
 
     const editButtonEl = container.createEl('div', {
-      cls: 'better-recall-deck__button',
+      cls: DECK_BUTTON,
       attr: {
         role: 'button',
         tabindex: '0',
