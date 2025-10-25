@@ -1,5 +1,3 @@
-export const CENTERED_VIEW = 'better-recall-centered-view';
-
 // Custom component classes
 export const BUTTONS_BAR_CLASS = 'better-recall-buttons-bar';
 
@@ -7,6 +5,9 @@ export const BUTTONS_BAR_CLASS = 'better-recall-buttons-bar';
 export const NEW_CARDS_COLOR = 'better-recall-new-cards-color';
 export const LEARN_CARDS_COLOR = 'better-recall-learn-cards-color';
 export const DUE_CARDS_COLOR = 'better-recall-due-cards-color';
+
+// Views
+export const CENTERED_VIEW = 'better-recall-centered-view';
 
 // Cards
 export const REVIEW_CARD_CONTENT = 'better-recall-review-card__content';
