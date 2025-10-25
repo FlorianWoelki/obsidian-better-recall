@@ -6,7 +6,6 @@ import { EditDeckModal } from '../modals/EditDeckModal';
 import { Deck } from 'src/data/deck';
 import { AddCardModal } from '../modals/card-modal/AddCardModal';
 import {
-  CENTERED_VIEW,
   DECK_BUTTON,
   DECK_MAIN,
   DECK_NAME,
@@ -54,9 +53,7 @@ export class DecksView extends RecallSubView {
   }
 
   public render(): void {
-    this.rootEl = this.recallView.rootEl.createDiv(
-      `${CENTERED_VIEW} better-recall-decks-view`,
-    );
+    this.rootEl = this.recallView.rootEl.createDiv('better-recall-decks-view');
 
     this.renderDecks();
     this.renderButtons();

@@ -5,6 +5,7 @@ import { ReviewView } from './ReviewView';
 import { DecksView } from './DecksView';
 import { RecallSubView } from './SubView';
 import { Deck } from 'src/data/deck';
+import { CENTERED_VIEW } from '../classes';
 
 export const FILE_VIEW_TYPE = 'recall-view';
 
@@ -37,7 +38,7 @@ export class RecallView extends FileView {
       return;
     }
 
-    this.rootEl = viewContent.createDiv('better-recall-recall-view');
+    this.rootEl = viewContent.createDiv(CENTERED_VIEW);
     this.reviewView = new ReviewView(plugin, this);
     this.emptyView = new EmptyView(plugin, this);
     this.decksView = new DecksView(plugin, this);
