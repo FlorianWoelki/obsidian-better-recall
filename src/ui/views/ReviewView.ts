@@ -6,7 +6,6 @@ import { RecallSubView } from './SubView';
 import { Deck } from 'src/data/deck';
 import {
   BUTTONS_BAR_CLASS,
-  CENTERED_VIEW,
   REVIEW_CARD_CONTENT,
   REVIEW_CARD_DIVIDER,
 } from '../classes';
@@ -85,7 +84,7 @@ export class ReviewView extends RecallSubView {
   }
 
   public render(): void {
-    this.rootEl = this.recallView.rootEl.createDiv(CENTERED_VIEW);
+    this.rootEl = this.recallView.rootEl.createDiv('better-recall-recall-view');
     document.addEventListener('keypress', this.handleKeyInput.bind(this));
 
     this.contentEl = this.rootEl.createDiv(
