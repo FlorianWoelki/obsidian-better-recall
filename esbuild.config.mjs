@@ -1,6 +1,7 @@
 import esbuild from 'esbuild';
 import process from 'process';
 import builtins from 'builtin-modules';
+import { watch } from 'fs';
 import copyFilesPlugin from './esbuild-copy-files.mjs';
 import { obsidianExportPath } from './env.mjs';
 
@@ -65,8 +66,16 @@ const buildOptions = {
 if (prod) {
   esbuild.build(buildOptions).catch(() => process.exit(1));
 } else {
-  esbuild
-    .context(buildOptions)
-    .then((ctx) => ctx.watch())
-    .catch(() => process.exit(1));
+  (async () => {
+    const ctx = await esbuild.context(buildOptions);
+    await ctx.watch();
+
+    console.log('Watching for changes...');
+
+    watch('./src', { recursive: true }, async (eventType, filename) => {
+      if (filename && filename.endsWith('.css') && eventType === 'change') {
+        await ctx.rebuild();
+      }
+    });
+  })().catch(() => process.exit(1));
 }
