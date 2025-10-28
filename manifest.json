@@ -1,10 +1,10 @@
 {
-  "id": "better-recall",
-  "name": "Better Recall",
-  "version": "0.0.2",
-  "minAppVersion": "0.9.12",
-  "description": "Add anki-like spaced repetition and recall to your vault.",
-  "author": "Florian Woelki",
-  "authorUrl": "https://florianwoelki.com",
-  "isDesktopOnly": false
+	"id": "better-recall",
+	"name": "Better Recall",
+	"version": "0.0.3",
+	"minAppVersion": "0.9.12",
+	"description": "Add anki-like spaced repetition and recall to your vault.",
+	"author": "Florian Woelki",
+	"authorUrl": "https://florianwoelki.com",
+	"isDesktopOnly": false
 }
