@@ -19,6 +19,7 @@ export interface ISpacedRepetitionItem {
   iteration: number;
   state: CardState;
   stepIndex: number;
+  metadata?: Record<string, any>;
 }
 
 export interface BasicSpacedRepetitionItem extends ISpacedRepetitionItem {
