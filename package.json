@@ -37,6 +37,7 @@
     "vitest": "^4.0.2"
   },
   "dependencies": {
+    "ts-fsrs": "^5.2.3",
     "uuid": "^13.0.0"
   }
 }
