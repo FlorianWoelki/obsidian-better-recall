@@ -65,6 +65,24 @@ export class FSRSAlgorithm extends SpacedRepetitionAlgorithm<FSRSParameters> {
     return this.queuedItems.shift() ?? null;
   }
 
+  public calculatePotentialNextReviewDate(
+    item: SpacedRepetitionItem,
+    performanceResponse: Rating,
+  ): Date {
+    if (!this.isValidRating(performanceResponse)) {
+      return item.nextReviewDate ?? new Date();
+    }
+
+    const fsrsCard = this.cardMap.get(item.id);
+    if (!fsrsCard) {
+      return item.nextReviewDate ?? new Date();
+    }
+
+    const now = new Date();
+    const scheduling = this.fsrs.repeat(fsrsCard, now);
+    return scheduling[performanceResponse].card.due;
+  }
+
   public setParameters(parameters: Partial<FSRSParameters>): void {
     super.setParameters(parameters);
     this.fsrs = new FSRS(this.parameters);

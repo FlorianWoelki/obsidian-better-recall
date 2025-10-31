@@ -1,6 +1,6 @@
 import BetterRecallPlugin from 'src/main';
 import { SpacedRepetitionItem } from 'src/spaced-repetition';
-import { PerformanceResponse } from 'src/spaced-repetition/anki';
+import { Rating } from 'ts-fsrs';
 import { RecallView } from '.';
 import { RecallSubView } from './SubView';
 import { Deck } from 'src/data/deck';
@@ -68,17 +68,13 @@ export class ReviewView extends RecallSubView {
       }
     } else {
       if (event.key === '1') {
-        // Handle again press.
-        this.handleResponse(PerformanceResponse.AGAIN);
+        this.handleResponse(Rating.Again);
       } else if (event.key === '2') {
-        // Handle good press.
-        this.handleResponse(PerformanceResponse.GOOD);
+        this.handleResponse(Rating.Good);
       } else if (event.key === '3') {
-        // Handle hard press.
-        this.handleResponse(PerformanceResponse.HARD);
+        this.handleResponse(Rating.Hard);
       } else if (event.key === '4') {
-        // Handle easy press.
-        this.handleResponse(PerformanceResponse.EASY);
+        this.handleResponse(Rating.Easy);
       }
     }
   }
@@ -132,17 +128,17 @@ export class ReviewView extends RecallSubView {
       `${BUTTONS_BAR_CLASS} better-recall-review-card__answer-buttons-bar`,
     );
 
-    this.renderButton(PerformanceResponse.AGAIN, '❌', 'Again');
+    this.renderButton(Rating.Again, '❌', 'Again');
 
-    this.renderButton(PerformanceResponse.GOOD, '😬', 'Good');
+    this.renderButton(Rating.Good, '😬', 'Good');
 
-    this.renderButton(PerformanceResponse.HARD, '😰', 'Hard');
+    this.renderButton(Rating.Hard, '😰', 'Hard');
 
-    this.renderButton(PerformanceResponse.EASY, '👑', 'Easy');
+    this.renderButton(Rating.Easy, '👑', 'Easy');
   }
 
   private renderButton(
-    performanceResponse: PerformanceResponse,
+    performanceResponse: Rating,
     emoji: string,
     text: string,
   ): void {
@@ -229,7 +225,7 @@ export class ReviewView extends RecallSubView {
     }
   }
 
-  private handleResponse(response: PerformanceResponse): void {
+  private handleResponse(response: Rating): void {
     if (this.currentItem) {
       this.plugin.algorithm.updateItemAfterReview(this.currentItem, response);
       this.showNextItem();

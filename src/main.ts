@@ -9,11 +9,13 @@ import {
 import { FILE_VIEW_TYPE, RecallView } from './ui/views';
 import { DecksManager } from './data/manager/decks-manager';
 import { EventEmitter } from './data/event';
+import { FSRSAlgorithm } from './spaced-repetition/fsrs';
 import { AnkiAlgorithm } from './spaced-repetition/anki';
 import { SettingsTab } from './ui/settings/SettingsTab';
 
 export default class BetterRecallPlugin extends Plugin {
-  public readonly algorithm = new AnkiAlgorithm();
+  // public readonly algorithm = new AnkiAlgorithm();
+  public readonly algorithm = new FSRSAlgorithm();
   public readonly decksManager = new DecksManager(this, this.algorithm);
 
   private data: BetterRecallData;
@@ -24,7 +26,8 @@ export default class BetterRecallPlugin extends Plugin {
     this.eventEmitter = new EventEmitter();
 
     await this.loadPluginData();
-    this.algorithm.setParameters(this.getSettings().ankiParameters);
+    // this.algorithm.setParameters(this.getSettings().ankiParameters);
+    this.algorithm.setParameters({});
     await this.decksManager.load();
 
     this.registerView(FILE_VIEW_TYPE, (leaf) => new RecallView(this, leaf));

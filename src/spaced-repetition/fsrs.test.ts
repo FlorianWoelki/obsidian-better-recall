@@ -171,3 +171,35 @@ describe('queuedItems behavior', () => {
     expect(fsrsAlgo.getNextReviewItem()).toBeNull();
   });
 });
+
+describe('calculatePotentialNextReviewDate', () => {
+  it('should return different dates for different ratings', () => {
+    const item = createSpacedRepetitionItem('Test item');
+    fsrsAlgo.addItem(item);
+    fsrsAlgo.startNewSession();
+
+    const reviewItem = fsrsAlgo.getNextReviewItem() as SpacedRepetitionItem;
+
+    const againDate = fsrsAlgo.calculatePotentialNextReviewDate(
+      reviewItem,
+      Rating.Again,
+    );
+    const hardDate = fsrsAlgo.calculatePotentialNextReviewDate(
+      reviewItem,
+      Rating.Hard,
+    );
+    const goodDate = fsrsAlgo.calculatePotentialNextReviewDate(
+      reviewItem,
+      Rating.Good,
+    );
+    const easyDate = fsrsAlgo.calculatePotentialNextReviewDate(
+      reviewItem,
+      Rating.Easy,
+    );
+
+    // FSRS typically schedules: Again < Hard < Good < Easy
+    expect(againDate.getTime()).toBeLessThanOrEqual(hardDate.getTime());
+    expect(hardDate.getTime()).toBeLessThanOrEqual(goodDate.getTime());
+    expect(goodDate.getTime()).toBeLessThanOrEqual(easyDate.getTime());
+  });
+});
