@@ -6,9 +6,16 @@ import {
   Rating,
   createEmptyCard,
 } from 'ts-fsrs';
-import { CardState, SpacedRepetitionAlgorithm, SpacedRepetitionItem } from '.';
+import {
+  CardState,
+  PerformanceResponse,
+  SpacedRepetitionAlgorithm,
+  SpacedRepetitionItem,
+} from '.';
 
 type ValidRating = Exclude<Rating, Rating.Manual>;
+
+type FSRSRating = Exclude<Rating, Rating.Manual>;
 
 export class FSRSAlgorithm extends SpacedRepetitionAlgorithm<FSRSParameters> {
   private fsrs: FSRS;
@@ -38,7 +45,7 @@ export class FSRSAlgorithm extends SpacedRepetitionAlgorithm<FSRSParameters> {
 
   public updateItemAfterReview(
     item: SpacedRepetitionItem,
-    performanceResponse: Rating,
+    performanceResponse: number,
   ): void {
     if (!this.isValidRating(performanceResponse)) {
       return;
@@ -67,11 +74,9 @@ export class FSRSAlgorithm extends SpacedRepetitionAlgorithm<FSRSParameters> {
 
   public calculatePotentialNextReviewDate(
     item: SpacedRepetitionItem,
-    performanceResponse: Rating,
+    performanceResponse: PerformanceResponse,
   ): Date {
-    if (!this.isValidRating(performanceResponse)) {
-      return item.nextReviewDate ?? new Date();
-    }
+    const rating = this.mapPerformanceResponse(performanceResponse);
 
     const fsrsCard = this.cardMap.get(item.id);
     if (!fsrsCard) {
@@ -80,12 +85,27 @@ export class FSRSAlgorithm extends SpacedRepetitionAlgorithm<FSRSParameters> {
 
     const now = new Date();
     const scheduling = this.fsrs.repeat(fsrsCard, now);
-    return scheduling[performanceResponse].card.due;
+    return scheduling[rating].card.due;
   }
 
   public setParameters(parameters: Partial<FSRSParameters>): void {
     super.setParameters(parameters);
     this.fsrs = new FSRS(this.parameters);
+  }
+
+  public mapPerformanceResponse(
+    performanceResponse: PerformanceResponse,
+  ): FSRSRating {
+    switch (performanceResponse) {
+      case PerformanceResponse.AGAIN:
+        return Rating.Again;
+      case PerformanceResponse.HARD:
+        return Rating.Hard;
+      case PerformanceResponse.GOOD:
+        return Rating.Good;
+      case PerformanceResponse.EASY:
+        return Rating.Easy;
+    }
   }
 
   private isValidRating(rating: Rating): rating is ValidRating {
