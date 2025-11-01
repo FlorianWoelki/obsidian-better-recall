@@ -1,6 +1,9 @@
 import BetterRecallPlugin from 'src/main';
-import { SpacedRepetitionItem } from 'src/spaced-repetition';
-import { PerformanceResponse } from 'src/spaced-repetition/anki';
+import {
+  PerformanceResponse,
+  SpacedRepetitionItem,
+} from 'src/spaced-repetition';
+import { Rating } from 'ts-fsrs';
 import { RecallView } from '.';
 import { RecallSubView } from './SubView';
 import { Deck } from 'src/data/deck';
@@ -68,16 +71,12 @@ export class ReviewView extends RecallSubView {
       }
     } else {
       if (event.key === '1') {
-        // Handle again press.
         this.handleResponse(PerformanceResponse.AGAIN);
       } else if (event.key === '2') {
-        // Handle good press.
         this.handleResponse(PerformanceResponse.GOOD);
       } else if (event.key === '3') {
-        // Handle hard press.
         this.handleResponse(PerformanceResponse.HARD);
       } else if (event.key === '4') {
-        // Handle easy press.
         this.handleResponse(PerformanceResponse.EASY);
       }
     }
@@ -229,9 +228,12 @@ export class ReviewView extends RecallSubView {
     }
   }
 
-  private handleResponse(response: PerformanceResponse): void {
+  private handleResponse(performanceResponse: PerformanceResponse): void {
     if (this.currentItem) {
-      this.plugin.algorithm.updateItemAfterReview(this.currentItem, response);
+      this.plugin.algorithm.updateItemAfterReview(
+        this.currentItem,
+        performanceResponse,
+      );
       this.showNextItem();
     }
   }

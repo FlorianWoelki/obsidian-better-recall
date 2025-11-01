@@ -5,6 +5,39 @@ export interface BetterRecallData {
   decks: DeckJsonStructure[];
 }
 
+export interface FSRSParameters {
+  /**
+   * Array of 19 weight parameters that control the FSRS algorithm's
+   * memory model. These are typically optimized based on user review
+   * history.
+   * @default [0.40255, 1.18385, 3.173, 15.69105, 7.1949, 0.5345, 1.4604,
+   *          0.0046, 1.54575, 0.1192, 1.01925, 1.9395, 0.11, 0.29605,
+   *          2.2698, 0.2315, 2.9898, 0.51655, 0.6621]
+   */
+  w: number[];
+  /**
+   * Target retention rate (probability of remember a card).
+   * Trade-off between retention and workload
+   * @default 0.9
+   */
+  requestRetention: number;
+  /**
+   * Maximum interval in days between reviews.
+   * @default 36500
+   */
+  maximumInterval: number;
+  /**
+   * Whether to add random variation to intervals to distribute reviews.
+   * @default false
+   */
+  enableFuzz: boolean;
+  /**
+   * Whether to enable short-term memory handling.
+   * @default false
+   */
+  enableShortTerm: boolean;
+}
+
 export interface AnkiParameters {
   /**
    * The multiplier applied to the current interval when a card lapses
@@ -69,6 +102,7 @@ export interface AnkiParameters {
 
 export interface BetterRecallSettings {
   ankiParameters: AnkiParameters;
+  fsrsParameters: FSRSParameters;
 }
 
 export const DEFAULT_SETTINGS: BetterRecallSettings = {
@@ -83,5 +117,16 @@ export const DEFAULT_SETTINGS: BetterRecallSettings = {
     hardIntervalMultiplier: 1.2,
     learningSteps: [1, 10],
     relearningSteps: [10],
+  },
+  fsrsParameters: {
+    w: [
+      0.40255, 1.18385, 3.173, 15.69105, 7.1949, 0.5345, 1.4604, 0.0046,
+      1.54575, 0.1192, 1.01925, 1.9395, 0.11, 0.29605, 2.2698, 0.2315, 2.9898,
+      0.51655, 0.6621,
+    ],
+    requestRetention: 0.9,
+    maximumInterval: 36500,
+    enableFuzz: false,
+    enableShortTerm: false,
   },
 };

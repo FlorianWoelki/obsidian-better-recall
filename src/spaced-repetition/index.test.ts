@@ -32,6 +32,7 @@ beforeEach(() => {
     state: CardState.NEW,
     stepIndex: 0,
     content: { front: 'Front', back: 'Back' },
+    metadata: { customField: 'value', priority: 1 },
   };
 });
 
