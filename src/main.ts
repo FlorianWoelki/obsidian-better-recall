@@ -27,7 +27,7 @@ export default class BetterRecallPlugin extends Plugin {
 
     await this.loadPluginData();
     // this.algorithm.setParameters(this.getSettings().ankiParameters);
-    this.algorithm.setParameters({});
+    this.algorithm.setParameters(this.getSettings().fsrsParameters);
     await this.decksManager.load();
 
     this.registerView(FILE_VIEW_TYPE, (leaf) => new RecallView(this, leaf));
