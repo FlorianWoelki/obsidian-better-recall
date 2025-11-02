@@ -1,7 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { v4 as uuidv4 } from 'uuid';
 import { FSRSAlgorithm } from './fsrs';
-import { CardState, CardType, SpacedRepetitionItem } from '.';
+import {
+  CardState,
+  CardType,
+  PerformanceResponse,
+  SpacedRepetitionItem,
+} from '.';
 import { Rating } from 'ts-fsrs';
 
 let fsrsAlgo: FSRSAlgorithm;
@@ -182,19 +187,19 @@ describe('calculatePotentialNextReviewDate', () => {
 
     const againDate = fsrsAlgo.calculatePotentialNextReviewDate(
       reviewItem,
-      Rating.Again,
+      PerformanceResponse.AGAIN,
     );
     const hardDate = fsrsAlgo.calculatePotentialNextReviewDate(
       reviewItem,
-      Rating.Hard,
+      PerformanceResponse.HARD,
     );
     const goodDate = fsrsAlgo.calculatePotentialNextReviewDate(
       reviewItem,
-      Rating.Good,
+      PerformanceResponse.GOOD,
     );
     const easyDate = fsrsAlgo.calculatePotentialNextReviewDate(
       reviewItem,
-      Rating.Easy,
+      PerformanceResponse.EASY,
     );
 
     // FSRS typically schedules: Again < Hard < Good < Easy

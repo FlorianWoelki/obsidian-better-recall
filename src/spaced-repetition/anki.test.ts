@@ -1,7 +1,12 @@
 import { v4 as uuidv4 } from 'uuid';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
-import { CardState, CardType, SpacedRepetitionItem } from '.';
-import { AnkiAlgorithm, PerformanceResponse } from './anki';
+import {
+  CardState,
+  CardType,
+  PerformanceResponse,
+  SpacedRepetitionItem,
+} from '.';
+import { AnkiAlgorithm } from './anki';
 
 let ankiAlgo: AnkiAlgorithm;
 
