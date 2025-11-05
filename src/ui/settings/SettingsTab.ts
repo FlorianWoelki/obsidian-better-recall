@@ -1,7 +1,17 @@
-import { Setting, PluginSettingTab, TextComponent } from 'obsidian';
+import {
+  Setting,
+  PluginSettingTab,
+  TextComponent,
+  DropdownComponent,
+} from 'obsidian';
 import BetterRecallPlugin from 'src/main';
 import { ResetButtonComponent } from '../components/ResetButtonComponent';
-import { AnkiParameters, DEFAULT_SETTINGS } from 'src/settings/data';
+import {
+  AnkiParameters,
+  DEFAULT_SETTINGS,
+  SchedulingAlgorithm,
+} from 'src/settings/data';
+import { __setFunctionName } from 'tslib';
 
 export class SettingsTab extends PluginSettingTab {
   private titleParameterMapping: Record<
@@ -66,6 +76,30 @@ export class SettingsTab extends PluginSettingTab {
   display() {
     this.containerEl.empty();
 
+    this.renderSchedulingAlgorithmDropdown();
+
+    this.renderAnkiParameters();
+  }
+
+  private renderSchedulingAlgorithmDropdown() {
+    const setting = new Setting(this.containerEl)
+      .setName('Scheduling Algorithm')
+      .setDesc('Change the scheduling algorithm for your spaced repetition.');
+    setting.addDropdown((dropdown) => {
+      // TODO: Refactor this logic here.
+      dropdown.addOptions({
+        [SchedulingAlgorithm.Anki]: 'Anki',
+        [SchedulingAlgorithm.FSRS]: 'FSRS',
+      });
+      dropdown.setValue(this.plugin.getSettings().schedulingAlgorithm);
+      dropdown.onChange(async (value) => {
+        this.plugin.setSchedulingAlgorithm(value as SchedulingAlgorithm);
+        await this.plugin.savePluginData();
+      });
+    });
+  }
+
+  private renderAnkiParameters(): void {
     Object.entries(this.titleParameterMapping).forEach(
       ([key, { parameter, description }]) => {
         let textComponent: TextComponent | null = null;

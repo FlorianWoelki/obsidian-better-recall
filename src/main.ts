@@ -5,6 +5,7 @@ import {
   BetterRecallData,
   BetterRecallSettings,
   DEFAULT_SETTINGS,
+  SchedulingAlgorithm,
 } from './settings/data';
 import { FILE_VIEW_TYPE, RecallView } from './ui/views';
 import { DecksManager } from './data/manager/decks-manager';
@@ -12,11 +13,11 @@ import { EventEmitter } from './data/event';
 import { FSRSAlgorithm } from './spaced-repetition/fsrs';
 import { AnkiAlgorithm } from './spaced-repetition/anki';
 import { SettingsTab } from './ui/settings/SettingsTab';
+import { SpacedRepetitionAlgorithm } from './spaced-repetition';
 
 export default class BetterRecallPlugin extends Plugin {
-  // public readonly algorithm = new AnkiAlgorithm();
-  public readonly algorithm = new FSRSAlgorithm();
-  public readonly decksManager = new DecksManager(this, this.algorithm);
+  public algorithm: SpacedRepetitionAlgorithm<unknown>;
+  public decksManager: DecksManager;
 
   private data: BetterRecallData;
   private eventEmitter: EventEmitter;
@@ -26,8 +27,8 @@ export default class BetterRecallPlugin extends Plugin {
     this.eventEmitter = new EventEmitter();
 
     await this.loadPluginData();
-    // this.algorithm.setParameters(this.getSettings().ankiParameters);
-    this.algorithm.setParameters(this.getSettings().fsrsParameters);
+    this.algorithm = this.initAlgorithm();
+    this.decksManager = new DecksManager(this, this.algorithm);
     await this.decksManager.load();
 
     this.registerView(FILE_VIEW_TYPE, (leaf) => new RecallView(this, leaf));
@@ -75,6 +76,20 @@ export default class BetterRecallPlugin extends Plugin {
     this.data = Object.assign({ settings: { ...DEFAULT_SETTINGS } }, {}, data);
   }
 
+  private initAlgorithm(): SpacedRepetitionAlgorithm<unknown> {
+    const settings = this.getSettings();
+
+    if (settings.schedulingAlgorithm === SchedulingAlgorithm.Anki) {
+      const algorithm = new AnkiAlgorithm();
+      algorithm.setParameters(settings.ankiParameters);
+      return algorithm;
+    }
+
+    const algorithm = new FSRSAlgorithm();
+    algorithm.setParameters(settings.fsrsParameters);
+    return algorithm;
+  }
+
   public getEventEmitter(): EventEmitter {
     return this.eventEmitter;
   }
@@ -99,6 +114,15 @@ export default class BetterRecallPlugin extends Plugin {
     if (typeof value === 'number') {
       this.getSettings().ankiParameters[key] = value;
     }
+  }
+
+  public async setSchedulingAlgorithm(
+    algorithm: SchedulingAlgorithm,
+  ): Promise<void> {
+    this.getSettings().schedulingAlgorithm = algorithm;
+    this.algorithm = this.initAlgorithm();
+    this.decksManager = new DecksManager(this, this.algorithm);
+    await this.decksManager.load();
   }
 
   public getData(): BetterRecallData {

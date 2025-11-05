@@ -5,6 +5,11 @@ export interface BetterRecallData {
   decks: DeckJsonStructure[];
 }
 
+export enum SchedulingAlgorithm {
+  Anki = 'anki',
+  FSRS = 'fsrs',
+}
+
 export interface FSRSParameters {
   /**
    * Array of 19 weight parameters that control the FSRS algorithm's
@@ -103,6 +108,14 @@ export interface AnkiParameters {
 export interface BetterRecallSettings {
   ankiParameters: AnkiParameters;
   fsrsParameters: FSRSParameters;
+  /**
+   * The scheduling algorithm to use for spaced repetition.
+   * - `anki`: Uses the traditional SM-2 based algorithm with ease factors.
+   * - `fsrs`: Uses the free spaced repetition scheduler, a modern algorithm
+   *   that optimizes intervals based on memory research.
+   * @default anki
+   */
+  schedulingAlgorithm: SchedulingAlgorithm;
 }
 
 export const DEFAULT_SETTINGS: BetterRecallSettings = {
@@ -129,4 +142,5 @@ export const DEFAULT_SETTINGS: BetterRecallSettings = {
     enableFuzz: false,
     enableShortTerm: false,
   },
+  schedulingAlgorithm: SchedulingAlgorithm.Anki,
 };
