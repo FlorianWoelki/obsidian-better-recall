@@ -69,6 +69,14 @@ export class SettingsTab extends PluginSettingTab {
     },
   };
 
+  private readonly schedulingAlgorithmLabels: Record<
+    SchedulingAlgorithm,
+    string
+  > = {
+    [SchedulingAlgorithm.Anki]: 'Anki',
+    [SchedulingAlgorithm.FSRS]: 'FSRS',
+  };
+
   constructor(private plugin: BetterRecallPlugin) {
     super(plugin.app, plugin);
   }
@@ -85,16 +93,15 @@ export class SettingsTab extends PluginSettingTab {
     const setting = new Setting(this.containerEl)
       .setName('Scheduling Algorithm')
       .setDesc('Change the scheduling algorithm for your spaced repetition.');
+
     setting.addDropdown((dropdown) => {
-      // TODO: Refactor this logic here.
-      dropdown.addOptions({
-        [SchedulingAlgorithm.Anki]: 'Anki',
-        [SchedulingAlgorithm.FSRS]: 'FSRS',
-      });
+      dropdown.addOptions(this.schedulingAlgorithmLabels);
       dropdown.setValue(this.plugin.getSettings().schedulingAlgorithm);
       dropdown.onChange(async (value) => {
-        this.plugin.setSchedulingAlgorithm(value as SchedulingAlgorithm);
-        await this.plugin.savePluginData();
+        if (this.isValidSchedulingAlgorithm(value)) {
+          this.plugin.setSchedulingAlgorithm(value);
+          await this.plugin.savePluginData();
+        }
       });
     });
   }
@@ -164,6 +171,14 @@ export class SettingsTab extends PluginSettingTab {
       .trim()
       .split(',')
       .map((text) => Number(text));
+  }
+
+  private isValidSchedulingAlgorithm(
+    value: string,
+  ): value is SchedulingAlgorithm {
+    return Object.values(SchedulingAlgorithm).includes(
+      value as SchedulingAlgorithm,
+    );
   }
 
   private isStringValidArray(input: string): boolean {
