@@ -10,6 +10,11 @@ export enum SchedulingAlgorithm {
   FSRS = 'fsrs',
 }
 
+export type ParameterMap = {
+  [SchedulingAlgorithm.Anki]: AnkiParameters;
+  [SchedulingAlgorithm.FSRS]: FSRSParameters;
+};
+
 export interface FSRSParameters {
   /**
    * Array of 19 weight parameters that control the FSRS algorithm's

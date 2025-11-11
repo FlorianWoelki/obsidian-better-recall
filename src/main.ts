@@ -5,6 +5,8 @@ import {
   BetterRecallData,
   BetterRecallSettings,
   DEFAULT_SETTINGS,
+  FSRSParameters,
+  ParameterMap,
   SchedulingAlgorithm,
 } from './settings/data';
 import { FILE_VIEW_TYPE, RecallView } from './ui/views';
@@ -98,22 +100,14 @@ export default class BetterRecallPlugin extends Plugin {
     return this.data.settings;
   }
 
-  public setAnkiParameter(
-    key: keyof AnkiParameters,
-    value: number | number[],
-  ): void {
-    if (key === 'learningSteps' || key === 'relearningSteps') {
-      if (!Array.isArray(value)) {
-        return;
-      }
-
-      this.getSettings().ankiParameters[key] = value;
-      return;
-    }
-
-    if (typeof value === 'number') {
-      this.getSettings().ankiParameters[key] = value;
-    }
+  public setParameter<
+    T extends SchedulingAlgorithm,
+    K extends keyof ParameterMap[T],
+  >(paramsType: T, key: K, value: ParameterMap[T][K]): void {
+    const params = this.getSettings()[
+      `${paramsType}Parameters`
+    ] as ParameterMap[T];
+    params[key] = value;
   }
 
   public async setSchedulingAlgorithm(
