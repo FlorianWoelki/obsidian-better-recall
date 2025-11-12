@@ -13,6 +13,7 @@ import {
   SchedulingAlgorithm,
 } from 'src/settings/data';
 import { __setFunctionName } from 'tslib';
+import { SettingConfig, SettingRenderer } from './Renderer';
 
 export class SettingsTab extends PluginSettingTab {
   private titleParameterMappingAnki: Record<
@@ -92,6 +93,11 @@ export class SettingsTab extends PluginSettingTab {
       parameter: 'enableShortTerm',
       description: 'Whether to enable short-term memory handling.',
     },
+    'Weight Parameters': {
+      parameter: 'w',
+      description:
+        'Array of 19 weight parameters (w[0] to w[18]) that control the FSRS memory model. Comma-separated values. These are trained on your review history to optimize scheduling.',
+    },
   };
 
   private readonly schedulingAlgorithmLabels: Record<
@@ -120,230 +126,72 @@ export class SettingsTab extends PluginSettingTab {
   }
 
   private renderSchedulingAlgorithmDropdown() {
-    const setting = new Setting(this.containerEl)
+    new Setting(this.containerEl)
       .setName('Scheduling Algorithm')
-      .setDesc('Change the scheduling algorithm for your spaced repetition.');
-
-    setting.addDropdown((dropdown) => {
-      dropdown.addOptions(this.schedulingAlgorithmLabels);
-      dropdown.setValue(this.plugin.getSettings().schedulingAlgorithm);
-      dropdown.onChange(async (value) => {
-        if (this.isValidSchedulingAlgorithm(value)) {
-          this.plugin.setSchedulingAlgorithm(value);
-          await this.plugin.savePluginData();
-          this.display();
-        }
+      .setDesc('Change the scheduling algorithm for your spaced repetition.')
+      .addDropdown((dropdown) => {
+        dropdown
+          .addOptions(this.schedulingAlgorithmLabels)
+          .setValue(this.plugin.getSettings().schedulingAlgorithm)
+          .onChange(async (value) => {
+            if (this.isValidSchedulingAlgorithm(value)) {
+              this.plugin.setSchedulingAlgorithm(value);
+              await this.plugin.savePluginData();
+              this.display();
+            }
+          });
       });
-    });
   }
 
   private renderFSRSParameters(): void {
-    Object.entries(this.titleParameterMappingFSRS).forEach(
-      ([key, { parameter, description }]) => {
-        const pluginValue = this.plugin.getSettings().fsrsParameters[parameter];
+    const renderer = new SettingRenderer(this.containerEl, () =>
+      this.plugin.savePluginData(),
+    );
+    const params = this.plugin.getSettings().fsrsParameters;
 
-        if (parameter === 'enableFuzz' || parameter === 'enableShortTerm') {
-          this.renderBooleanSetting(
-            key,
-            description,
-            parameter,
-            pluginValue as boolean,
-          );
-        } else {
-          this.renderNumericSetting(
-            key,
-            description,
-            parameter,
-            pluginValue as number,
-          );
+    Object.entries(this.titleParameterMappingFSRS).forEach(
+      ([name, { parameter, description }]) => {
+        const config: SettingConfig<any> = {
+          name,
+          description,
+          defaultValue: DEFAULT_SETTINGS.fsrsParameters[parameter],
+        };
+
+        if (parameter === 'w') {
+          config.arrayLength = 19;
         }
+
+        renderer.render(config, params[parameter], (value) =>
+          this.plugin.setParameter(SchedulingAlgorithm.FSRS, parameter, value),
+        );
       },
     );
-
-    this.renderWeightParameters();
-  }
-
-  private renderBooleanSetting(
-    name: string,
-    description: string,
-    parameter: keyof FSRSParameters,
-    value: boolean,
-  ): void {
-    const setting = new Setting(this.containerEl)
-      .setName(name)
-      .setDesc(description);
-
-    new ResetButtonComponent(setting.controlEl).onClick(async () => {
-      const defaultValue = DEFAULT_SETTINGS.fsrsParameters[parameter];
-      this.plugin.setParameter(
-        SchedulingAlgorithm.FSRS,
-        parameter,
-        defaultValue,
-      );
-      await this.plugin.savePluginData();
-      this.display();
-    });
-
-    setting.addToggle((toggle) => {
-      toggle.setValue(value);
-      toggle.onChange(async (newValue) => {
-        this.plugin.setParameter(SchedulingAlgorithm.FSRS, parameter, newValue);
-        await this.plugin.savePluginData();
-      });
-    });
-  }
-
-  private renderNumericSetting(
-    name: string,
-    description: string,
-    parameter: keyof FSRSParameters,
-    value: number,
-  ): void {
-    let textComponent: TextComponent | null = null;
-    const setting = new Setting(this.containerEl)
-      .setName(name)
-      .setDesc(description);
-
-    new ResetButtonComponent(setting.controlEl).onClick(async () => {
-      if (!textComponent) return;
-      const defaultValue = DEFAULT_SETTINGS.fsrsParameters[parameter];
-      textComponent.setValue(defaultValue.toString());
-      this.plugin.setParameter(
-        SchedulingAlgorithm.FSRS,
-        parameter,
-        defaultValue,
-      );
-      await this.plugin.savePluginData();
-    });
-
-    setting.addText((text) => {
-      textComponent = text;
-      text.setValue(value.toString());
-      text.onChange(async (input) => {
-        const trimmed = input.trim();
-        if (!isNaN(+trimmed)) {
-          this.plugin.setParameter(
-            SchedulingAlgorithm.FSRS,
-            parameter,
-            Number(trimmed),
-          );
-          await this.plugin.savePluginData();
-        }
-      });
-    });
-  }
-
-  private renderWeightParameters(): void {
-    const weights = this.plugin.getSettings().fsrsParameters.w;
-    let textComponent: TextComponent | null = null;
-
-    const setting = new Setting(this.containerEl)
-      .setName('Weight Parameters (w)')
-      .setDesc(
-        'Array of 19 weight parameters that control the FSRS memory model. Comma-separated values.',
-      );
-
-    new ResetButtonComponent(setting.controlEl).onClick(async () => {
-      if (!textComponent) return;
-      const defaultValue = DEFAULT_SETTINGS.fsrsParameters.w;
-      textComponent.setValue(defaultValue.join(','));
-      this.plugin.setParameter(SchedulingAlgorithm.FSRS, 'w', defaultValue);
-      await this.plugin.savePluginData();
-    });
-
-    setting.addText((text) => {
-      textComponent = text;
-      text.setValue(weights.join(','));
-      text.onChange(async (input) => {
-        const trimmed = input.trim();
-        if (this.isStringValidArray(trimmed)) {
-          const newValue = this.parseStringToArray(trimmed);
-          if (newValue.length === 19) {
-            this.plugin.setParameter(SchedulingAlgorithm.FSRS, 'w', newValue);
-            await this.plugin.savePluginData();
-          }
-        }
-      });
-    });
   }
 
   private renderAnkiParameters(): void {
+    const renderer = new SettingRenderer(this.containerEl, () =>
+      this.plugin.savePluginData(),
+    );
+    const params = this.plugin.getSettings().ankiParameters;
+
     Object.entries(this.titleParameterMappingAnki).forEach(
-      ([key, { parameter, description }]) => {
-        let textComponent: TextComponent | null = null;
-        const pluginValue = this.plugin.getSettings().ankiParameters[parameter];
-
-        const setting = new Setting(this.containerEl)
-          .setName(key)
-          .setDesc(description);
-
-        new ResetButtonComponent(setting.controlEl).onClick(async () => {
-          if (!textComponent) {
-            return;
-          }
-
-          const defaultValue = DEFAULT_SETTINGS.ankiParameters[parameter];
-          this.setValue(textComponent, defaultValue);
-          this.plugin.setParameter(
-            SchedulingAlgorithm.Anki,
-            parameter,
-            defaultValue,
-          );
-          await this.plugin.savePluginData();
-        });
-
-        setting.addText((text) => {
-          textComponent = text;
-          this.setValue(text, pluginValue);
-
-          text.onChange(async (input) => {
-            input = input.trim();
-            if (
-              parameter === 'learningSteps' ||
-              parameter === 'relearningSteps'
-            ) {
-              if (!this.isStringValidArray(input)) {
-                return;
-              }
-
-              const newValue = this.parseStringToArray(input);
-              this.plugin.setParameter(
-                SchedulingAlgorithm.Anki,
-                parameter,
-                newValue,
-              );
-            } else {
-              if (isNaN(+input)) {
-                return;
-              }
-
-              this.plugin.setParameter(
-                SchedulingAlgorithm.Anki,
-                parameter,
-                Number(input),
-              );
-            }
-
-            await this.plugin.savePluginData();
-          });
-        });
+      ([name, { parameter, description }]) => {
+        renderer.render(
+          {
+            name,
+            description,
+            defaultValue: DEFAULT_SETTINGS.ankiParameters[parameter],
+          },
+          params[parameter],
+          (value) =>
+            this.plugin.setParameter(
+              SchedulingAlgorithm.Anki,
+              parameter,
+              value,
+            ),
+        );
       },
     );
-  }
-
-  private setValue(text: TextComponent, value: number | number[]): void {
-    if (Array.isArray(value)) {
-      text.setValue(value.join(','));
-    } else {
-      text.setValue(value.toString());
-    }
-  }
-
-  private parseStringToArray(input: string): number[] {
-    return input
-      .trim()
-      .split(',')
-      .map((text) => Number(text));
   }
 
   private isValidSchedulingAlgorithm(
@@ -352,12 +200,5 @@ export class SettingsTab extends PluginSettingTab {
     return Object.values(SchedulingAlgorithm).includes(
       value as SchedulingAlgorithm,
     );
-  }
-
-  private isStringValidArray(input: string): boolean {
-    return input
-      .trim()
-      .split(',')
-      .every((text) => !isNaN(+text));
   }
 }
