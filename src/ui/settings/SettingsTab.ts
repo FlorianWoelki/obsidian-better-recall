@@ -1,9 +1,4 @@
-import {
-  Setting,
-  PluginSettingTab,
-  TextComponent,
-  DropdownComponent,
-} from 'obsidian';
+import { Setting, PluginSettingTab } from 'obsidian';
 import BetterRecallPlugin from 'src/main';
 import { ResetButtonComponent } from '../components/ResetButtonComponent';
 import {
@@ -23,51 +18,52 @@ export class SettingsTab extends PluginSettingTab {
     'Lapse interval': {
       parameter: 'lapseInterval',
       description:
-        'The multiplier applied to the current interval when a card lapses.',
+        'How much to shrink the wait time when you forget a card (e.g., 0.5 cuts it in half).',
     },
     'Easy interval': {
       parameter: 'easyInterval',
       description:
-        'The interval (in days) assigned to a card when rated as `easy` during learning/relearning.',
+        'How many days until you see a new card again if you mark it "easy" while learning.',
     },
     'Easy bonus': {
       parameter: 'easyBonus',
       description:
-        'The multiplier applied to the interval when a review card is rated as `easy`.',
+        'Extra time multiplier when you mark a review card "easy" (e.g., 1.3 adds 30% more time).',
     },
     'Graduating interval': {
       parameter: 'graduatingInterval',
       description:
-        'The interval (in days) assigned to a card when it graduates from learning to review.',
+        'The first review interval (in days) when a new card finishes its learning phase.',
     },
     'Min ease factor': {
       parameter: 'minEaseFactor',
-      description: 'The minimum allowed ease factor for a card.',
+      description:
+        'The lowest difficulty multiplier a card can have (prevents cards from getting stuck too short).',
     },
     'Ease factor decrement': {
       parameter: 'easeFactorDecrement',
       description:
-        'The amount by which the ease factor is decreased when a card is rated as `again`.',
+        'How much to reduce a card\'s difficulty multiplier when you mark it "again".',
     },
     'Ease factor increment': {
       parameter: 'easeFactorIncrement',
       description:
-        'The amount by which the ease factor is increased when a card is rated as `easy`.',
+        'Amount to adjust the difficulty multiplier when you mark cards "hard" (decreases) or "easy" (increases). Typically 0.15.',
     },
     'Hard interval multiplier': {
       parameter: 'hardIntervalMultiplier',
       description:
-        'The multiplier applied to the current interval when a review card is rated as `hard`.',
+        'Shrinks the next interval when you mark a card "hard" (e.g., 1.2 = 120% of current interval). Always increases by at least 1 day.',
     },
     'Learning steps': {
       parameter: 'learningSteps',
       description:
-        'Comma-separated step intervals (in minutes) for new cards in the learning phase.',
+        'Wait times (in minutes) for reviewing new cards. E.g., "1,10" means review after 1 minute, then 10 minutes.',
     },
     'Relearning steps': {
       parameter: 'relearningSteps',
       description:
-        'Comma-separated step intervals (in minutes) for cards in the relearning phase.',
+        'Wait times (in minutes) for reviewing forgotten cards. E.g., "10" means review once after 10 minutes.',
     },
   };
 
@@ -78,25 +74,27 @@ export class SettingsTab extends PluginSettingTab {
     'Request Retention': {
       parameter: 'requestRetention',
       description:
-        'Target retention rate (probability of remembering a card). Trade-off between retention and workload.',
+        'Your target success rate (e.g., 0.9 = aim to remember 90% of cards). Higher = more reviews but better retention.',
     },
     'Maximum Interval': {
       parameter: 'maximumInterval',
-      description: 'Maximum interval in days between reviews.',
+      description:
+        "The longest you'll wait between reviews (in days), no matter how well you know a card.",
     },
     'Enable Fuzz': {
       parameter: 'enableFuzz',
       description:
-        'Whether to add random variation to intervals to distribute reviews.',
+        'Adds slight randomness to review intervals to prevent cards from bunching up on the same days.',
     },
     'Enable Short Term': {
       parameter: 'enableShortTerm',
-      description: 'Whether to enable short-term memory handling.',
+      description:
+        'Enables short-term memory scheduling for cards in the learning phase (more frequent initial reviews).',
     },
     'Weight Parameters': {
       parameter: 'w',
       description:
-        'Array of 19 weight parameters (w[0] to w[18]) that control the FSRS memory model. Comma-separated values. These are trained on your review history to optimize scheduling.',
+        '19 numbers (w[0] to w[18]) that FSRS learns from your review history to personalize your scheduling. Should be optimized with at least 1,000 reviews.',
     },
   };
 
