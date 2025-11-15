@@ -46,12 +46,12 @@ export class SettingsTab extends PluginSettingTab {
     'Ease factor increment': {
       parameter: 'easeFactorIncrement',
       description:
-        'Amount to adjust the difficulty multiplier when you mark cards "hard" (decreases) or "easy" (increases). Typically 0.15.',
+        'Amount to adjust the difficulty multiplier. Increased when marked "easy", decreased when marked "hard". Typically 0.15.',
     },
     'Hard interval multiplier': {
       parameter: 'hardIntervalMultiplier',
       description:
-        'Shrinks the next interval when you mark a card "hard" (e.g., 1.2 = 120% of current interval). Always increases by at least 1 day.',
+        'Multiplier for the next interval when you mark a card "hard" (e.g., 1.2 = 120% of current interval, a 20% increase). Always increases by at least 1 day.',
     },
     'Learning steps': {
       parameter: 'learningSteps',
@@ -124,7 +124,9 @@ export class SettingsTab extends PluginSettingTab {
   private renderSchedulingAlgorithmDropdown() {
     new Setting(this.containerEl)
       .setName('Scheduling Algorithm')
-      .setDesc('Change the scheduling algorithm for your spaced repetition.')
+      .setDesc(
+        'Change the scheduling algorithm for your spaced repetition (WARNING: this may require resetting the review progress).',
+      )
       .addDropdown((dropdown) => {
         dropdown
           .addOptions(this.schedulingAlgorithmLabels)

@@ -47,6 +47,7 @@ export class FSRSAlgorithm extends SpacedRepetitionAlgorithm<FSRSParameters> {
   ): void {
     const fsrsCard = this.cardMap.get(item.id);
     if (!fsrsCard) {
+      console.warn(`FSRS card not found for item ${item.id}...`);
       return;
     }
 
