@@ -1,6 +1,5 @@
 import { Setting, PluginSettingTab } from 'obsidian';
 import BetterRecallPlugin from 'src/main';
-import { ResetButtonComponent } from '../components/ResetButtonComponent';
 import {
   AnkiParameters,
   DEFAULT_SETTINGS,

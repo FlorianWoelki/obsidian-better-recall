@@ -1,6 +1,5 @@
 import { Setting, TextComponent } from 'obsidian';
 import { ResetButtonComponent } from '../components/ResetButtonComponent';
-import { __setFunctionName } from 'tslib';
 
 type SettingValue = boolean | number | string | number[];
 
