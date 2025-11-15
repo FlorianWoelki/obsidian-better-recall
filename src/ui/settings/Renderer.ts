@@ -55,7 +55,7 @@ export class SettingRenderer {
 
     setting.addToggle((toggle) => {
       toggle.setValue(currentValue).onChange(async (value) => {
-        if (config.validate?.(value)) {
+        if (!config.validate || config.validate(value)) {
           onUpdate(value);
           await this.onSave();
         }
@@ -81,7 +81,7 @@ export class SettingRenderer {
       textComponent = text;
       text.setValue(currentValue.toString()).onChange(async (input) => {
         const num = Number(input.trim());
-        if (!isNaN(num) && config.validate?.(num)) {
+        if (!isNaN(num) && (!config.validate || config.validate(num))) {
           onUpdate(num);
           await this.onSave();
         }
@@ -107,7 +107,7 @@ export class SettingRenderer {
       textComponent = text;
       text.setValue(currentValue).onChange(async (input) => {
         const trimmed = input.trim();
-        if (config.validate?.(trimmed)) {
+        if (!config.validate || config.validate(trimmed)) {
           onUpdate(trimmed);
           await this.onSave();
         }
@@ -139,7 +139,7 @@ export class SettingRenderer {
           isValid &&
           (!config.arrayLength || parts.length === config.arrayLength)
         ) {
-          if (config.validate?.(parts)) {
+          if (!config.validate || config.validate(parts)) {
             onUpdate(parts);
             await this.onSave();
           }

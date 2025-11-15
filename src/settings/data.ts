@@ -26,7 +26,7 @@ export interface FSRSParameters {
    */
   w: number[];
   /**
-   * Target retention rate (probability of remember a card).
+   * Target retention rate (probability of remembering a card).
    * Trade-off between retention and workload
    * @default 0.9
    */

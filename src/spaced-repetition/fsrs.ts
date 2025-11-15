@@ -13,8 +13,6 @@ import {
   SpacedRepetitionItem,
 } from '.';
 
-type ValidRating = Exclude<Rating, Rating.Manual>;
-
 type FSRSRating = Exclude<Rating, Rating.Manual>;
 
 export class FSRSAlgorithm extends SpacedRepetitionAlgorithm<FSRSParameters> {
@@ -45,12 +43,8 @@ export class FSRSAlgorithm extends SpacedRepetitionAlgorithm<FSRSParameters> {
 
   public updateItemAfterReview(
     item: SpacedRepetitionItem,
-    performanceResponse: number,
+    performanceResponse: PerformanceResponse,
   ): void {
-    if (!this.isValidRating(performanceResponse)) {
-      return;
-    }
-
     const fsrsCard = this.cardMap.get(item.id);
     if (!fsrsCard) {
       return;
@@ -58,7 +52,8 @@ export class FSRSAlgorithm extends SpacedRepetitionAlgorithm<FSRSParameters> {
 
     const now = new Date();
     const scheduling = this.fsrs.repeat(fsrsCard, now);
-    const updatedCard = scheduling[performanceResponse].card;
+    const rating = this.mapPerformanceResponse(performanceResponse);
+    const updatedCard = scheduling[rating].card;
 
     this.cardMap.set(item.id, updatedCard);
     item.lastReviewDate = now;
@@ -106,10 +101,6 @@ export class FSRSAlgorithm extends SpacedRepetitionAlgorithm<FSRSParameters> {
       case PerformanceResponse.EASY:
         return Rating.Easy;
     }
-  }
-
-  private isValidRating(rating: Rating): rating is ValidRating {
-    return rating !== Rating.Manual;
   }
 
   private syncFromFSRSCard(

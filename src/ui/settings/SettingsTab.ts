@@ -6,7 +6,6 @@ import {
   FSRSParameters,
   SchedulingAlgorithm,
 } from 'src/settings/data';
-import { __setFunctionName } from 'tslib';
 import { SettingConfig, SettingRenderer } from './Renderer';
 
 export class SettingsTab extends PluginSettingTab {

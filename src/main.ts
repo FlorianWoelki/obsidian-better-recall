@@ -108,6 +108,7 @@ export default class BetterRecallPlugin extends Plugin {
       `${paramsType}Parameters`
     ] as ParameterMap[T];
     params[key] = value;
+    this.algorithm?.setParameters(params);
   }
 
   public async setSchedulingAlgorithm(

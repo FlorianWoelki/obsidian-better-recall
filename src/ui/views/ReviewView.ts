@@ -3,7 +3,6 @@ import {
   PerformanceResponse,
   SpacedRepetitionItem,
 } from 'src/spaced-repetition';
-import { Rating } from 'ts-fsrs';
 import { RecallView } from '.';
 import { RecallSubView } from './SubView';
 import { Deck } from 'src/data/deck';

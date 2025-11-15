@@ -7,7 +7,6 @@ import {
   PerformanceResponse,
   SpacedRepetitionItem,
 } from '.';
-import { Rating } from 'ts-fsrs';
 
 let fsrsAlgo: FSRSAlgorithm;
 
@@ -48,7 +47,7 @@ describe('getNextReviewItem', () => {
     fsrsAlgo.startNewSession();
 
     const reviewItem = fsrsAlgo.getNextReviewItem() as SpacedRepetitionItem;
-    fsrsAlgo.updateItemAfterReview(reviewItem, Rating.Good);
+    fsrsAlgo.updateItemAfterReview(reviewItem, PerformanceResponse.GOOD);
 
     const nextReview = reviewItem.nextReviewDate;
     if (nextReview) {
@@ -67,7 +66,7 @@ describe('updateItemAfterReview', () => {
 
     const reviewItem = fsrsAlgo.getNextReviewItem() as SpacedRepetitionItem;
     const beforeIteration = reviewItem.iteration;
-    fsrsAlgo.updateItemAfterReview(reviewItem, Rating.Again);
+    fsrsAlgo.updateItemAfterReview(reviewItem, PerformanceResponse.AGAIN);
 
     expect(reviewItem.state).toBe(CardState.LEARNING);
     expect(reviewItem.iteration).toBe(beforeIteration + 1);
@@ -82,7 +81,7 @@ describe('updateItemAfterReview', () => {
 
     const reviewItem = fsrsAlgo.getNextReviewItem() as SpacedRepetitionItem;
     const beforeIteration = reviewItem.iteration;
-    fsrsAlgo.updateItemAfterReview(reviewItem, Rating.Good);
+    fsrsAlgo.updateItemAfterReview(reviewItem, PerformanceResponse.GOOD);
 
     expect(reviewItem.state).toBe(CardState.LEARNING);
     expect(reviewItem.iteration).toBe(beforeIteration + 1);
@@ -97,7 +96,7 @@ describe('updateItemAfterReview', () => {
 
     const reviewItem = fsrsAlgo.getNextReviewItem() as SpacedRepetitionItem;
     const beforeIteration = reviewItem.iteration;
-    fsrsAlgo.updateItemAfterReview(reviewItem, Rating.Hard);
+    fsrsAlgo.updateItemAfterReview(reviewItem, PerformanceResponse.HARD);
 
     expect(reviewItem.state).toBe(CardState.LEARNING);
     expect(reviewItem.iteration).toBe(beforeIteration + 1);
@@ -112,27 +111,12 @@ describe('updateItemAfterReview', () => {
 
     const reviewItem = fsrsAlgo.getNextReviewItem() as SpacedRepetitionItem;
     const beforeIteration = reviewItem.iteration;
-    fsrsAlgo.updateItemAfterReview(reviewItem, Rating.Easy);
+    fsrsAlgo.updateItemAfterReview(reviewItem, PerformanceResponse.EASY);
 
     expect(reviewItem.state).toBe(CardState.REVIEW);
     expect(reviewItem.iteration).toBe(beforeIteration + 1);
     expect(reviewItem.lastReviewDate).toBeDefined();
     expect(reviewItem.nextReviewDate).toBeDefined();
-  });
-
-  it('should not update item for MANUAL rating', () => {
-    const item = createSpacedRepetitionItem('Test item');
-    fsrsAlgo.addItem(item);
-    fsrsAlgo.startNewSession();
-
-    const reviewItem = fsrsAlgo.getNextReviewItem() as SpacedRepetitionItem;
-    const beforeIteration = reviewItem.iteration;
-    const beforeState = reviewItem.state;
-
-    fsrsAlgo.updateItemAfterReview(reviewItem, Rating.Manual);
-
-    expect(reviewItem.iteration).toBe(beforeIteration);
-    expect(reviewItem.state).toBe(beforeState);
   });
 });
 
@@ -157,7 +141,7 @@ describe('queuedItems behavior', () => {
     fsrsAlgo.startNewSession();
 
     const reviewItem = fsrsAlgo.getNextReviewItem() as SpacedRepetitionItem;
-    fsrsAlgo.updateItemAfterReview(reviewItem, Rating.Again);
+    fsrsAlgo.updateItemAfterReview(reviewItem, PerformanceResponse.AGAIN);
 
     const nextItem = fsrsAlgo.getNextReviewItem();
     if (nextItem) {
@@ -171,7 +155,7 @@ describe('queuedItems behavior', () => {
     fsrsAlgo.startNewSession();
 
     const reviewItem = fsrsAlgo.getNextReviewItem() as SpacedRepetitionItem;
-    fsrsAlgo.updateItemAfterReview(reviewItem, Rating.Easy);
+    fsrsAlgo.updateItemAfterReview(reviewItem, PerformanceResponse.EASY);
 
     expect(fsrsAlgo.getNextReviewItem()).toBeNull();
   });
