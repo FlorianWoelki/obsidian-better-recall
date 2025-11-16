@@ -1,11 +1,9 @@
 import { Plugin } from 'obsidian';
 import { registerCommands } from './commands';
 import {
-  AnkiParameters,
   BetterRecallData,
   BetterRecallSettings,
   DEFAULT_SETTINGS,
-  FSRSParameters,
   ParameterMap,
   SchedulingAlgorithm,
 } from './settings/data';

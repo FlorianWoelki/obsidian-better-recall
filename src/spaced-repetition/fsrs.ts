@@ -8,6 +8,7 @@ import {
 } from 'ts-fsrs';
 import {
   CardState,
+  CardType,
   PerformanceResponse,
   SpacedRepetitionAlgorithm,
   SpacedRepetitionItem,
@@ -27,6 +28,29 @@ export class FSRSAlgorithm extends SpacedRepetitionAlgorithm<FSRSParameters> {
 
   public getDefaultValues(): FSRSParameters {
     return generatorParameters();
+  }
+
+  public createNewCard(
+    id: string,
+    content: { front: string; back: string },
+  ): SpacedRepetitionItem {
+    const now = new Date();
+    const fsrsCard = createEmptyCard<FSRSCard>(now);
+
+    const item: SpacedRepetitionItem = {
+      id,
+      type: CardType.BASIC,
+      content,
+      state: CardState.NEW,
+      iteration: 0,
+      metadata: {}, // will be filled by syncFromFSRSCard
+    };
+
+    this.cardMap.set(id, fsrsCard);
+    this.syncFromFSRSCard(item, fsrsCard);
+    item.nextReviewDate = fsrsCard.due;
+
+    return item;
   }
 
   public scheduleReview(item: SpacedRepetitionItem): void {

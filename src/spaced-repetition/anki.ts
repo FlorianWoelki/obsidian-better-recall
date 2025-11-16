@@ -1,6 +1,7 @@
 import { AnkiParameters, DEFAULT_SETTINGS } from '../settings/data';
 import {
   CardState,
+  CardType,
   PerformanceResponse,
   SpacedRepetitionAlgorithm,
   SpacedRepetitionItem,
@@ -20,35 +21,56 @@ export class AnkiAlgorithm extends SpacedRepetitionAlgorithm<AnkiParameters> {
     return DEFAULT_SETTINGS.ankiParameters;
   }
 
+  public createNewCard(
+    id: string,
+    content: { front: string; back: string },
+  ): SpacedRepetitionItem {
+    const item: SpacedRepetitionItem = {
+      id,
+      type: CardType.BASIC,
+      content,
+      state: CardState.NEW,
+      iteration: 0,
+      metadata: {
+        easeFactor: 2.5,
+        interval: 0,
+        stepIndex: 0,
+      },
+    };
+
+    this.scheduleReview(item);
+    return item;
+  }
+
   private get updateStrategies() {
     return {
       [AnkiRating.AGAIN]: (item: SpacedRepetitionItem) => {
-        item.easeFactor = Math.max(
+        item.metadata.easeFactor = Math.max(
           this.parameters.minEaseFactor,
-          item.easeFactor - this.parameters.easeFactorDecrement,
+          item.metadata.easeFactor - this.parameters.easeFactorDecrement,
         );
         if (item.state === CardState.REVIEW) {
           item.state = CardState.RELEARNING;
-          item.stepIndex = 0;
+          item.metadata.stepIndex = 0;
         } else {
-          item.stepIndex = 0;
+          item.metadata.stepIndex = 0;
         }
-        return item.interval * this.parameters.lapseInterval;
+        return item.metadata.interval * this.parameters.lapseInterval;
       },
       [AnkiRating.HARD]: (item: SpacedRepetitionItem) => {
-        item.easeFactor = Math.max(
+        item.metadata.easeFactor = Math.max(
           this.parameters.minEaseFactor,
-          item.easeFactor - this.parameters.easeFactorIncrement,
+          item.metadata.easeFactor - this.parameters.easeFactorIncrement,
         );
         if (
           item.state === CardState.LEARNING ||
           item.state === CardState.RELEARNING
         ) {
-          item.stepIndex += 1;
+          item.metadata.stepIndex += 1;
         }
         return Math.max(
-          item.interval * this.parameters.hardIntervalMultiplier,
-          item.interval + 1,
+          item.metadata.interval * this.parameters.hardIntervalMultiplier,
+          item.metadata.interval + 1,
         );
       },
       [AnkiRating.GOOD]: (item: SpacedRepetitionItem) => {
@@ -57,22 +79,25 @@ export class AnkiAlgorithm extends SpacedRepetitionAlgorithm<AnkiParameters> {
           item.state === CardState.LEARNING ||
           item.state === CardState.RELEARNING
         ) {
-          item.stepIndex += 1;
+          item.metadata.stepIndex += 1;
           const steps =
             item.state === CardState.LEARNING
               ? this.parameters.learningSteps
               : this.parameters.relearningSteps;
-          if (item.stepIndex >= steps.length) {
+          if (item.metadata.stepIndex >= steps.length) {
             item.state = CardState.REVIEW;
             return this.parameters.graduatingInterval;
           }
 
           return 0;
         }
-        return Math.max(item.interval * item.easeFactor, item.interval + 1);
+        return Math.max(
+          item.metadata.interval * item.metadata.easeFactor,
+          item.metadata.interval + 1,
+        );
       },
       [AnkiRating.EASY]: (item: SpacedRepetitionItem) => {
-        item.easeFactor += this.parameters.easeFactorIncrement;
+        item.metadata.easeFactor += this.parameters.easeFactorIncrement;
         if (
           item.state === CardState.NEW ||
           item.state === CardState.LEARNING ||
@@ -82,7 +107,11 @@ export class AnkiAlgorithm extends SpacedRepetitionAlgorithm<AnkiParameters> {
           return this.parameters.easyInterval;
         }
 
-        return item.interval * item.easeFactor * this.parameters.easyBonus;
+        return (
+          item.metadata.interval *
+          item.metadata.easeFactor *
+          this.parameters.easyBonus
+        );
       },
     };
   }
@@ -96,7 +125,7 @@ export class AnkiAlgorithm extends SpacedRepetitionAlgorithm<AnkiParameters> {
 
     if (newItem.state === CardState.NEW) {
       newItem.state = CardState.LEARNING;
-      newItem.stepIndex = 0;
+      newItem.metadata.stepIndex = 0;
     }
 
     const newInterval = this.updateStrategies[rating](newItem);
@@ -108,9 +137,12 @@ export class AnkiAlgorithm extends SpacedRepetitionAlgorithm<AnkiParameters> {
     if (
       (newItem.state === CardState.LEARNING ||
         newItem.state === CardState.RELEARNING) &&
-      newItem.stepIndex < steps.length
+      newItem.metadata.stepIndex < steps.length
     ) {
-      return this.calculateNextReviewDate(steps[newItem.stepIndex], true);
+      return this.calculateNextReviewDate(
+        steps[newItem.metadata.stepIndex],
+        true,
+      );
     } else {
       return this.calculateNextReviewDate(newInterval);
     }
@@ -127,19 +159,23 @@ export class AnkiAlgorithm extends SpacedRepetitionAlgorithm<AnkiParameters> {
         item.state === CardState.LEARNING
           ? this.parameters.learningSteps
           : this.parameters.relearningSteps;
-      if (item.stepIndex < steps.length) {
+      if (item.metadata.stepIndex < steps.length) {
         item.nextReviewDate = this.calculateNextReviewDate(
-          steps[item.stepIndex],
+          steps[item.metadata.stepIndex],
           true,
         );
       } else {
-        item.nextReviewDate = this.calculateNextReviewDate(item.interval);
+        item.nextReviewDate = this.calculateNextReviewDate(
+          item.metadata.interval,
+        );
         item.state = CardState.REVIEW;
       }
     } else if (item.state === CardState.NEW) {
       item.nextReviewDate = new Date();
     } else {
-      item.nextReviewDate = this.calculateNextReviewDate(item.interval);
+      item.nextReviewDate = this.calculateNextReviewDate(
+        item.metadata.interval,
+      );
     }
 
     this.addToQueueIfDueToday(item);
@@ -157,10 +193,10 @@ export class AnkiAlgorithm extends SpacedRepetitionAlgorithm<AnkiParameters> {
 
     if (item.state === CardState.NEW) {
       item.state = CardState.LEARNING;
-      item.stepIndex = 0;
+      item.metadata.stepIndex = 0;
     }
 
-    item.interval = this.updateStrategies[rating](item);
+    item.metadata.interval = this.updateStrategies[rating](item);
     item.iteration += 1;
 
     this.scheduleReview(item);

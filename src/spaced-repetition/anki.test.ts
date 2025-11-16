@@ -15,11 +15,13 @@ function createSpacedRepetitionItem(content: string): SpacedRepetitionItem {
     id: uuidv4(),
     content: { front: content, back: content },
     type: CardType.BASIC,
-    easeFactor: 2.5,
-    interval: 0,
     iteration: 0,
     state: CardState.NEW,
-    stepIndex: 0,
+    metadata: {
+      easeFactor: 2.5,
+      interval: 0,
+      stepIndex: 0,
+    },
   };
 }
 
@@ -61,8 +63,8 @@ describe('updateItemAfterReview', () => {
     ankiAlgo.updateItemAfterReview(reviewItem, PerformanceResponse.AGAIN);
 
     expect(reviewItem?.state).toBe(CardState.LEARNING);
-    expect(reviewItem?.stepIndex).toBe(0);
-    expect(reviewItem?.interval).toBe(0);
+    expect(reviewItem?.metadata.stepIndex).toBe(0);
+    expect(reviewItem?.metadata.interval).toBe(0);
   });
 
   it('should update item correctly for GOOD response', () => {
@@ -74,7 +76,7 @@ describe('updateItemAfterReview', () => {
     ankiAlgo.updateItemAfterReview(reviewItem, PerformanceResponse.GOOD);
 
     expect(reviewItem?.state).toBe(CardState.LEARNING);
-    expect(reviewItem?.stepIndex).toBe(1);
+    expect(reviewItem?.metadata.stepIndex).toBe(1);
 
     vi.advanceTimersByTime(10 * 60 * 1000); // Advance 10 minutes
 
@@ -82,13 +84,13 @@ describe('updateItemAfterReview', () => {
     ankiAlgo.updateItemAfterReview(reviewItem, PerformanceResponse.GOOD);
 
     expect(reviewItem?.state).toBe(CardState.REVIEW);
-    expect(item.interval).toBe(1);
+    expect(item.metadata.interval).toBe(1);
   });
 
   it('should update item correctly for HARD response', () => {
     const item = createSpacedRepetitionItem('Test item');
     item.state = CardState.REVIEW;
-    item.interval = 10;
+    item.metadata.interval = 10;
     ankiAlgo.addItem(item);
     item.nextReviewDate = new Date();
     ankiAlgo.startNewSession();
@@ -96,14 +98,14 @@ describe('updateItemAfterReview', () => {
     const reviewItem = ankiAlgo.getNextReviewItem() as SpacedRepetitionItem;
     ankiAlgo.updateItemAfterReview(reviewItem, PerformanceResponse.HARD);
 
-    expect(reviewItem?.easeFactor).toBe(2.35);
-    expect(reviewItem?.interval).toBe(12);
+    expect(reviewItem?.metadata.easeFactor).toBe(2.35);
+    expect(reviewItem?.metadata.interval).toBe(12);
   });
 
   it('should update item correctly for EASY response', () => {
     const item = createSpacedRepetitionItem('Test item');
     item.state = CardState.REVIEW;
-    item.interval = 10;
+    item.metadata.interval = 10;
     ankiAlgo.addItem(item);
     item.nextReviewDate = new Date();
     ankiAlgo.startNewSession();
@@ -111,8 +113,8 @@ describe('updateItemAfterReview', () => {
     const reviewItem = ankiAlgo.getNextReviewItem() as SpacedRepetitionItem;
     ankiAlgo.updateItemAfterReview(reviewItem, PerformanceResponse.EASY);
 
-    expect(reviewItem?.easeFactor).toBe(2.65);
-    expect(reviewItem?.interval).toBeCloseTo(34.45, 2);
+    expect(reviewItem?.metadata.easeFactor).toBe(2.65);
+    expect(reviewItem?.metadata.interval).toBeCloseTo(34.45, 2);
   });
 });
 

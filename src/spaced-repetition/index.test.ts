@@ -26,11 +26,8 @@ beforeEach(() => {
   mockItem = {
     id: '1',
     type: CardType.BASIC,
-    easeFactor: 2.5,
-    interval: 1,
     iteration: 0,
     state: CardState.NEW,
-    stepIndex: 0,
     content: { front: 'Front', back: 'Back' },
     metadata: { customField: 'value', priority: 1 },
   };

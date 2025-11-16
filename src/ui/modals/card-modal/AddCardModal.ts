@@ -1,10 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
 import BetterRecallPlugin from '../../../main';
-import {
-  CardState,
-  CardType,
-  SpacedRepetitionItem,
-} from 'src/spaced-repetition';
 import { CardModal } from './CardModal';
 
 export class AddCardModal extends CardModal {
@@ -31,20 +26,11 @@ export class AddCardModal extends CardModal {
     this.frontInputComp.setValue('');
     this.backInputComp.setValue('');
 
-    // TODO: Refactor, make it easier
-    const card: SpacedRepetitionItem = {
-      id: uuidv4(),
-      type: CardType.BASIC,
-      content: {
-        front,
-        back,
-      },
-      state: CardState.NEW,
-      easeFactor: 2.5,
-      interval: 0,
-      iteration: 0,
-      stepIndex: 0,
-    };
+    const card = this.plugin.algorithm.createNewCard(uuidv4(), {
+      front,
+      back,
+    });
+
     this.plugin.decksManager.addCard(deckId, card);
     this.plugin
       .getEventEmitter()

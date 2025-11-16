@@ -15,11 +15,9 @@ function createSpacedRepetitionItem(content: string): SpacedRepetitionItem {
     id: uuidv4(),
     content: { front: content, back: content },
     type: CardType.BASIC,
-    easeFactor: 2.5,
-    interval: 0,
     iteration: 0,
     state: CardState.NEW,
-    stepIndex: 0,
+    metadata: {},
   };
 }
 

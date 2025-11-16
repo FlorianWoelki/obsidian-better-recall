@@ -1,4 +1,5 @@
 import { DeckJsonStructure } from 'src/data/deck';
+import { generatorParameters, Steps } from 'ts-fsrs';
 
 export interface BetterRecallData {
   settings: BetterRecallSettings;
@@ -15,36 +16,14 @@ export type ParameterMap = {
   [SchedulingAlgorithm.FSRS]: FSRSParameters;
 };
 
+// Parameters are taken and adapted from ts-fsrs
 export interface FSRSParameters {
-  /**
-   * Array of 19 weight parameters that control the FSRS algorithm's
-   * memory model. These are typically optimized based on user review
-   * history.
-   * @default [0.40255, 1.18385, 3.173, 15.69105, 7.1949, 0.5345, 1.4604,
-   *          0.0046, 1.54575, 0.1192, 1.01925, 1.9395, 0.11, 0.29605,
-   *          2.2698, 0.2315, 2.9898, 0.51655, 0.6621]
-   */
-  w: number[];
-  /**
-   * Target retention rate (probability of remembering a card).
-   * Trade-off between retention and workload
-   * @default 0.9
-   */
+  w: number[] | readonly number[];
   requestRetention: number;
-  /**
-   * Maximum interval in days between reviews.
-   * @default 36500
-   */
   maximumInterval: number;
-  /**
-   * Whether to add random variation to intervals to distribute reviews.
-   * @default false
-   */
+  learningSteps: Steps;
+  relearningSteps: Steps;
   enableFuzz: boolean;
-  /**
-   * Whether to enable short-term memory handling.
-   * @default false
-   */
   enableShortTerm: boolean;
 }
 
@@ -118,11 +97,13 @@ export interface BetterRecallSettings {
    * - `anki`: Uses the traditional SM-2 based algorithm with ease factors.
    * - `fsrs`: Uses the free spaced repetition scheduler, a modern algorithm
    *   that optimizes intervals based on memory research.
-   * @default anki
+   * @default fsrs
    */
   schedulingAlgorithm: SchedulingAlgorithm;
 }
 
+// TODO: Maybe refactor this instead of declaring it here.
+const generatedFSRSParameters = generatorParameters();
 export const DEFAULT_SETTINGS: BetterRecallSettings = {
   ankiParameters: {
     lapseInterval: 0.5,
@@ -137,15 +118,13 @@ export const DEFAULT_SETTINGS: BetterRecallSettings = {
     relearningSteps: [10],
   },
   fsrsParameters: {
-    w: [
-      0.40255, 1.18385, 3.173, 15.69105, 7.1949, 0.5345, 1.4604, 0.0046,
-      1.54575, 0.1192, 1.01925, 1.9395, 0.11, 0.29605, 2.2698, 0.2315, 2.9898,
-      0.51655, 0.6621,
-    ],
-    requestRetention: 0.9,
-    maximumInterval: 36500,
-    enableFuzz: false,
-    enableShortTerm: false,
+    w: generatedFSRSParameters.w,
+    learningSteps: generatedFSRSParameters.learning_steps,
+    relearningSteps: generatedFSRSParameters.relearning_steps,
+    requestRetention: generatedFSRSParameters.request_retention,
+    maximumInterval: generatedFSRSParameters.maximum_interval,
+    enableFuzz: generatedFSRSParameters.enable_fuzz,
+    enableShortTerm: generatedFSRSParameters.enable_short_term,
   },
-  schedulingAlgorithm: SchedulingAlgorithm.Anki,
+  schedulingAlgorithm: SchedulingAlgorithm.FSRS,
 };

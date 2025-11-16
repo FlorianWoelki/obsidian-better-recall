@@ -21,12 +21,10 @@ export interface ISpacedRepetitionItem {
   type: CardType;
   lastReviewDate?: Date;
   nextReviewDate?: Date;
-  easeFactor: number;
-  interval: number;
-  iteration: number;
   state: CardState;
-  stepIndex: number;
-  metadata?: Record<string, any>;
+  iteration: number;
+  // This field contains all the metadata for the scheduling algorithm.
+  metadata: Record<string, any>;
 }
 
 export interface BasicSpacedRepetitionItem extends ISpacedRepetitionItem {
@@ -119,6 +117,17 @@ export abstract class SpacedRepetitionAlgorithm<T> {
     item: SpacedRepetitionItem,
     performanceResponse: PerformanceResponse,
   ): void;
+
+  /**
+   * Creates a new card with proper initialization for the algorithm.
+   * @param id The unique identifier for the card.
+   * @param content The card content (front/back for basic cards).
+   * @returns A new SpacedRepetitionItem properly initialized for the algorithm.
+   */
+  public abstract createNewCard(
+    id: string,
+    content: { front: string; back: string },
+  ): SpacedRepetitionItem;
 
   public addItem(item: SpacedRepetitionItem): void {
     this.items.push(item);

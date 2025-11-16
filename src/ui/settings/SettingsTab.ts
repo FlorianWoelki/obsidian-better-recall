@@ -69,30 +69,35 @@ export class SettingsTab extends PluginSettingTab {
     string,
     { description: string; parameter: keyof FSRSParameters }
   > = {
-    'Request Retention': {
+    'Learning steps': {
+      parameter: 'learningSteps',
+      description:
+        'Delays for new cards before they enter long‑term review (e.g. ["1m","10m"]). Shorter or more steps = more initial drilling on the first day.',
+    },
+    'Relearning steps': {
+      parameter: 'relearningSteps',
+      description:
+        'Delays for cards you forgot after they were in review (e.g. ["10m"]). Controls how aggressively lapsed cards are re‑drilled before returning to normal scheduling.',
+    },
+    'Request retention': {
       parameter: 'requestRetention',
       description:
         'Your target success rate (e.g., 0.9 = aim to remember 90% of cards). Higher = more reviews but better retention.',
     },
-    'Maximum Interval': {
+    'Maximum interval': {
       parameter: 'maximumInterval',
       description:
         "The longest you'll wait between reviews (in days), no matter how well you know a card.",
     },
-    'Enable Fuzz': {
+    'Enable fuzz': {
       parameter: 'enableFuzz',
       description:
         'Adds slight randomness to review intervals to prevent cards from bunching up on the same days.',
     },
-    'Enable Short Term': {
+    'Enable short term': {
       parameter: 'enableShortTerm',
       description:
         'Enables short-term memory scheduling for cards in the learning phase (more frequent initial reviews).',
-    },
-    'Weight Parameters': {
-      parameter: 'w',
-      description:
-        '19 numbers (w[0] to w[18]) that FSRS learns from your review history to personalize your scheduling. Should be optimized with at least 1,000 reviews.',
     },
   };
 
@@ -125,7 +130,7 @@ export class SettingsTab extends PluginSettingTab {
     new Setting(this.containerEl)
       .setName('Scheduling Algorithm')
       .setDesc(
-        'Change the scheduling algorithm for your spaced repetition (WARNING: this may require resetting the review progress).',
+        'Change the scheduling algorithm for your spaced repetition (WARNING: this resets the reviewing progress on all decks).',
       )
       .addDropdown((dropdown) => {
         dropdown
@@ -154,10 +159,6 @@ export class SettingsTab extends PluginSettingTab {
           description,
           defaultValue: DEFAULT_SETTINGS.fsrsParameters[parameter],
         };
-
-        if (parameter === 'w') {
-          config.arrayLength = 19;
-        }
 
         renderer.render(config, params[parameter], (value) =>
           this.plugin.setParameter(SchedulingAlgorithm.FSRS, parameter, value),
