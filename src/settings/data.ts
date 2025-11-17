@@ -1,9 +1,11 @@
 import { DeckJsonStructure } from 'src/data/deck';
 import { generatorParameters, Steps } from 'ts-fsrs';
 
+export const CURRENT_SCHEMA_VERSION = 2;
 export interface BetterRecallData {
   settings: BetterRecallSettings;
   decks: DeckJsonStructure[];
+  schemaVersion?: number;
 }
 
 export enum SchedulingAlgorithm {

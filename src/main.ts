@@ -3,6 +3,7 @@ import { registerCommands } from './commands';
 import {
   BetterRecallData,
   BetterRecallSettings,
+  CURRENT_SCHEMA_VERSION,
   DEFAULT_SETTINGS,
   ParameterMap,
   SchedulingAlgorithm,
@@ -14,6 +15,7 @@ import { FSRSAlgorithm } from './spaced-repetition/fsrs';
 import { AnkiAlgorithm } from './spaced-repetition/anki';
 import { SettingsTab } from './ui/settings/SettingsTab';
 import { SpacedRepetitionAlgorithm } from './spaced-repetition';
+import { runMigrations } from './migrations';
 
 export default class BetterRecallPlugin extends Plugin {
   public algorithm: SpacedRepetitionAlgorithm<unknown>;
@@ -61,19 +63,42 @@ export default class BetterRecallPlugin extends Plugin {
    * Loads and initializes the data including the settings for the plugin.
    * First, it loads the existing data from the plugin and then checks for any missing
    * settings and applies default values where necessary.
+   * It also runs the migrations, if the schema version is outdated.
    * Finally, it populates the `data` property with this loaded data.
    * @returns Promise that resolves when the settings have been loaded and initialized.
    */
   private async loadPluginData(): Promise<void> {
     const data = await this.loadData();
+
     if (data) {
       Object.entries(DEFAULT_SETTINGS).forEach(([key, value]) => {
         if (data.settings[key] === undefined) {
           data.settings[key] = value;
         }
       });
+
+      this.data = Object.assign(
+        { settings: { ...DEFAULT_SETTINGS } },
+        {},
+        data,
+      );
+
+      const migrated = runMigrations(this.data);
+      if (migrated) {
+        await this.savePluginData();
+      }
+    } else {
+      // Fresh install, no need for migrations or something else.
+      this.data = Object.assign(
+        {
+          settings: { ...DEFAULT_SETTINGS },
+          decks: [],
+          schemaVersion: CURRENT_SCHEMA_VERSION,
+        },
+        {},
+        data,
+      );
     }
-    this.data = Object.assign({ settings: { ...DEFAULT_SETTINGS } }, {}, data);
   }
 
   private initAlgorithm(): SpacedRepetitionAlgorithm<unknown> {
