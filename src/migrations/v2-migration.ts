@@ -1,8 +1,4 @@
 import { BetterRecallData } from 'src/settings/data';
-import {
-  BasicSpacedRepetitionItem,
-  ISpacedRepetitionItem,
-} from 'src/spaced-repetition';
 
 interface OldAnkiItem {
   type: number;
@@ -19,6 +15,16 @@ interface OldAnkiItem {
   nextReviewDate?: string;
 }
 
+interface NewCardStructure {
+  type: number;
+  content: { front: string; back: string };
+  lastReviewDate?: Date;
+  nextReviewDate?: Date;
+  state: number;
+  iteration: number;
+  metadata: Record<string, any>;
+}
+
 const isOldAnkiItem = (obj: any): obj is OldAnkiItem => {
   if (!obj || typeof obj !== 'object') {
     return false;
@@ -32,10 +38,7 @@ const isOldAnkiItem = (obj: any): obj is OldAnkiItem => {
   return typeof obj.type === 'number' && hasOldScheduling;
 };
 
-const migrateOldItem = (
-  id: string,
-  oldItem: OldAnkiItem,
-): Omit<BasicSpacedRepetitionItem, 'id'> => {
+const migrateOldItem = (oldItem: OldAnkiItem): NewCardStructure => {
   return {
     content: oldItem.content,
     type: oldItem.type,
@@ -69,13 +72,13 @@ export const migrateToV2 = (data: BetterRecallData): void => {
       continue;
     }
 
-    const newItems: Record<string, Omit<ISpacedRepetitionItem, 'id'>> = {};
+    const newItems: Record<string, NewCardStructure> = {};
 
     for (const [id, rawItem] of Object.entries(items)) {
       if (isOldAnkiItem(rawItem)) {
-        newItems[id] = migrateOldItem(id, rawItem);
+        newItems[id] = migrateOldItem(rawItem);
       } else {
-        newItems[id] = rawItem as ISpacedRepetitionItem;
+        newItems[id] = rawItem as NewCardStructure;
       }
     }
 
