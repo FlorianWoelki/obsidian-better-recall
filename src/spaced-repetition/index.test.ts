@@ -2,6 +2,7 @@ import { vi, describe, expect, it, beforeEach } from 'vitest';
 import {
   CardState,
   CardType,
+  PerformanceResponse,
   SpacedRepetitionAlgorithm,
   SpacedRepetitionItem,
 } from '.';
@@ -15,6 +16,28 @@ class TestAlgorithm extends SpacedRepetitionAlgorithm<unknown> {
     return null;
   }
   updateItemAfterReview() {}
+  mapPerformanceResponse(performanceResponse: PerformanceResponse): number {
+    return 0;
+  }
+  calculatePotentialNextReviewDate(
+    item: SpacedRepetitionItem,
+    performanceResponse: PerformanceResponse,
+  ): Date {
+    return new Date();
+  }
+  createNewCard(
+    id: string,
+    content: { front: string; back: string },
+  ): SpacedRepetitionItem {
+    return {
+      id,
+      content,
+      iteration: 0,
+      state: CardState.NEW,
+      type: CardType.BASIC,
+      metadata: {},
+    };
+  }
 }
 
 let algorithm: TestAlgorithm;
