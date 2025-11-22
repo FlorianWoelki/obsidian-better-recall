@@ -48,6 +48,7 @@ export class FSRSAlgorithm extends SpacedRepetitionAlgorithm<FSRSParameters> {
 
     this.cardMap.set(id, fsrsCard);
     this.syncFromFSRSCard(item, fsrsCard);
+    item.lastReviewDate = fsrsCard.last_review;
     item.nextReviewDate = fsrsCard.due;
 
     return item;

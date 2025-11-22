@@ -134,13 +134,14 @@ export default class BetterRecallPlugin extends Plugin {
     this.algorithm?.setParameters(params);
   }
 
-  public async setSchedulingAlgorithm(
+  public async updateSchedulingAlgorithm(
     algorithm: SchedulingAlgorithm,
   ): Promise<void> {
     this.getSettings().schedulingAlgorithm = algorithm;
     this.algorithm = this.initAlgorithm();
     this.decksManager = new DecksManager(this, this.algorithm);
     await this.decksManager.load();
+    await this.decksManager.resetCardsForAlgorithmSwitch();
   }
 
   public getData(): BetterRecallData {

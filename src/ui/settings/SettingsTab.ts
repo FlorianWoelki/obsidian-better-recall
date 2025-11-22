@@ -138,7 +138,7 @@ export class SettingsTab extends PluginSettingTab {
           .setValue(this.plugin.getSettings().schedulingAlgorithm)
           .onChange(async (value) => {
             if (this.isValidSchedulingAlgorithm(value)) {
-              this.plugin.setSchedulingAlgorithm(value);
+              await this.plugin.updateSchedulingAlgorithm(value);
               await this.plugin.savePluginData();
               this.display();
             }
