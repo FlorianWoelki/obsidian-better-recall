@@ -142,6 +142,11 @@ export default class BetterRecallPlugin extends Plugin {
     this.decksManager = new DecksManager(this, this.algorithm);
     await this.decksManager.load();
     await this.decksManager.resetCardsForAlgorithmSwitch();
+
+    // Emit an event that will reflect the changes in the decks view.
+    for (const deck of Object.values(this.decksManager.getDecks())) {
+      this.eventEmitter.emit('editDeck', { deck });
+    }
   }
 
   public getData(): BetterRecallData {
