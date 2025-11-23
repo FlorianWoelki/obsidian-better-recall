@@ -132,9 +132,9 @@ export class ReviewView extends RecallSubView {
 
     this.renderButton(PerformanceResponse.AGAIN, '❌', 'Again');
 
-    this.renderButton(PerformanceResponse.GOOD, '😬', 'Good');
-
     this.renderButton(PerformanceResponse.HARD, '😰', 'Hard');
+
+    this.renderButton(PerformanceResponse.GOOD, '😬', 'Good');
 
     this.renderButton(PerformanceResponse.EASY, '👑', 'Easy');
   }
