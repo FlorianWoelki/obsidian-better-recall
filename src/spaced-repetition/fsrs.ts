@@ -48,8 +48,6 @@ export class FSRSAlgorithm extends SpacedRepetitionAlgorithm<FSRSParameters> {
 
     this.cardMap.set(id, fsrsCard);
     this.syncFromFSRSCard(item, fsrsCard);
-    item.lastReviewDate = fsrsCard.last_review;
-    item.nextReviewDate = fsrsCard.due;
 
     return item;
   }
@@ -58,8 +56,8 @@ export class FSRSAlgorithm extends SpacedRepetitionAlgorithm<FSRSParameters> {
     let fsrsCard = this.cardMap.get(item.id);
     if (!fsrsCard) {
       fsrsCard = createEmptyCard<FSRSCard>(item.nextReviewDate ?? new Date());
-      this.cardMap.set(item.id, fsrsCard);
       this.syncFromFSRSCard(item, fsrsCard);
+      this.cardMap.set(item.id, fsrsCard);
     }
 
     item.nextReviewDate = fsrsCard.due;
@@ -82,8 +80,8 @@ export class FSRSAlgorithm extends SpacedRepetitionAlgorithm<FSRSParameters> {
     const updatedCard = scheduling[rating].card;
 
     this.cardMap.set(item.id, updatedCard);
-    item.lastReviewDate = now;
     this.syncFromFSRSCard(item, updatedCard);
+    item.lastReviewDate = now;
     item.iteration += 1;
 
     this.addToQueueIfDueToday(item);
@@ -129,10 +127,16 @@ export class FSRSAlgorithm extends SpacedRepetitionAlgorithm<FSRSParameters> {
     }
   }
 
+  public removeItem(item: SpacedRepetitionItem): void {
+    super.removeItem(item);
+    this.cardMap.delete(item.id);
+  }
+
   private syncFromFSRSCard(
     item: SpacedRepetitionItem,
     fsrsCard: FSRSCard,
   ): void {
+    item.lastReviewDate = fsrsCard.last_review;
     item.nextReviewDate = fsrsCard.due;
 
     if (fsrsCard.last_review) {

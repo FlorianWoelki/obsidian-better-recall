@@ -89,15 +89,11 @@ export default class BetterRecallPlugin extends Plugin {
       }
     } else {
       // Fresh install, no need for migrations or something else.
-      this.data = Object.assign(
-        {
-          settings: { ...DEFAULT_SETTINGS },
-          decks: [],
-          schemaVersion: CURRENT_SCHEMA_VERSION,
-        },
-        {},
-        data,
-      );
+      this.data = {
+        settings: { ...DEFAULT_SETTINGS },
+        decks: [],
+        schemaVersion: CURRENT_SCHEMA_VERSION,
+      };
     }
   }
 
@@ -127,9 +123,11 @@ export default class BetterRecallPlugin extends Plugin {
     T extends SchedulingAlgorithm,
     K extends keyof ParameterMap[T],
   >(paramsType: T, key: K, value: ParameterMap[T][K]): void {
-    const params = this.getSettings()[
-      `${paramsType}Parameters`
-    ] as ParameterMap[T];
+    const paramsKey =
+      paramsType === SchedulingAlgorithm.Anki
+        ? 'ankiParameters'
+        : 'fsrsParameters';
+    const params = this.getSettings()[paramsKey] as ParameterMap[T];
     params[key] = value;
     this.algorithm?.setParameters(params);
   }

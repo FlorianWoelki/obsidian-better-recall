@@ -103,12 +103,6 @@ export class DecksManager {
   public async resetCardsForAlgorithmSwitch(): Promise<void> {
     Object.values(this.decks).forEach((deck) => {
       Object.values(deck.cards).forEach((card) => {
-        card.state = CardState.NEW;
-        card.iteration = 0;
-        card.lastReviewDate = undefined;
-        card.nextReviewDate = undefined;
-        card.metadata = {};
-
         const reinitializedCard = this.algorithm.createNewCard(
           card.id,
           card.content,
