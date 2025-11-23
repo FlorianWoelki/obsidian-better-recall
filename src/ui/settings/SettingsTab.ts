@@ -36,7 +36,7 @@ export class SettingsTab extends PluginSettingTab {
     'Min ease factor': {
       parameter: 'minEaseFactor',
       description:
-        'The lowest difficulty multiplier a card can have (prevents cards from getting stuck too short).',
+        'The lowest difficulty multiplier a card can have (prevents intervals from becoming too short).',
     },
     'Ease factor decrement': {
       parameter: 'easeFactorDecrement',
@@ -46,7 +46,7 @@ export class SettingsTab extends PluginSettingTab {
     'Ease factor increment': {
       parameter: 'easeFactorIncrement',
       description:
-        'Amount to adjust the difficulty multiplier. Increased when marked "easy", decreased when marked "hard". Typically 0.15.',
+        'The amount to adjust the difficulty multiplier. Increased when marked "easy", decreased when marked "hard". Typically 0.15.',
     },
     'Hard interval multiplier': {
       parameter: 'hardIntervalMultiplier',
@@ -72,12 +72,12 @@ export class SettingsTab extends PluginSettingTab {
     'Learning steps': {
       parameter: 'learningSteps',
       description:
-        'Delays for new cards before they enter long‑term review (e.g. ["1m","10m"]). Shorter or more steps = more initial drilling on the first day.',
+        'Delays for new cards before they enter long‑term review (e.g. "1m,10m"). Shorter or more steps = more initial drilling on the first day.',
     },
     'Relearning steps': {
       parameter: 'relearningSteps',
       description:
-        'Delays for cards you forgot after they were in review (e.g. ["10m"]). Controls how aggressively lapsed cards are re‑drilled before returning to normal scheduling.',
+        'Delays for reviewing cards that you forgot while they were in review (e.g. "10m"). Controls how aggressively lapsed cards are re‑drilled before returning to normal scheduling.',
     },
     'Request retention': {
       parameter: 'requestRetention',

@@ -8,7 +8,9 @@ const migrations: Record<number, Migration> = {
 };
 
 export function runMigrations(data: BetterRecallData): boolean {
-  // Default back to 1 because `schemaVersion` was introduced in 0.1.0.
+  // Default to schemaVersion = 1 for data created before v0.1.0, when the
+  // `schemaVersion` field was introduced. Data from plugin versions prior to
+  // v0.1.0 implicitly has schemaVersion = 1.
   const prevVersion = data.schemaVersion ?? 1;
   let migrated = false;
 
