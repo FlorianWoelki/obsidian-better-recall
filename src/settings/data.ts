@@ -1,8 +1,32 @@
 import { DeckJsonStructure } from 'src/data/deck';
+import { generatorParameters, Steps } from 'ts-fsrs';
 
+export const CURRENT_SCHEMA_VERSION = 2;
 export interface BetterRecallData {
   settings: BetterRecallSettings;
   decks: DeckJsonStructure[];
+  schemaVersion?: number;
+}
+
+export enum SchedulingAlgorithm {
+  Anki = 'anki',
+  FSRS = 'fsrs',
+}
+
+export type ParameterMap = {
+  [SchedulingAlgorithm.Anki]: AnkiParameters;
+  [SchedulingAlgorithm.FSRS]: FSRSParameters;
+};
+
+// Parameters are taken and adapted from ts-fsrs
+export interface FSRSParameters {
+  w: number[] | readonly number[];
+  requestRetention: number;
+  maximumInterval: number;
+  learningSteps: Steps;
+  relearningSteps: Steps;
+  enableFuzz: boolean;
+  enableShortTerm: boolean;
 }
 
 export interface AnkiParameters {
@@ -69,8 +93,19 @@ export interface AnkiParameters {
 
 export interface BetterRecallSettings {
   ankiParameters: AnkiParameters;
+  fsrsParameters: FSRSParameters;
+  /**
+   * The scheduling algorithm to use for spaced repetition.
+   * - `anki`: Uses the traditional SM-2 based algorithm with ease factors.
+   * - `fsrs`: Uses the free spaced repetition scheduler, a modern algorithm
+   *   that optimizes intervals based on memory research.
+   * @default fsrs
+   */
+  schedulingAlgorithm: SchedulingAlgorithm;
 }
 
+// TODO: Maybe refactor this instead of declaring it here.
+const generatedFSRSParameters = generatorParameters();
 export const DEFAULT_SETTINGS: BetterRecallSettings = {
   ankiParameters: {
     lapseInterval: 0.5,
@@ -84,4 +119,14 @@ export const DEFAULT_SETTINGS: BetterRecallSettings = {
     learningSteps: [1, 10],
     relearningSteps: [10],
   },
+  fsrsParameters: {
+    w: generatedFSRSParameters.w,
+    learningSteps: generatedFSRSParameters.learning_steps,
+    relearningSteps: generatedFSRSParameters.relearning_steps,
+    requestRetention: generatedFSRSParameters.request_retention,
+    maximumInterval: generatedFSRSParameters.maximum_interval,
+    enableFuzz: generatedFSRSParameters.enable_fuzz,
+    enableShortTerm: generatedFSRSParameters.enable_short_term,
+  },
+  schedulingAlgorithm: SchedulingAlgorithm.FSRS,
 };

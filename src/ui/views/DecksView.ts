@@ -91,6 +91,16 @@ export class DecksView extends RecallSubView {
 
     deckNameEl.setText(deck.getName());
     deckNameEl.title = deck.getDescription();
+
+    // Updates the cards if the cards data have been updated.
+    const deckRowEl = this.getDeckRowEl(deck.id);
+    if (!deckRowEl) {
+      return;
+    }
+
+    this.refreshNewCardsCount(deck.id, deckRowEl);
+    this.refreshLearnCardsCount(deck.id, deckRowEl);
+    this.refreshDueCardsCount(deck.id, deckRowEl);
   }
 
   private handleDeleteItem({ payload }: AddItemEvent): void {

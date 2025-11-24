@@ -1,9 +1,11 @@
 import { expect, vi, it, describe, beforeEach } from 'vitest';
 import { DecksManager } from './decks-manager';
 import {
+  CardState,
+  CardType,
   SpacedRepetitionAlgorithm,
   SpacedRepetitionItem,
-} from 'src/spaced-repetition';
+} from '../../spaced-repetition';
 import { Deck } from '../deck';
 import BetterRecallPlugin from 'src/main';
 
@@ -25,10 +27,20 @@ vi.mock('obsidian', async () => {
 
 describe('DecksManager', () => {
   let decksManager: DecksManager;
+  let mockAlgorithm = {} as SpacedRepetitionAlgorithm<unknown>;
 
   beforeEach(() => {
     vi.clearAllMocks();
-    const mockAlgorithm = {} as SpacedRepetitionAlgorithm<unknown>;
+    mockAlgorithm.createNewCard = vi.fn().mockImplementation((id, content) => ({
+      id,
+      type: CardType.BASIC,
+      content,
+      state: CardState.NEW,
+      iteration: 0,
+      lastReviewDate: undefined,
+      nextReviewDate: undefined,
+      metadata: {},
+    }));
     decksManager = new DecksManager(
       mocks.plugin as unknown as BetterRecallPlugin,
       mockAlgorithm,
@@ -169,6 +181,110 @@ describe('DecksManager', () => {
       await expect(decksManager.delete('nonexistent')).rejects.toThrow(
         'Deck name does not exist',
       );
+    });
+  });
+
+  describe('resetCardsForAlgorithmSwitch', () => {
+    it('should reset all cards to NEW state when switching algorithms', async () => {
+      const deck = await decksManager.create('Test Deck', 'Test Description');
+
+      const card1 = {
+        id: 'card1',
+        type: CardType.BASIC,
+        content: { front: 'Hello', back: 'World' },
+        state: CardState.REVIEW,
+        iteration: 5,
+        lastReviewDate: new Date('2023-01-01'),
+        nextReviewDate: new Date('2023-12-31'),
+        metadata: {
+          easeFactor: 2.5,
+          interval: 30,
+          stepIndex: 2,
+        },
+      };
+
+      const card2 = {
+        id: 'card2',
+        type: CardType.BASIC,
+        content: { front: 'Foo', back: 'Bar' },
+        state: CardState.LEARNING,
+        iteration: 2,
+        lastReviewDate: new Date('2023-02-01'),
+        nextReviewDate: new Date('2023-12-30'),
+        metadata: {
+          stability: 10,
+          difficulty: 0.5,
+        },
+      };
+
+      decksManager.addCard(deck.id, card1);
+      decksManager.addCard(deck.id, card2);
+
+      await decksManager.resetCardsForAlgorithmSwitch();
+
+      const updatedDeck = decksManager.getDecks()[deck.id];
+      const cards = Object.values(updatedDeck.cards);
+
+      expect(cards).toHaveLength(2);
+
+      const resetCard1 = cards.find((c) => c.id === 'card1');
+      expect(resetCard1).toBeDefined();
+      expect(resetCard1?.state).toBe(CardState.NEW);
+      expect(resetCard1?.iteration).toBe(0);
+      expect(resetCard1?.lastReviewDate).toBeUndefined();
+      expect(resetCard1?.nextReviewDate).toBeUndefined();
+      expect(resetCard1?.metadata).toEqual({});
+      expect(resetCard1?.content).toEqual({ front: 'Hello', back: 'World' });
+
+      const resetCard2 = cards.find((c) => c.id === 'card2');
+      expect(resetCard2).toBeDefined();
+      expect(resetCard2?.state).toBe(CardState.NEW);
+      expect(resetCard2?.iteration).toBe(0);
+      expect(resetCard2?.lastReviewDate).toBeUndefined();
+      expect(resetCard2?.nextReviewDate).toBeUndefined();
+      expect(resetCard2?.metadata).toEqual({});
+      expect(resetCard2?.content).toEqual({ front: 'Foo', back: 'Bar' });
+
+      expect(mockAlgorithm.createNewCard).toHaveBeenCalledTimes(2);
+      expect(mockAlgorithm.createNewCard).toHaveBeenCalledWith('card1', {
+        front: 'Hello',
+        back: 'World',
+      });
+      expect(mockAlgorithm.createNewCard).toHaveBeenCalledWith('card2', {
+        front: 'Foo',
+        back: 'Bar',
+      });
+    });
+
+    it('should call save method after resetting cards', async () => {
+      const deck = await decksManager.create('Test Deck', 'Test Description');
+
+      const card = {
+        id: 'card1',
+        type: 0,
+        content: { front: 'Hello', back: 'World' },
+        state: 2,
+        iteration: 5,
+        lastReviewDate: new Date(),
+        nextReviewDate: new Date(),
+        metadata: { easeFactor: 2.5 },
+      };
+
+      decksManager.addCard(deck.id, card);
+
+      const saveSpy = vi.spyOn(decksManager, 'save').mockResolvedValue();
+
+      await decksManager.resetCardsForAlgorithmSwitch();
+
+      expect(saveSpy).toHaveBeenCalledTimes(1);
+    });
+
+    it('should handle empty decks gracefully', async () => {
+      const saveSpy = vi.spyOn(decksManager, 'save').mockResolvedValue();
+
+      await decksManager.resetCardsForAlgorithmSwitch();
+
+      expect(saveSpy).toHaveBeenCalledTimes(1);
     });
   });
 });

@@ -1,3 +1,10 @@
+export enum PerformanceResponse {
+  AGAIN = 0,
+  HARD = 1,
+  GOOD = 2,
+  EASY = 3,
+}
+
 export enum CardState {
   NEW,
   LEARNING,
@@ -14,11 +21,10 @@ export interface ISpacedRepetitionItem {
   type: CardType;
   lastReviewDate?: Date;
   nextReviewDate?: Date;
-  easeFactor: number;
-  interval: number;
-  iteration: number;
   state: CardState;
-  stepIndex: number;
+  iteration: number;
+  // This field contains all the metadata for the scheduling algorithm.
+  metadata: Record<string, any>;
 }
 
 export interface BasicSpacedRepetitionItem extends ISpacedRepetitionItem {
@@ -73,6 +79,32 @@ export abstract class SpacedRepetitionAlgorithm<T> {
   public abstract getNextReviewItem(): SpacedRepetitionItem | null;
 
   /**
+   * Tries to map the general performance response to the specific rating
+   * of the algorithm. The rating of the algorithm should be defined in the
+   * implementation.
+   * @param performanceResponse The performance response that will be mapped
+   * to the algorithm's value.
+   */
+  public abstract mapPerformanceResponse(
+    performanceResponse: PerformanceResponse,
+  ): number;
+
+  /**
+   * Calculates the potential next review date for an item based on a performance
+   * response.
+   * This method should simulate the scheduling algorithm without modifying the actual
+   * item state, allowing callers to preview when the next review would be scheduled
+   * given a specific performance rating.
+   * @param item The item to calculate the next review date for.
+   * @param performanceResponse The user's performance response.
+   * @returns The calculated next review date.
+   */
+  public abstract calculatePotentialNextReviewDate(
+    item: SpacedRepetitionItem,
+    performanceResponse: PerformanceResponse,
+  ): Date;
+
+  /**
    * Updates an item's state after it has been reviewed.
    * This method should implement the algorithm's logic for adjusting
    * the item's properties (such as interval or ease factor) based on
@@ -83,8 +115,19 @@ export abstract class SpacedRepetitionAlgorithm<T> {
    */
   public abstract updateItemAfterReview(
     item: SpacedRepetitionItem,
-    performanceResponse: number,
+    performanceResponse: PerformanceResponse,
   ): void;
+
+  /**
+   * Creates a new card with proper initialization for the algorithm.
+   * @param id The unique identifier for the card.
+   * @param content The card content (front/back for basic cards).
+   * @returns A new SpacedRepetitionItem properly initialized for the algorithm.
+   */
+  public abstract createNewCard(
+    id: string,
+    content: { front: string; back: string },
+  ): SpacedRepetitionItem;
 
   public addItem(item: SpacedRepetitionItem): void {
     this.items.push(item);

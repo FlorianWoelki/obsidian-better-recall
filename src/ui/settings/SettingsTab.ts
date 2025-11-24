@@ -1,62 +1,112 @@
-import { Setting, PluginSettingTab, TextComponent } from 'obsidian';
+import { Setting, PluginSettingTab } from 'obsidian';
 import BetterRecallPlugin from 'src/main';
-import { ResetButtonComponent } from '../components/ResetButtonComponent';
-import { AnkiParameters, DEFAULT_SETTINGS } from 'src/settings/data';
+import {
+  AnkiParameters,
+  DEFAULT_SETTINGS,
+  FSRSParameters,
+  SchedulingAlgorithm,
+} from 'src/settings/data';
+import { SettingConfig, SettingRenderer } from './Renderer';
 
 export class SettingsTab extends PluginSettingTab {
-  private titleParameterMapping: Record<
+  private titleParameterMappingAnki: Record<
     string,
     { description: string; parameter: keyof AnkiParameters }
   > = {
     'Lapse interval': {
       parameter: 'lapseInterval',
       description:
-        'The multiplier applied to the current interval when a card lapses.',
+        'How much to shrink the wait time when you forget a card (e.g., 0.5 cuts it in half).',
     },
     'Easy interval': {
       parameter: 'easyInterval',
       description:
-        'The interval (in days) assigned to a card when rated as `easy` during learning/relearning.',
+        'How many days until you see a new card again if you mark it "easy" while learning.',
     },
     'Easy bonus': {
       parameter: 'easyBonus',
       description:
-        'The multiplier applied to the interval when a review card is rated as `easy`.',
+        'Extra time multiplier when you mark a review card "easy" (e.g., 1.3 adds 30% more time).',
     },
     'Graduating interval': {
       parameter: 'graduatingInterval',
       description:
-        'The interval (in days) assigned to a card when it graduates from learning to review.',
+        'The first review interval (in days) when a new card finishes its learning phase.',
     },
     'Min ease factor': {
       parameter: 'minEaseFactor',
-      description: 'The minimum allowed ease factor for a card.',
+      description:
+        'The lowest difficulty multiplier a card can have (prevents intervals from becoming too short).',
     },
     'Ease factor decrement': {
       parameter: 'easeFactorDecrement',
       description:
-        'The amount by which the ease factor is decreased when a card is rated as `again`.',
+        'How much to reduce a card\'s difficulty multiplier when you mark it "again".',
     },
     'Ease factor increment': {
       parameter: 'easeFactorIncrement',
       description:
-        'The amount by which the ease factor is increased when a card is rated as `easy`.',
+        'The amount to adjust the difficulty multiplier. Increased when marked "easy", decreased when marked "hard". Typically 0.15.',
     },
     'Hard interval multiplier': {
       parameter: 'hardIntervalMultiplier',
       description:
-        'The multiplier applied to the current interval when a review card is rated as `hard`.',
+        'Multiplier for the next interval when you mark a card "hard" (e.g., 1.2 = 120% of current interval, a 20% increase). Always increases by at least 1 day.',
     },
     'Learning steps': {
       parameter: 'learningSteps',
       description:
-        'Comma-separated step intervals (in minutes) for new cards in the learning phase.',
+        'Wait times (in minutes) for reviewing new cards. E.g., "1,10" means review after 1 minute, then 10 minutes.',
     },
     'Relearning steps': {
       parameter: 'relearningSteps',
       description:
-        'Comma-separated step intervals (in minutes) for cards in the relearning phase.',
+        'Wait times (in minutes) for reviewing forgotten cards. E.g., "10" means review once after 10 minutes.',
     },
+  };
+
+  private titleParameterMappingFSRS: Record<
+    string,
+    { description: string; parameter: keyof FSRSParameters }
+  > = {
+    'Learning steps': {
+      parameter: 'learningSteps',
+      description:
+        'Delays for new cards before they enter long‑term review (e.g. "1m,10m"). Shorter or more steps = more initial drilling on the first day.',
+    },
+    'Relearning steps': {
+      parameter: 'relearningSteps',
+      description:
+        'Delays for reviewing cards that you forgot while they were in review (e.g. "10m"). Controls how aggressively lapsed cards are re‑drilled before returning to normal scheduling.',
+    },
+    'Request retention': {
+      parameter: 'requestRetention',
+      description:
+        'Your target success rate (e.g., 0.9 = aim to remember 90% of cards). Higher = more reviews but better retention.',
+    },
+    'Maximum interval': {
+      parameter: 'maximumInterval',
+      description:
+        "The longest you'll wait between reviews (in days), no matter how well you know a card.",
+    },
+    'Enable fuzz': {
+      parameter: 'enableFuzz',
+      description:
+        'Adds slight randomness to review intervals to prevent cards from bunching up on the same days.',
+    },
+    'Enable short term': {
+      parameter: 'enableShortTerm',
+      description:
+        'Enables short-term memory scheduling for cards in the learning phase (more frequent initial reviews).',
+    },
+  };
+
+  private readonly schedulingAlgorithmLabels: Record<
+    SchedulingAlgorithm,
+    string
+  > = {
+    [SchedulingAlgorithm.Anki]: 'Anki',
+    [SchedulingAlgorithm.FSRS]: 'FSRS',
   };
 
   constructor(private plugin: BetterRecallPlugin) {
@@ -65,77 +115,89 @@ export class SettingsTab extends PluginSettingTab {
 
   display() {
     this.containerEl.empty();
+    this.renderSchedulingAlgorithmDropdown();
 
-    Object.entries(this.titleParameterMapping).forEach(
-      ([key, { parameter, description }]) => {
-        let textComponent: TextComponent | null = null;
-        const pluginValue = this.plugin.getSettings().ankiParameters[parameter];
+    const currentAlgorithm = this.plugin.getSettings().schedulingAlgorithm;
 
-        const setting = new Setting(this.containerEl)
-          .setName(key)
-          .setDesc(description);
+    if (currentAlgorithm === SchedulingAlgorithm.Anki) {
+      this.renderAnkiParameters();
+    } else if (currentAlgorithm === SchedulingAlgorithm.FSRS) {
+      this.renderFSRSParameters();
+    }
+  }
 
-        new ResetButtonComponent(setting.controlEl).onClick(async () => {
-          if (!textComponent) {
-            return;
-          }
-
-          const defaultValue = DEFAULT_SETTINGS.ankiParameters[parameter];
-          this.setValue(textComponent, defaultValue);
-          this.plugin.setAnkiParameter(parameter, defaultValue);
-          await this.plugin.savePluginData();
-        });
-
-        setting.addText((text) => {
-          textComponent = text;
-          this.setValue(text, pluginValue);
-
-          text.onChange(async (input) => {
-            input = input.trim();
-            if (
-              parameter === 'learningSteps' ||
-              parameter === 'relearningSteps'
-            ) {
-              if (!this.isStringValidArray(input)) {
-                return;
-              }
-
-              const newValue = this.parseStringToArray(input);
-              this.plugin.setAnkiParameter(parameter, newValue);
-            } else {
-              if (isNaN(+input)) {
-                return;
-              }
-
-              this.plugin.setAnkiParameter(parameter, Number(input));
+  private renderSchedulingAlgorithmDropdown() {
+    new Setting(this.containerEl)
+      .setName('Scheduling Algorithm')
+      .setDesc(
+        'Change the scheduling algorithm for your spaced repetition (WARNING: this resets the reviewing progress on all decks).',
+      )
+      .addDropdown((dropdown) => {
+        dropdown
+          .addOptions(this.schedulingAlgorithmLabels)
+          .setValue(this.plugin.getSettings().schedulingAlgorithm)
+          .onChange(async (value) => {
+            if (this.isValidSchedulingAlgorithm(value)) {
+              await this.plugin.updateSchedulingAlgorithm(value);
+              await this.plugin.savePluginData();
+              this.display();
             }
-
-            await this.plugin.savePluginData();
           });
-        });
+      });
+  }
+
+  private renderFSRSParameters(): void {
+    const renderer = new SettingRenderer(this.containerEl, () =>
+      this.plugin.savePluginData(),
+    );
+    const params = this.plugin.getSettings().fsrsParameters;
+
+    Object.entries(this.titleParameterMappingFSRS).forEach(
+      ([name, { parameter, description }]) => {
+        const config: SettingConfig<any> = {
+          name,
+          description,
+          defaultValue: DEFAULT_SETTINGS.fsrsParameters[parameter],
+        };
+
+        renderer.render(config, params[parameter], (value) =>
+          this.plugin.setParameter(SchedulingAlgorithm.FSRS, parameter, value),
+        );
       },
     );
   }
 
-  private setValue(text: TextComponent, value: number | number[]): void {
-    if (Array.isArray(value)) {
-      text.setValue(value.join(','));
-    } else {
-      text.setValue(value.toString());
-    }
+  private renderAnkiParameters(): void {
+    const renderer = new SettingRenderer(this.containerEl, () =>
+      this.plugin.savePluginData(),
+    );
+    const params = this.plugin.getSettings().ankiParameters;
+
+    Object.entries(this.titleParameterMappingAnki).forEach(
+      ([name, { parameter, description }]) => {
+        renderer.render(
+          {
+            name,
+            description,
+            defaultValue: DEFAULT_SETTINGS.ankiParameters[parameter],
+          },
+          params[parameter],
+          (value) =>
+            this.plugin.setParameter(
+              SchedulingAlgorithm.Anki,
+              parameter,
+              value,
+            ),
+        );
+      },
+    );
   }
 
-  private parseStringToArray(input: string): number[] {
-    return input
-      .trim()
-      .split(',')
-      .map((text) => Number(text));
-  }
-
-  private isStringValidArray(input: string): boolean {
-    return input
-      .trim()
-      .split(',')
-      .every((text) => !isNaN(+text));
+  private isValidSchedulingAlgorithm(
+    value: string,
+  ): value is SchedulingAlgorithm {
+    return Object.values(SchedulingAlgorithm).includes(
+      value as SchedulingAlgorithm,
+    );
   }
 }

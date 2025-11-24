@@ -2,7 +2,8 @@ import { Deck, DeckJsonStructure, jsonObjectToDeck } from '../deck';
 import {
   SpacedRepetitionAlgorithm,
   SpacedRepetitionItem,
-} from 'src/spaced-repetition';
+  CardState,
+} from '../../spaced-repetition';
 import BetterRecallPlugin from 'src/main';
 
 export class DecksManager {
@@ -97,6 +98,21 @@ export class DecksManager {
     }
 
     delete this.decks[deckId].cards[cardId];
+  }
+
+  public async resetCardsForAlgorithmSwitch(): Promise<void> {
+    Object.values(this.decks).forEach((deck) => {
+      Object.values(deck.cards).forEach((card) => {
+        const reinitializedCard = this.algorithm.createNewCard(
+          card.id,
+          card.content,
+        );
+
+        deck.cards[card.id] = reinitializedCard;
+      });
+    });
+
+    await this.save();
   }
 
   public async save(): Promise<void> {
