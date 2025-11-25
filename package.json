@@ -20,21 +20,21 @@
   "author": "Florian Woelki",
   "license": "MIT",
   "devDependencies": {
-    "@types/node": "^24.9.1",
+    "@types/node": "^24.10.1",
     "@typescript-eslint/eslint-plugin": "8.46.2",
     "@typescript-eslint/parser": "8.46.2",
     "@vitest/coverage-istanbul": "^4.0.2",
     "builtin-modules": "5.0.0",
-    "esbuild": "0.25.11",
-    "eslint": "^9.38.0",
+    "esbuild": "0.27.0",
+    "eslint": "^9.39.1",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",
-    "happy-dom": "^20.0.8",
-    "obsidian": "1.10.0",
+    "happy-dom": "^20.0.10",
+    "obsidian": "1.10.3",
     "prettier": "^3.6.2",
     "tslib": "2.8.1",
     "typescript": "5.9.3",
-    "vitest": "^4.0.2"
+    "vitest": "^4.0.13"
   },
   "dependencies": {
     "ts-fsrs": "^5.2.3",
