@@ -16,6 +16,7 @@ import { AnkiAlgorithm } from './spaced-repetition/anki';
 import { SettingsTab } from './ui/settings/SettingsTab';
 import { SpacedRepetitionAlgorithm } from './spaced-repetition';
 import { runMigrations } from './migrations';
+import { getDefaultDeck } from './data/deck';
 
 export default class BetterRecallPlugin extends Plugin {
   public algorithm: SpacedRepetitionAlgorithm<unknown>;
@@ -71,29 +72,38 @@ export default class BetterRecallPlugin extends Plugin {
     const data = await this.loadData();
 
     if (data) {
-      Object.entries(DEFAULT_SETTINGS).forEach(([key, value]) => {
-        if (data.settings[key] === undefined) {
-          data.settings[key] = value;
-        }
-      });
+      let changed = false;
+      const mergedSettings = { ...DEFAULT_SETTINGS, ...(data.settings ?? {}) };
 
-      this.data = Object.assign(
-        { settings: { ...DEFAULT_SETTINGS } },
-        {},
-        data,
-      );
+      if (
+        JSON.stringify(mergedSettings) !== JSON.stringify(data.settings ?? {})
+      ) {
+        changed = true;
+      }
+
+      this.data = {
+        ...data,
+        settings: mergedSettings,
+      };
+
+      if (!this.data.decks || this.data.decks.length === 0) {
+        this.data.decks = [getDefaultDeck()];
+        changed = true;
+      }
 
       const migrated = runMigrations(this.data);
-      if (migrated) {
+
+      if (changed || migrated) {
         await this.savePluginData();
       }
     } else {
       // Fresh install, no need for migrations or something else.
       this.data = {
         settings: { ...DEFAULT_SETTINGS },
-        decks: [],
+        decks: [getDefaultDeck()],
         schemaVersion: CURRENT_SCHEMA_VERSION,
       };
+      await this.savePluginData();
     }
   }
 
