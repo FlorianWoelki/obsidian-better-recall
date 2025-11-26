@@ -60,11 +60,6 @@ export class DecksView extends RecallSubView {
   }
 
   private handleDeleteDeck(): void {
-    if (this.plugin.decksManager.decksArray.length === 0) {
-      this.recallView.openEmptyView();
-      return;
-    }
-
     this.recallView.rootEl.empty();
     this.render();
   }

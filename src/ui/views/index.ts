@@ -1,6 +1,5 @@
 import { FileView, ViewStateResult, WorkspaceLeaf } from 'obsidian';
 import BetterRecallPlugin from '../../main';
-import { EmptyView } from './EmptyView';
 import { ReviewView } from './ReviewView';
 import { DecksView } from './DecksView';
 import { RecallSubView } from './SubView';
@@ -10,7 +9,6 @@ import { CENTERED_VIEW } from '../classes';
 export const FILE_VIEW_TYPE = 'recall-view';
 
 enum ViewMode {
-  Empty,
   Decks,
   Review,
 }
@@ -19,7 +17,6 @@ export class RecallView extends FileView {
   public readonly rootEl: HTMLElement;
 
   private currentView?: RecallSubView;
-  private emptyView: EmptyView;
   private reviewView: ReviewView;
   private decksView: DecksView;
 
@@ -40,36 +37,21 @@ export class RecallView extends FileView {
 
     this.rootEl = viewContent.createDiv(CENTERED_VIEW);
     this.reviewView = new ReviewView(plugin, this);
-    this.emptyView = new EmptyView(plugin, this);
     this.decksView = new DecksView(plugin, this);
 
-    this.setViewMode(
-      plugin.decksManager.decksArray.length === 0
-        ? ViewMode.Empty
-        : ViewMode.Decks,
-    );
+    this.setViewMode(ViewMode.Decks);
   }
 
   protected async onOpen(): Promise<void> {
     this.renderView();
 
-    this.plugin.getEventEmitter().on('addDeck', this.handleAddDeck.bind(this));
-  }
-
-  private handleAddDeck(): void {
-    if (this.viewMode === ViewMode.Empty) {
-      this.setViewMode(ViewMode.Decks);
-      this.renderView();
-    }
+    this.plugin.getEventEmitter().on('addDeck', this.renderView.bind(this));
   }
 
   private setViewMode(viewMode: ViewMode): void {
     this.currentView?.onClose();
     this.viewMode = viewMode;
     switch (this.viewMode) {
-      case ViewMode.Empty:
-        this.currentView = this.emptyView;
-        break;
       case ViewMode.Decks:
         this.currentView = this.decksView;
         break;
@@ -96,11 +78,6 @@ export class RecallView extends FileView {
     this.renderView();
   }
 
-  public openEmptyView(): void {
-    this.setViewMode(ViewMode.Empty);
-    this.renderView();
-  }
-
   private renderView(): void {
     this.rootEl.empty();
     this.currentView?.render();
@@ -112,7 +89,7 @@ export class RecallView extends FileView {
 
   protected async onClose(): Promise<void> {
     this.currentView?.onClose();
-    this.plugin.getEventEmitter().off('addDeck', this.handleAddDeck.bind(this));
+    this.plugin.getEventEmitter().off('addDeck', this.renderView.bind(this));
     await super.onClose();
   }
 
