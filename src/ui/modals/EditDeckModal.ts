@@ -63,6 +63,7 @@ export class EditDeckModal extends Modal {
     // Create custom delete button.
     const deleteButton = new ButtonComponent(buttonsContainer)
       .setButtonText('Delete')
+      .setDisabled(this.plugin.decksManager.decksArray.length === 1)
       .onClick(() => this.deleteDeck());
     deleteButton.buttonEl.addClass('better-recall-delete-button');
 
