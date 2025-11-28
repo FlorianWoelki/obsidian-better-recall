@@ -8,6 +8,7 @@ import {
   CardJsonStructure,
   Deck,
   DeckJsonStructure,
+  getDefaultDeck,
   jsonObjectToDeck,
 } from './deck';
 
@@ -138,5 +139,26 @@ describe('jsonObjectToDeck', () => {
       lastReviewDate: now,
       nextReviewDate: now,
     });
+  });
+});
+
+describe('getDefaultDeck', () => {
+  beforeEach(() => {
+    vi.useFakeTimers().setSystemTime(new Date('2024-07-04'));
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it('should return a default deck with correct structure', () => {
+    const deck = getDefaultDeck();
+
+    expect(deck.id).toBe('mocked-uuid');
+    expect(deck.name).toBe('Default Deck');
+    expect(deck.description).toBe('The default deck');
+    expect(deck.createdAt).toBe('Thu Jul 04 2024');
+    expect(deck.updatedAt).toBe('Thu Jul 04 2024');
+    expect(deck.cards).toEqual({});
   });
 });
