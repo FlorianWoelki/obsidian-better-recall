@@ -53,7 +53,7 @@ export class CreateDeckModal extends Modal {
     this.buttonsBarComp = new ButtonsBarComponent(this.contentEl)
       .setSubmitText('Create')
       .setSubmitButtonDisabled(true)
-      .onClose(this.close)
+      .onClose(this.close.bind(this))
       .onSubmit(async () => {
         await this.createDeck();
       });

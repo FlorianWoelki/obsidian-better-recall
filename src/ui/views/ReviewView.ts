@@ -125,7 +125,7 @@ export class ReviewView extends RecallSubView {
     const showAnswerTextEl = this.showAnswerButton.buttonEl.createSpan();
     showAnswerEmojiEl.setText('👀');
     showAnswerTextEl.setText('Show answer');
-    this.showAnswerButton.onClick(this.showRecallButtons);
+    this.showAnswerButton.onClick(this.showRecallButtons.bind(this));
   }
 
   private renderRecallButtons(): void {

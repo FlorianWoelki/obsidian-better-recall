@@ -314,7 +314,7 @@ export class DecksView extends RecallSubView {
 
     new ButtonComponent(buttonsBarEl)
       .setButtonText('Create Deck')
-      .onClick(this.openDeckModal);
+      .onClick(this.openDeckModal.bind(this));
 
     new ButtonComponent(buttonsBarEl)
       .setButtonText('Add card')
