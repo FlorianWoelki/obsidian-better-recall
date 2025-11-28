@@ -71,7 +71,7 @@ export class EditDeckModal extends Modal {
     this.buttonsBarComp = new ButtonsBarComponent(buttonsContainer)
       .setSubmitText('Save')
       .setSubmitButtonDisabled(false)
-      .onClose(this.close.bind(this))
+      .onClose(this.close)
       .onSubmit(async () => {
         if (this.deckNameInputComp.getValue().length === 0) {
           return;

@@ -22,6 +22,8 @@ export class RecallView extends FileView {
 
   private viewMode: ViewMode;
 
+  private boundRenderView = this.renderView.bind(this);
+
   constructor(
     private plugin: BetterRecallPlugin,
     leaf: WorkspaceLeaf,
@@ -45,7 +47,7 @@ export class RecallView extends FileView {
   protected async onOpen(): Promise<void> {
     this.renderView();
 
-    this.plugin.getEventEmitter().on('addDeck', this.renderView.bind(this));
+    this.plugin.getEventEmitter().on('addDeck', this.boundRenderView);
   }
 
   private setViewMode(viewMode: ViewMode): void {
@@ -89,7 +91,7 @@ export class RecallView extends FileView {
 
   protected async onClose(): Promise<void> {
     this.currentView?.onClose();
-    this.plugin.getEventEmitter().off('addDeck', this.renderView.bind(this));
+    this.plugin.getEventEmitter().off('addDeck', this.boundRenderView);
     await super.onClose();
   }
 

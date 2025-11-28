@@ -25,10 +25,10 @@ export class SettingRenderer {
     private onSave: () => Promise<void>,
   ) {
     this.renderers = new Map([
-      ['boolean', this.renderBoolean.bind(this)],
-      ['number', this.renderNumber.bind(this)],
-      ['string', this.renderText.bind(this)],
-      ['array', this.renderArray.bind(this)],
+      ['boolean', this.renderBoolean],
+      ['number', this.renderNumber],
+      ['string', this.renderText],
+      ['array', this.renderArray],
     ]);
   }
 

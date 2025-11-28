@@ -77,7 +77,7 @@ export abstract class CardModal extends Modal {
       description: 'Front',
     })
       .setValue(front ?? '')
-      .onChange(this.handleInputChange.bind(this));
+      .onChange(this.handleInputChange);
     this.frontInputComp.keyboardListener.onEnter = () => {
       if (this.disabled) {
         return;
@@ -90,7 +90,7 @@ export abstract class CardModal extends Modal {
       description: 'Back',
     })
       .setValue(back ?? '')
-      .onChange(this.handleInputChange.bind(this));
+      .onChange(this.handleInputChange);
     this.backInputComp.descriptionEl.addClass('better-recall-back-field');
     this.backInputComp.keyboardListener.onEnter = () => {
       if (this.disabled) {
@@ -109,8 +109,8 @@ export abstract class CardModal extends Modal {
     this.buttonsBarComp = new ButtonsBarComponent(options.container)
       .setSubmitButtonDisabled(true)
       .setSubmitText(submitText)
-      .onSubmit(this.submit.bind(this))
-      .onClose(this.close.bind(this));
+      .onSubmit(this.submit)
+      .onClose(this.close);
   }
 
   protected handleInputChange() {
