@@ -36,20 +36,20 @@ const rowAttributes = {
 export class DecksView extends RecallSubView {
   private rootEl: HTMLElement;
 
+  private boundAddDeck = this.handleAddDeck.bind(this);
+  private boundAddItem = this.handleAddItem.bind(this);
+  private boundDeleteItem = this.handleDeleteItem.bind(this);
+  private boundDeleteDeck = this.handleDeleteDeck.bind(this);
+  private boundEditDeck = this.handleEditDeck.bind(this);
+
   constructor(plugin: BetterRecallPlugin, recallView: RecallView) {
     super(plugin, recallView);
 
-    this.plugin.getEventEmitter().on('addDeck', this.handleAddDeck.bind(this));
-    this.plugin
-      .getEventEmitter()
-      .on('editDeck', this.handleEditDeck.bind(this));
-    this.plugin.getEventEmitter().on('addItem', this.handleAddItem.bind(this));
-    this.plugin
-      .getEventEmitter()
-      .on('deleteItem', this.handleDeleteItem.bind(this));
-    this.plugin
-      .getEventEmitter()
-      .on('deleteDeck', this.handleDeleteDeck.bind(this));
+    this.plugin.getEventEmitter().on('addDeck', this.boundAddDeck);
+    this.plugin.getEventEmitter().on('editDeck', this.boundEditDeck);
+    this.plugin.getEventEmitter().on('addItem', this.boundAddItem);
+    this.plugin.getEventEmitter().on('deleteItem', this.boundDeleteItem);
+    this.plugin.getEventEmitter().on('deleteDeck', this.boundDeleteDeck);
   }
 
   public render(): void {
@@ -60,11 +60,6 @@ export class DecksView extends RecallSubView {
   }
 
   private handleDeleteDeck(): void {
-    if (this.plugin.decksManager.decksArray.length === 0) {
-      this.recallView.openEmptyView();
-      return;
-    }
-
     this.recallView.rootEl.empty();
     this.render();
   }
@@ -330,17 +325,11 @@ export class DecksView extends RecallSubView {
   }
 
   public onClose(): void {
-    this.plugin.getEventEmitter().off('addDeck', this.handleAddDeck.bind(this));
-    this.plugin
-      .getEventEmitter()
-      .off('editDeck', this.handleEditDeck.bind(this));
-    this.plugin.getEventEmitter().off('addItem', this.handleAddItem.bind(this));
-    this.plugin
-      .getEventEmitter()
-      .off('deleteItem', this.handleDeleteItem.bind(this));
-    this.plugin
-      .getEventEmitter()
-      .off('deleteDeck', this.handleDeleteDeck.bind(this));
+    this.plugin.getEventEmitter().off('addDeck', this.boundAddDeck);
+    this.plugin.getEventEmitter().off('editDeck', this.boundEditDeck);
+    this.plugin.getEventEmitter().off('addItem', this.boundAddItem);
+    this.plugin.getEventEmitter().off('deleteItem', this.boundDeleteItem);
+    this.plugin.getEventEmitter().off('deleteDeck', this.boundDeleteDeck);
 
     const deckRowEls = this.rootEl.querySelectorAll('.better-recall-deck');
     deckRowEls.forEach((deckRowEl) => {

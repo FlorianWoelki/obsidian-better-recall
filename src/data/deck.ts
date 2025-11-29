@@ -18,6 +18,17 @@ export interface DeckJsonStructure {
   cards: Record<string, CardJsonStructure>;
 }
 
+export function getDefaultDeck(): DeckJsonStructure {
+  return {
+    id: uuidv4(),
+    name: 'Default Deck',
+    description: 'The default deck',
+    createdAt: new Date().toDateString(),
+    updatedAt: new Date().toDateString(),
+    cards: {},
+  };
+}
+
 export function jsonObjectToDeck(
   algorithm: SpacedRepetitionAlgorithm<unknown>,
   jsonObject: DeckJsonStructure,

@@ -14,6 +14,10 @@ const cardAttributes = {
 export class EditCardsModal extends Modal {
   private buttonsBarComp: ButtonsBarComponent;
 
+  private boundEditItem = this.handleEditItem.bind(this);
+  private boundAddItem = this.handleAddItem.bind(this);
+  private boundDeleteItem = this.handleDeleteItem.bind(this);
+
   constructor(
     private plugin: BetterRecallPlugin,
     private deck: Deck,
@@ -26,13 +30,9 @@ export class EditCardsModal extends Modal {
     super.onOpen();
     this.render();
 
-    this.plugin
-      .getEventEmitter()
-      .on('editItem', this.handleEditItem.bind(this));
-    this.plugin.getEventEmitter().on('addItem', this.handleAddItem.bind(this));
-    this.plugin
-      .getEventEmitter()
-      .on('deleteItem', this.handleDeleteItem.bind(this));
+    this.plugin.getEventEmitter().on('editItem', this.boundEditItem);
+    this.plugin.getEventEmitter().on('addItem', this.boundAddItem);
+    this.plugin.getEventEmitter().on('deleteItem', this.boundDeleteItem);
   }
 
   private handleDeleteItem({ payload }: DeleteItemEvent): void {
@@ -111,13 +111,9 @@ export class EditCardsModal extends Modal {
 
   onClose(): void {
     super.onClose();
-    this.plugin
-      .getEventEmitter()
-      .off('editItem', this.handleEditItem.bind(this));
-    this.plugin.getEventEmitter().off('addItem', this.handleAddItem.bind(this));
-    this.plugin
-      .getEventEmitter()
-      .off('deleteItem', this.handleDeleteItem.bind(this));
+    this.plugin.getEventEmitter().off('editItem', this.boundEditItem);
+    this.plugin.getEventEmitter().off('addItem', this.boundAddItem);
+    this.plugin.getEventEmitter().off('deleteItem', this.boundDeleteItem);
     this.plugin.decksManager.save();
     this.contentEl.empty();
   }

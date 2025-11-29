@@ -36,6 +36,9 @@ export class ReviewView extends RecallSubView {
   private deck: Deck;
   private state: ReviewState;
 
+  private boundKeyInput = this.handleKeyInput.bind(this);
+  private boundInternalLinkClick = this.handleInternalLinkClick.bind(this);
+
   constructor(
     protected readonly plugin: BetterRecallPlugin,
     protected readonly recallView: RecallView,
@@ -83,7 +86,7 @@ export class ReviewView extends RecallSubView {
 
   public render(): void {
     this.rootEl = this.recallView.rootEl.createDiv('better-recall-recall-view');
-    document.addEventListener('keypress', this.handleKeyInput.bind(this));
+    document.addEventListener('keypress', this.boundKeyInput);
 
     this.contentEl = this.rootEl.createDiv(
       'better-recall-card better-recall-review-card',
@@ -207,10 +210,10 @@ export class ReviewView extends RecallSubView {
 
       // TODO: Check why event listeners are deactivated for internal links.
       this.cardFrontEl.querySelectorAll('a.internal-link').forEach((link) => {
-        link.addEventListener('click', this.handleInternalLinkClick.bind(this));
+        link.addEventListener('click', this.boundInternalLinkClick);
       });
       this.cardBackEl.querySelectorAll('a.internal-link').forEach((link) => {
-        link.addEventListener('click', this.handleInternalLinkClick.bind(this));
+        link.addEventListener('click', this.boundInternalLinkClick);
       });
     } else {
       this.cardFrontEl.setText('Review session complete 🚀!');
@@ -239,18 +242,12 @@ export class ReviewView extends RecallSubView {
 
   public onClose(): void {
     super.onClose();
-    document.removeEventListener('keypress', this.handleKeyInput.bind(this));
+    document.removeEventListener('keypress', this.boundKeyInput);
     this.cardFrontEl.querySelectorAll('a.internal-link').forEach((link) => {
-      link.removeEventListener(
-        'click',
-        this.handleInternalLinkClick.bind(this),
-      );
+      link.removeEventListener('click', this.boundInternalLinkClick);
     });
     this.cardBackEl.querySelectorAll('a.internal-link').forEach((link) => {
-      link.removeEventListener(
-        'click',
-        this.handleInternalLinkClick.bind(this),
-      );
+      link.removeEventListener('click', this.boundInternalLinkClick);
     });
     this.plugin.decksManager.save();
   }
