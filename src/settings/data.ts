@@ -104,8 +104,14 @@ export interface BetterRecallSettings {
   schedulingAlgorithm: SchedulingAlgorithm;
 }
 
-// TODO: Maybe refactor this instead of declaring it here.
-const generatedFSRSParameters = generatorParameters();
+let cachedFSRSParameters: ReturnType<typeof generatorParameters> | null = null;
+function getFSRSDefaults() {
+  if (!cachedFSRSParameters) {
+    cachedFSRSParameters = generatorParameters();
+  }
+  return cachedFSRSParameters;
+}
+
 export const DEFAULT_SETTINGS: BetterRecallSettings = {
   ankiParameters: {
     lapseInterval: 0.5,
@@ -119,14 +125,17 @@ export const DEFAULT_SETTINGS: BetterRecallSettings = {
     learningSteps: [1, 10],
     relearningSteps: [10],
   },
-  fsrsParameters: {
-    w: generatedFSRSParameters.w,
-    learningSteps: generatedFSRSParameters.learning_steps,
-    relearningSteps: generatedFSRSParameters.relearning_steps,
-    requestRetention: generatedFSRSParameters.request_retention,
-    maximumInterval: generatedFSRSParameters.maximum_interval,
-    enableFuzz: generatedFSRSParameters.enable_fuzz,
-    enableShortTerm: generatedFSRSParameters.enable_short_term,
+  get fsrsParameters() {
+    const params = getFSRSDefaults();
+    return {
+      w: params.w,
+      learningSteps: params.learning_steps,
+      relearningSteps: params.relearning_steps,
+      requestRetention: params.request_retention,
+      maximumInterval: params.maximum_interval,
+      enableFuzz: params.enable_fuzz,
+      enableShortTerm: params.enable_short_term,
+    };
   },
   schedulingAlgorithm: SchedulingAlgorithm.FSRS,
 };
