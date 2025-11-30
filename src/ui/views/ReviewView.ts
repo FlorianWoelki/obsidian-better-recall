@@ -208,7 +208,7 @@ export class ReviewView extends RecallSubView {
         this.plugin,
       );
 
-      // TODO: Check why event listeners are deactivated for internal links.
+      // Event listeners are deactivated for internal links.
       this.cardFrontEl.querySelectorAll('a.internal-link').forEach((link) => {
         link.addEventListener('click', this.boundInternalLinkClick);
       });

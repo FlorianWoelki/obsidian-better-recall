@@ -149,7 +149,7 @@
 .better-recall-review-card__divider {
   height: 1px;
   width: 100%;
-  background-color: var(--background-modifier-cover);
+  background-color: var(--background-modifier-border);
 }
 
 .better-recall-review-card__content {
