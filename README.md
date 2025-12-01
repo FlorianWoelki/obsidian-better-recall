@@ -11,7 +11,7 @@ It allows you to create decks and add cards, giving you the ultimate spaced repe
 The plugin integrates the following spaced-repetition algorithms:
 
 - [Anki algorithm](https://faqs.ankiweb.net/what-spaced-repetition-algorithm.html)
-
+- [FSRS algorithm](https://github.com/open-spaced-repetition/ts-fsrs)
 
 ## How to use it
 
