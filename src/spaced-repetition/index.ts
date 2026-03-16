@@ -51,7 +51,7 @@ export abstract class SpacedRepetitionAlgorithm<T> {
 
     this.parameters = {
       ...this.getDefaultValues(),
-      parameters,
+      ...parameters,
     };
   }
 

@@ -4,6 +4,7 @@ import {
   Card as FSRSCard,
   generatorParameters,
   Rating,
+  State,
   createEmptyCard,
 } from 'ts-fsrs';
 import {
@@ -19,6 +20,13 @@ type FSRSRating = Exclude<Rating, Rating.Manual>;
 export class FSRSAlgorithm extends SpacedRepetitionAlgorithm<FSRSParameters> {
   private fsrs: FSRS;
   private cardMap: Map<string, FSRSCard>;
+
+  private static readonly STATE_MAP: ReadonlyArray<[CardState, State]> = [
+    [CardState.NEW, State.New],
+    [CardState.LEARNING, State.Learning],
+    [CardState.REVIEW, State.Review],
+    [CardState.RELEARNING, State.Relearning],
+  ];
 
   constructor(parameters: Partial<FSRSParameters> = {}) {
     super(parameters);
@@ -56,7 +64,7 @@ export class FSRSAlgorithm extends SpacedRepetitionAlgorithm<FSRSParameters> {
     let fsrsCard = this.cardMap.get(item.id);
     if (!fsrsCard) {
       fsrsCard = createEmptyCard<FSRSCard>(item.nextReviewDate ?? new Date());
-      this.syncFromFSRSCard(item, fsrsCard);
+      this.syncToFSRSCard(item, fsrsCard);
       this.cardMap.set(item.id, fsrsCard);
     }
 
@@ -136,13 +144,11 @@ export class FSRSAlgorithm extends SpacedRepetitionAlgorithm<FSRSParameters> {
     item: SpacedRepetitionItem,
     fsrsCard: FSRSCard,
   ): void {
-    item.lastReviewDate = fsrsCard.last_review;
-    item.nextReviewDate = fsrsCard.due;
-
     if (fsrsCard.last_review) {
       item.lastReviewDate = fsrsCard.last_review;
     }
 
+    item.nextReviewDate = fsrsCard.due;
     item.state = this.mapStateFromFSRS(fsrsCard.state);
 
     item.metadata = {
@@ -155,13 +161,23 @@ export class FSRSAlgorithm extends SpacedRepetitionAlgorithm<FSRSParameters> {
     };
   }
 
+  private syncToFSRSCard(item: SpacedRepetitionItem, fsrsCard: FSRSCard): void {
+    fsrsCard.stability = item.metadata.stability ?? 0;
+    fsrsCard.difficulty = item.metadata.difficulty ?? 0;
+    fsrsCard.scheduled_days = item.metadata.scheduled_days ?? 0;
+    fsrsCard.learning_steps = item.metadata.learning_steps ?? 0;
+    fsrsCard.reps = item.metadata.reps ?? 0;
+    fsrsCard.lapses = item.metadata.lapses ?? 0;
+    fsrsCard.state = this.mapStateToFSRS(item.state);
+    fsrsCard.due = item.nextReviewDate ?? new Date();
+    fsrsCard.last_review = item.lastReviewDate;
+  }
+
   private mapStateFromFSRS(fsrsState: number): CardState {
-    const stateMap = [
-      CardState.NEW,
-      CardState.LEARNING,
-      CardState.REVIEW,
-      CardState.RELEARNING,
-    ];
-    return stateMap[fsrsState] ?? CardState.NEW;
+    return FSRSAlgorithm.STATE_MAP[fsrsState]?.[0] ?? CardState.NEW;
+  }
+
+  private mapStateToFSRS(cardState: CardState): State {
+    return FSRSAlgorithm.STATE_MAP[cardState]?.[1] ?? State.New;
   }
 }

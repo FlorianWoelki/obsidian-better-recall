@@ -142,9 +142,8 @@ describe('queuedItems behavior', () => {
     fsrsAlgo.updateItemAfterReview(reviewItem, PerformanceResponse.AGAIN);
 
     const nextItem = fsrsAlgo.getNextReviewItem();
-    if (nextItem) {
-      expect(nextItem.id).toBe(reviewItem.id);
-    }
+    expect(nextItem).not.toBeNull();
+    expect(nextItem!.id).toBe(reviewItem.id);
   });
 
   it('should not re-add items to the queue if not due after review', () => {
