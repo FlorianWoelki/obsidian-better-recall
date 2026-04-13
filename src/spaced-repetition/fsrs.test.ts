@@ -189,3 +189,40 @@ describe('calculatePotentialNextReviewDate', () => {
     expect(goodDate.getTime()).toBeLessThanOrEqual(easyDate.getTime());
   });
 });
+
+describe('parameter normalization', () => {
+  it('should normalize camelCase parameters passed to constructor', () => {
+    const algo = new FSRSAlgorithm({
+      requestRetention: 0.83,
+      maximumInterval: 1234,
+      enableFuzz: false,
+      enableShortTerm: true,
+      learningSteps: ['2m', '20m'],
+      relearningSteps: ['15m'],
+    } as any);
+
+    const params = algo.getParameters();
+    expect(params.request_retention).toBe(0.83);
+    expect(params.maximum_interval).toBe(1234);
+    expect(params.enable_fuzz).toBe(false);
+    expect(params.enable_short_term).toBe(true);
+    expect(params.learning_steps).toStrictEqual(['2m', '20m']);
+    expect(params.relearning_steps).toStrictEqual(['15m']);
+  });
+
+  it('should normalize camelCase parameters passed via setParameters', () => {
+    const algo = new FSRSAlgorithm();
+    algo.setParameters({
+      requestRetention: 0.81,
+      maximumInterval: 2222,
+      enableFuzz: true,
+      enableShortTerm: false,
+    } as any);
+
+    const params = algo.getParameters();
+    expect(params.request_retention).toBe(0.81);
+    expect(params.maximum_interval).toBe(2222);
+    expect(params.enable_fuzz).toBe(true);
+    expect(params.enable_short_term).toBe(false);
+  });
+});

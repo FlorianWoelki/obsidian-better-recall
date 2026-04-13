@@ -29,7 +29,7 @@ export class FSRSAlgorithm extends SpacedRepetitionAlgorithm<FSRSParameters> {
   ];
 
   constructor(parameters: Partial<FSRSParameters> = {}) {
-    super(parameters);
+    super(FSRSAlgorithm.normalizeParameters(parameters));
     this.fsrs = new FSRS(this.parameters);
     this.cardMap = new Map();
   }
@@ -116,7 +116,7 @@ export class FSRSAlgorithm extends SpacedRepetitionAlgorithm<FSRSParameters> {
   }
 
   public setParameters(parameters: Partial<FSRSParameters>): void {
-    super.setParameters(parameters);
+    super.setParameters(FSRSAlgorithm.normalizeParameters(parameters));
     this.fsrs = new FSRS(this.parameters);
   }
 
@@ -179,5 +179,60 @@ export class FSRSAlgorithm extends SpacedRepetitionAlgorithm<FSRSParameters> {
 
   private mapStateToFSRS(cardState: CardState): State {
     return FSRSAlgorithm.STATE_MAP[cardState]?.[1] ?? State.New;
+  }
+
+  /**
+   * Normalizes FSRS parameters to the snake_case keys expected by `ts-fsrs`.
+   *
+   * App settings are stored in camelCase (e.g. `requestRetention`), while
+   * `ts-fsrs` only reads snake_case fields (e.g. `request_retention`). This
+   * adapter accepts both formats and returns a partial object containing only
+   * defined snake_case values so runtime overrides are applied correctly.
+   *
+   * @param parameters Raw FSRS parameters from settings or callers.
+   * @returns A partial parameter object using `ts-fsrs` snake_case keys only.
+   */
+  private static normalizeParameters(
+    parameters: Partial<FSRSParameters>,
+  ): Partial<FSRSParameters> {
+    const params = parameters as Partial<FSRSParameters> & {
+      requestRetention?: number;
+      maximumInterval?: number;
+      learningSteps?: FSRSParameters['learning_steps'] | null;
+      relearningSteps?: FSRSParameters['relearning_steps'] | null;
+      enableFuzz?: boolean;
+      enableShortTerm?: boolean;
+    };
+
+    const normalized: Partial<FSRSParameters> = {};
+
+    const set = <K extends keyof FSRSParameters>(
+      key: K,
+      value: FSRSParameters[K] | undefined,
+    ) => {
+      if (value !== undefined) normalized[key] = value;
+    };
+
+    set('w', params.w);
+    set(
+      'request_retention',
+      params.request_retention ?? params.requestRetention,
+    );
+    set('maximum_interval', params.maximum_interval ?? params.maximumInterval);
+    set(
+      'learning_steps',
+      params.learning_steps ?? params.learningSteps ?? undefined,
+    );
+    set(
+      'relearning_steps',
+      params.relearning_steps ?? params.relearningSteps ?? undefined,
+    );
+    set('enable_fuzz', params.enable_fuzz ?? params.enableFuzz);
+    set(
+      'enable_short_term',
+      params.enable_short_term ?? params.enableShortTerm,
+    );
+
+    return normalized;
   }
 }
