@@ -199,7 +199,7 @@ describe('parameter normalization', () => {
       enableShortTerm: true,
       learningSteps: ['2m', '20m'],
       relearningSteps: ['15m'],
-    } as any);
+    });
 
     const params = algo.getParameters();
     expect(params.request_retention).toBe(0.83);
@@ -217,7 +217,7 @@ describe('parameter normalization', () => {
       maximumInterval: 2222,
       enableFuzz: true,
       enableShortTerm: false,
-    } as any);
+    });
 
     const params = algo.getParameters();
     expect(params.request_retention).toBe(0.81);

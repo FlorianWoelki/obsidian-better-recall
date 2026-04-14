@@ -17,6 +17,24 @@ import {
 
 type FSRSRating = Exclude<Rating, Rating.Manual>;
 
+// Raw FSRS keys supported directly by `ts-fsrs`.
+type FSRSSnakeKeys = Partial<FSRSParameters>;
+
+// CamelCase aliases used by this plugin's settings/UI layer.
+// These are normalized to snake_case before creating `FSRS`.
+type FSRSCamelKeys = {
+  requestRetention?: FSRSParameters['request_retention'];
+  maximumInterval?: FSRSParameters['maximum_interval'];
+  learningSteps?: FSRSParameters['learning_steps'];
+  relearningSteps?: FSRSParameters['relearning_steps'];
+  enableFuzz?: FSRSParameters['enable_fuzz'];
+  enableShortTerm?: FSRSParameters['enable_short_term'];
+};
+
+// Public parameter input accepted by `FSRSAlgorithm`.
+// Supports both snake_case (`ts-fsrs`) and camelCase (plugin settings) keys.
+export type FSRSConfigInput = FSRSSnakeKeys & FSRSCamelKeys;
+
 export class FSRSAlgorithm extends SpacedRepetitionAlgorithm<FSRSParameters> {
   private fsrs: FSRS;
   private cardMap: Map<string, FSRSCard>;
@@ -28,7 +46,7 @@ export class FSRSAlgorithm extends SpacedRepetitionAlgorithm<FSRSParameters> {
     [CardState.RELEARNING, State.Relearning],
   ];
 
-  constructor(parameters: Partial<FSRSParameters> = {}) {
+  constructor(parameters: FSRSConfigInput = {}) {
     super(FSRSAlgorithm.normalizeParameters(parameters));
     this.fsrs = new FSRS(this.parameters);
     this.cardMap = new Map();
@@ -115,7 +133,7 @@ export class FSRSAlgorithm extends SpacedRepetitionAlgorithm<FSRSParameters> {
     return scheduling[rating].card.due;
   }
 
-  public setParameters(parameters: Partial<FSRSParameters>): void {
+  public setParameters(parameters: FSRSConfigInput): void {
     super.setParameters(FSRSAlgorithm.normalizeParameters(parameters));
     this.fsrs = new FSRS(this.parameters);
   }
@@ -193,16 +211,9 @@ export class FSRSAlgorithm extends SpacedRepetitionAlgorithm<FSRSParameters> {
    * @returns A partial parameter object using `ts-fsrs` snake_case keys only.
    */
   private static normalizeParameters(
-    parameters: Partial<FSRSParameters>,
+    parameters: FSRSConfigInput,
   ): Partial<FSRSParameters> {
-    const params = parameters as Partial<FSRSParameters> & {
-      requestRetention?: number;
-      maximumInterval?: number;
-      learningSteps?: FSRSParameters['learning_steps'] | null;
-      relearningSteps?: FSRSParameters['relearning_steps'] | null;
-      enableFuzz?: boolean;
-      enableShortTerm?: boolean;
-    };
+    const params = parameters;
 
     const normalized: Partial<FSRSParameters> = {};
 
