@@ -17,6 +17,24 @@ import {
 
 type FSRSRating = Exclude<Rating, Rating.Manual>;
 
+// Raw FSRS keys supported directly by `ts-fsrs`.
+type FSRSSnakeKeys = Partial<FSRSParameters>;
+
+// CamelCase aliases used by this plugin's settings/UI layer.
+// These are normalized to snake_case before creating `FSRS`.
+type FSRSCamelKeys = {
+  requestRetention?: FSRSParameters['request_retention'];
+  maximumInterval?: FSRSParameters['maximum_interval'];
+  learningSteps?: FSRSParameters['learning_steps'];
+  relearningSteps?: FSRSParameters['relearning_steps'];
+  enableFuzz?: FSRSParameters['enable_fuzz'];
+  enableShortTerm?: FSRSParameters['enable_short_term'];
+};
+
+// Public parameter input accepted by `FSRSAlgorithm`.
+// Supports both snake_case (`ts-fsrs`) and camelCase (plugin settings) keys.
+export type FSRSConfigInput = FSRSSnakeKeys & FSRSCamelKeys;
+
 export class FSRSAlgorithm extends SpacedRepetitionAlgorithm<FSRSParameters> {
   private fsrs: FSRS;
   private cardMap: Map<string, FSRSCard>;
@@ -28,8 +46,8 @@ export class FSRSAlgorithm extends SpacedRepetitionAlgorithm<FSRSParameters> {
     [CardState.RELEARNING, State.Relearning],
   ];
 
-  constructor(parameters: Partial<FSRSParameters> = {}) {
-    super(parameters);
+  constructor(parameters: FSRSConfigInput = {}) {
+    super(FSRSAlgorithm.normalizeParameters(parameters));
     this.fsrs = new FSRS(this.parameters);
     this.cardMap = new Map();
   }
@@ -115,8 +133,8 @@ export class FSRSAlgorithm extends SpacedRepetitionAlgorithm<FSRSParameters> {
     return scheduling[rating].card.due;
   }
 
-  public setParameters(parameters: Partial<FSRSParameters>): void {
-    super.setParameters(parameters);
+  public setParameters(parameters: FSRSConfigInput): void {
+    super.setParameters(FSRSAlgorithm.normalizeParameters(parameters));
     this.fsrs = new FSRS(this.parameters);
   }
 
@@ -179,5 +197,53 @@ export class FSRSAlgorithm extends SpacedRepetitionAlgorithm<FSRSParameters> {
 
   private mapStateToFSRS(cardState: CardState): State {
     return FSRSAlgorithm.STATE_MAP[cardState]?.[1] ?? State.New;
+  }
+
+  /**
+   * Normalizes FSRS parameters to the snake_case keys expected by `ts-fsrs`.
+   *
+   * App settings are stored in camelCase (e.g. `requestRetention`), while
+   * `ts-fsrs` only reads snake_case fields (e.g. `request_retention`). This
+   * adapter accepts both formats and returns a partial object containing only
+   * defined snake_case values so runtime overrides are applied correctly.
+   *
+   * @param parameters Raw FSRS parameters from settings or callers.
+   * @returns A partial parameter object using `ts-fsrs` snake_case keys only.
+   */
+  private static normalizeParameters(
+    parameters: FSRSConfigInput,
+  ): Partial<FSRSParameters> {
+    const params = parameters;
+
+    const normalized: Partial<FSRSParameters> = {};
+
+    const set = <K extends keyof FSRSParameters>(
+      key: K,
+      value: FSRSParameters[K] | undefined,
+    ) => {
+      if (value !== undefined) normalized[key] = value;
+    };
+
+    set('w', params.w);
+    set(
+      'request_retention',
+      params.request_retention ?? params.requestRetention,
+    );
+    set('maximum_interval', params.maximum_interval ?? params.maximumInterval);
+    set(
+      'learning_steps',
+      params.learning_steps ?? params.learningSteps ?? undefined,
+    );
+    set(
+      'relearning_steps',
+      params.relearning_steps ?? params.relearningSteps ?? undefined,
+    );
+    set('enable_fuzz', params.enable_fuzz ?? params.enableFuzz);
+    set(
+      'enable_short_term',
+      params.enable_short_term ?? params.enableShortTerm,
+    );
+
+    return normalized;
   }
 }
