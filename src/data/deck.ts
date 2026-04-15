@@ -23,8 +23,8 @@ export function getDefaultDeck(): DeckJsonStructure {
     id: uuidv4(),
     name: 'Default Deck',
     description: 'The default deck',
-    createdAt: new Date().toDateString(),
-    updatedAt: new Date().toDateString(),
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
     cards: {},
   };
 }
@@ -81,8 +81,8 @@ export class Deck {
       id: this.id,
       name: this.name,
       description: this.description,
-      createdAt: this.createdAt.toDateString(),
-      updatedAt: this.updatedAt.toDateString(),
+      createdAt: this.createdAt.toISOString(),
+      updatedAt: this.updatedAt.toISOString(),
       // Cards which does not have the `id` in its value.
       cards: Object.entries(this.cards).reduce<
         Record<string, CardJsonStructure>

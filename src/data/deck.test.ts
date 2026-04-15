@@ -27,7 +27,7 @@ describe('Deck', () => {
     mockAlgorithm = {
       isDueToday: vi.fn(),
     } as unknown as SpacedRepetitionAlgorithm<unknown>;
-    vi.useFakeTimers().setSystemTime(new Date('2024-07-04'));
+    vi.useFakeTimers().setSystemTime(new Date('2024-07-04T12:34:56.789Z'));
   });
 
   afterEach(() => {
@@ -39,8 +39,8 @@ describe('Deck', () => {
     expect(deck.id).toBe('mocked-uuid');
     expect(deck.getName()).toBe('Test Deck');
     expect(deck.getDescription()).toBe('Test Description');
-    expect(deck.createdAt).toEqual(new Date('2024-07-04'));
-    expect(deck.updatedAt).toEqual(new Date('2024-07-04'));
+    expect(deck.createdAt).toEqual(new Date('2024-07-04T12:34:56.789Z'));
+    expect(deck.updatedAt).toEqual(new Date('2024-07-04T12:34:56.789Z'));
     expect(deck.cards).toEqual({});
   });
 
@@ -51,8 +51,8 @@ describe('Deck', () => {
       id: 'mocked-uuid',
       name: 'Test Deck',
       description: 'Test Description',
-      createdAt: 'Thu Jul 04 2024',
-      updatedAt: 'Thu Jul 04 2024',
+      createdAt: '2024-07-04T12:34:56.789Z',
+      updatedAt: '2024-07-04T12:34:56.789Z',
       cards: {},
     });
   });
@@ -144,7 +144,7 @@ describe('jsonObjectToDeck', () => {
 
 describe('getDefaultDeck', () => {
   beforeEach(() => {
-    vi.useFakeTimers().setSystemTime(new Date('2024-07-04'));
+    vi.useFakeTimers().setSystemTime(new Date('2024-07-04T12:34:56.789Z'));
   });
 
   afterEach(() => {
@@ -157,8 +157,8 @@ describe('getDefaultDeck', () => {
     expect(deck.id).toBe('mocked-uuid');
     expect(deck.name).toBe('Default Deck');
     expect(deck.description).toBe('The default deck');
-    expect(deck.createdAt).toBe('Thu Jul 04 2024');
-    expect(deck.updatedAt).toBe('Thu Jul 04 2024');
+    expect(deck.createdAt).toBe('2024-07-04T12:34:56.789Z');
+    expect(deck.updatedAt).toBe('2024-07-04T12:34:56.789Z');
     expect(deck.cards).toEqual({});
   });
 });
