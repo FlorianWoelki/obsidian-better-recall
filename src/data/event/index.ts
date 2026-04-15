@@ -13,7 +13,7 @@ interface ListenerEntry<E extends AnyEvent> {
 }
 
 export class EventEmitter {
-  private listeners: { [K in EventType]?: ListenerEntry<AnyEvent>[] } = {};
+  private listeners: { [K in EventType]?: ListenerEntry<EventMap[K]>[] } = {};
 
   on<K extends EventType>(
     type: K,
@@ -21,7 +21,7 @@ export class EventEmitter {
     priority = 0,
   ): void {
     this.listeners[type] ??= [];
-    this.listeners[type]?.push({ listener, once: false, priority });
+    this.listeners[type].push({ listener, once: false, priority });
     this.sortListeners(type);
   }
 
@@ -31,7 +31,7 @@ export class EventEmitter {
     priority = 0,
   ): void {
     this.listeners[type] ??= [];
-    this.listeners[type]?.push({ listener, once: true, priority });
+    this.listeners[type].push({ listener, once: true, priority });
     this.sortListeners(type);
   }
 
@@ -39,13 +39,15 @@ export class EventEmitter {
     type: K,
     listener: EventListener<EventMap[K]>,
   ): void {
-    if (!this.listeners[type]) {
+    const entries = this.listeners[type];
+    if (!entries) {
       return;
     }
 
-    this.listeners[type] = this.listeners[type]?.filter(
-      (entry) => entry.listener !== listener,
-    );
+    const idx = entries.findIndex((entry) => entry.listener === listener);
+    if (idx !== -1) {
+      entries.splice(idx, 1);
+    }
   }
 
   emit<K extends EventType>(type: K, payload: EventMap[K]['payload']): void {
@@ -63,7 +65,7 @@ export class EventEmitter {
     });
   }
 
-  private sortListeners(type: EventType): void {
+  private sortListeners<K extends EventType>(type: K): void {
     if (this.listeners[type]) {
       this.listeners[type]?.sort((a, b) => b.priority - a.priority);
     }

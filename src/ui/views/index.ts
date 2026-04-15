@@ -14,13 +14,13 @@ enum ViewMode {
 }
 
 export class RecallView extends FileView {
-  public readonly rootEl: HTMLElement;
+  public readonly rootEl!: HTMLElement;
 
   private currentView?: RecallSubView;
-  private reviewView: ReviewView;
-  private decksView: DecksView;
+  private reviewView!: ReviewView;
+  private decksView!: DecksView;
 
-  private viewMode: ViewMode;
+  private viewMode!: ViewMode;
 
   private boundRenderView = this.renderView.bind(this);
 

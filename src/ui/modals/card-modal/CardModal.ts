@@ -9,12 +9,12 @@ import { InputAreaComponent } from 'src/ui/components/input/InputAreaComponent';
 import { cn } from 'src/util';
 
 export abstract class CardModal extends Modal {
-  private optionsContainerEl: HTMLElement;
+  private optionsContainerEl!: HTMLElement;
 
-  protected deckDropdownComp: DropdownComponent;
-  protected frontInputComp: InputAreaComponent;
-  protected backInputComp: InputAreaComponent;
-  protected buttonsBarComp: ButtonsBarComponent;
+  protected deckDropdownComp!: DropdownComponent;
+  protected frontInputComp!: InputAreaComponent;
+  protected backInputComp!: InputAreaComponent;
+  protected buttonsBarComp!: ButtonsBarComponent;
 
   constructor(protected plugin: BetterRecallPlugin) {
     super(plugin.app);

@@ -5,9 +5,9 @@ import { ButtonsBarComponent } from '../components/ButtonsBarComponent';
 import { InputFieldComponent } from '../components/input/InputFieldComponent';
 
 export class EditDeckModal extends Modal {
-  private buttonsBarComp: ButtonsBarComponent;
-  private deckNameInputComp: InputFieldComponent;
-  private deckDescriptionInputComp: InputFieldComponent;
+  private buttonsBarComp!: ButtonsBarComponent;
+  private deckNameInputComp!: InputFieldComponent;
+  private deckDescriptionInputComp!: InputFieldComponent;
 
   constructor(
     private plugin: BetterRecallPlugin,
