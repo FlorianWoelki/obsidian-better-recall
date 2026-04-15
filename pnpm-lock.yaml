@@ -43,8 +43,8 @@ importers:
         specifier: ^5.5.5
         version: 5.5.5(eslint-config-prettier@10.1.8(eslint@10.2.0))(eslint@10.2.0)(prettier@3.8.3)
       happy-dom:
-        specifier: ^20.8.4
-        version: 20.8.4
+        specifier: ^20.9.0
+        version: 20.9.0
       obsidian:
         specifier: 1.12.3
         version: 1.12.3(@codemirror/state@6.5.0)(@codemirror/view@6.38.6)
@@ -59,7 +59,7 @@ importers:
         version: 6.0.2
       vitest:
         specifier: ^4.1.4
-        version: 4.1.4(@types/node@24.10.1)(@vitest/coverage-istanbul@4.1.4)(happy-dom@20.8.4)(vite@8.0.8(@types/node@24.10.1)(esbuild@0.28.0))
+        version: 4.1.4(@types/node@24.10.1)(@vitest/coverage-istanbul@4.1.4)(happy-dom@20.9.0)(vite@8.0.8(@types/node@24.10.1)(esbuild@0.28.0))
 
 packages:
 
@@ -827,8 +827,8 @@ packages:
     resolution: {integrity: sha512-XxwI8EOhVQgWp6iDL+3b0r86f4d6AX6zSU55HfB4ydCEuXLXc5FcYeOu+nnGftS4TEju/11rt4KJPTMgbfmv4A==}
     engines: {node: '>=10.13.0'}
 
-  happy-dom@20.8.4:
-    resolution: {integrity: sha512-GKhjq4OQCYB4VLFBzv8mmccUadwlAusOZOI7hC1D9xDIT5HhzkJK17c4el2f6R6C715P9xB4uiMxeKUa2nHMwQ==}
+  happy-dom@20.9.0:
+    resolution: {integrity: sha512-GZZ9mKe8r646NUAf/zemnGbjYh4Bt8/MqASJY+pSm5ZDtc3YQox+4gsLI7yi1hba6o+eCsGxpHn5+iEVn31/FQ==}
     engines: {node: '>=20.0.0'}
 
   has-flag@4.0.0:
@@ -1777,7 +1777,7 @@ snapshots:
       magicast: 0.5.2
       obug: 2.1.1
       tinyrainbow: 3.1.0
-      vitest: 4.1.4(@types/node@24.10.1)(@vitest/coverage-istanbul@4.1.4)(happy-dom@20.8.4)(vite@8.0.8(@types/node@24.10.1)(esbuild@0.28.0))
+      vitest: 4.1.4(@types/node@24.10.1)(@vitest/coverage-istanbul@4.1.4)(happy-dom@20.9.0)(vite@8.0.8(@types/node@24.10.1)(esbuild@0.28.0))
     transitivePeerDependencies:
       - supports-color
 
@@ -2036,7 +2036,7 @@ snapshots:
     dependencies:
       is-glob: 4.0.3
 
-  happy-dom@20.8.4:
+  happy-dom@20.9.0:
     dependencies:
       '@types/node': 24.10.1
       '@types/whatwg-mimetype': 3.0.2
@@ -2339,7 +2339,7 @@ snapshots:
       esbuild: 0.28.0
       fsevents: 2.3.3
 
-  vitest@4.1.4(@types/node@24.10.1)(@vitest/coverage-istanbul@4.1.4)(happy-dom@20.8.4)(vite@8.0.8(@types/node@24.10.1)(esbuild@0.28.0)):
+  vitest@4.1.4(@types/node@24.10.1)(@vitest/coverage-istanbul@4.1.4)(happy-dom@20.9.0)(vite@8.0.8(@types/node@24.10.1)(esbuild@0.28.0)):
     dependencies:
       '@vitest/expect': 4.1.4
       '@vitest/mocker': 4.1.4(vite@8.0.8(@types/node@24.10.1)(esbuild@0.28.0))
@@ -2364,7 +2364,7 @@ snapshots:
     optionalDependencies:
       '@types/node': 24.10.1
       '@vitest/coverage-istanbul': 4.1.4(vitest@4.1.4)
-      happy-dom: 20.8.4
+      happy-dom: 20.9.0
     transitivePeerDependencies:
       - msw
 
