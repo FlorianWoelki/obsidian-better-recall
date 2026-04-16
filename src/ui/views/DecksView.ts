@@ -15,7 +15,11 @@ import {
   NEW_CARDS_COLOR,
 } from '../classes';
 import { EditCardsModal } from '../modals/EditCardsModal';
-import { AddItemEvent, EditDeckEvent } from 'src/data/event/events';
+import {
+  AddItemEvent,
+  DeleteItemEvent,
+  EditDeckEvent,
+} from 'src/data/event/events';
 
 const visibleClass = 'better-recall-deck-action--visible';
 const rowAttributes = {
@@ -34,7 +38,7 @@ const rowAttributes = {
 };
 
 export class DecksView extends RecallSubView {
-  private rootEl: HTMLElement;
+  declare private rootEl: HTMLElement;
 
   private boundAddDeck = this.handleAddDeck.bind(this);
   private boundAddItem = this.handleAddItem.bind(this);
@@ -98,7 +102,7 @@ export class DecksView extends RecallSubView {
     this.refreshDueCardsCount(deck.id, deckRowEl);
   }
 
-  private handleDeleteItem({ payload }: AddItemEvent): void {
+  private handleDeleteItem({ payload }: DeleteItemEvent): void {
     if (!payload) {
       return;
     }
@@ -194,11 +198,13 @@ export class DecksView extends RecallSubView {
     return deckRowEl.querySelector(rowAttributes.dueCardsCount.attr);
   }
 
-  private handleDeckRowMouseEnter(event: MouseEvent): void {
-    event.preventDefault();
-    event.stopPropagation();
+  private handleDeckRowMouseEnter(event: Event): void {
+    const mouseEvent = event as MouseEvent;
 
-    const target = event.target as HTMLElement | undefined;
+    mouseEvent.preventDefault();
+    mouseEvent.stopPropagation();
+
+    const target = mouseEvent.target as HTMLElement | undefined;
     if (!target || !target.parentElement) {
       return;
     }
@@ -206,11 +212,13 @@ export class DecksView extends RecallSubView {
     target.addClass(visibleClass);
   }
 
-  private handleDeckRowMouseLeave(event: MouseEvent): void {
-    event.preventDefault();
-    event.stopPropagation();
+  private handleDeckRowMouseLeave(event: Event): void {
+    const mouseEvent = event as MouseEvent;
 
-    const target = event.target as HTMLElement | null;
+    mouseEvent.preventDefault();
+    mouseEvent.stopPropagation();
+
+    const target = mouseEvent.target as HTMLElement | null;
     if (!target) {
       return;
     }

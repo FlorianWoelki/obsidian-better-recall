@@ -19,11 +19,11 @@ import { runMigrations } from './migrations';
 import { getDefaultDeck } from './data/deck';
 
 export default class BetterRecallPlugin extends Plugin {
-  public algorithm: SpacedRepetitionAlgorithm<unknown>;
-  public decksManager: DecksManager;
+  declare public algorithm: SpacedRepetitionAlgorithm<unknown>;
+  declare public decksManager: DecksManager;
 
-  private data: BetterRecallData;
-  private eventEmitter: EventEmitter;
+  declare private data: BetterRecallData;
+  declare private eventEmitter: EventEmitter;
 
   async onload() {
     console.log('loading better recall');

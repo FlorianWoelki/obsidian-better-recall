@@ -19,11 +19,12 @@ export class KeyboardListener {
     this.inputEl.removeEventListener('keypress', this.boundEnterPress);
   }
 
-  private onEnterPress(event: KeyboardEvent): void {
+  private onEnterPress(event: Event): void {
+    const keyEvent = event as KeyboardEvent;
     setTimeout(() => {
       const isEmpty = this.inputEl.value.length === 0;
 
-      if (!event.altKey || event.key !== 'Enter' || isEmpty) {
+      if (!keyEvent.altKey || keyEvent.key !== 'Enter' || isEmpty) {
         return;
       }
 

@@ -2,9 +2,9 @@ import { ButtonComponent, Component } from 'obsidian';
 import { BUTTONS_BAR_CLASS } from '../classes';
 
 export class ButtonsBarComponent extends Component {
-  private submitButtonComp: ButtonComponent;
-  private closeButtonComp: ButtonComponent;
-  public buttonsBarEl: HTMLDivElement;
+  declare private submitButtonComp: ButtonComponent;
+  declare private closeButtonComp: ButtonComponent;
+  declare public buttonsBarEl: HTMLDivElement;
 
   constructor(private contentEl: HTMLElement) {
     super();

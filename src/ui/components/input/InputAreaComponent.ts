@@ -7,7 +7,7 @@ interface InputAreaComponentOptions {
 }
 
 export class InputAreaComponent extends TextAreaComponent {
-  public descriptionEl: HTMLElement;
+  public descriptionEl?: HTMLElement;
 
   public keyboardListener: KeyboardListener;
 

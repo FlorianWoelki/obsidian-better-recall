@@ -12,7 +12,7 @@ const cardAttributes = {
 };
 
 export class EditCardsModal extends Modal {
-  private buttonsBarComp: ButtonsBarComponent;
+  declare private buttonsBarComp: ButtonsBarComponent;
 
   private boundEditItem = this.handleEditItem.bind(this);
   private boundAddItem = this.handleAddItem.bind(this);

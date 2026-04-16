@@ -7,7 +7,7 @@ interface InputFieldComponentOptions {
 }
 
 export class InputFieldComponent extends TextComponent {
-  public descriptionEl: HTMLElement;
+  public descriptionEl?: HTMLElement;
 
   public keyboardListener: KeyboardListener;
 
