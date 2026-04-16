@@ -41,12 +41,16 @@ export class EditCardModal extends CardModal {
   }
 
   protected submit(): void {
-    const deckId = this.deckDropdownComp.getValue();
-    const front = this.frontInputComp.getValue();
-    const back = this.backInputComp.getValue();
+    if (!this.inputFields || !this.deckDropdownComp) {
+      return;
+    }
 
-    this.frontInputComp.setValue('');
-    this.backInputComp.setValue('');
+    const deckId = this.deckDropdownComp.getValue();
+    const front = this.inputFields.front.getValue();
+    const back = this.inputFields.back.getValue();
+
+    this.inputFields.front.setValue('');
+    this.inputFields.back.setValue('');
 
     const updatedCard = {
       ...this.card,

@@ -9,12 +9,15 @@ import { InputAreaComponent } from 'src/ui/components/input/InputAreaComponent';
 import { cn } from 'src/util';
 
 export abstract class CardModal extends Modal {
-  private optionsContainerEl!: HTMLElement;
+  declare private optionsContainerEl: HTMLElement;
 
-  protected deckDropdownComp!: DropdownComponent;
-  protected frontInputComp!: InputAreaComponent;
-  protected backInputComp!: InputAreaComponent;
-  protected buttonsBarComp!: ButtonsBarComponent;
+  protected deckDropdownComp?: DropdownComponent;
+  protected buttonsBarComp?: ButtonsBarComponent;
+
+  protected inputFields?: {
+    front: InputAreaComponent;
+    back: InputAreaComponent;
+  };
 
   constructor(protected plugin: BetterRecallPlugin) {
     super(plugin.app);
@@ -31,8 +34,8 @@ export abstract class CardModal extends Modal {
   }
 
   onClose(): void {
-    this.frontInputComp.keyboardListener.cleanup();
-    this.backInputComp.keyboardListener.cleanup();
+    this.inputFields?.front.keyboardListener.cleanup();
+    this.inputFields?.back.keyboardListener.cleanup();
     super.onClose();
     this.plugin.decksManager.save();
     this.contentEl.empty();
@@ -73,12 +76,12 @@ export abstract class CardModal extends Modal {
   }
 
   protected renderBasicTypeFields(front?: string, back?: string): void {
-    this.frontInputComp = new InputAreaComponent(this.contentEl, {
+    const frontComp = new InputAreaComponent(this.contentEl, {
       description: 'Front',
     })
       .setValue(front ?? '')
       .onChange(this.handleInputChange.bind(this));
-    this.frontInputComp.keyboardListener.onEnter = () => {
+    frontComp.keyboardListener.onEnter = () => {
       if (this.disabled) {
         return;
       }
@@ -86,18 +89,23 @@ export abstract class CardModal extends Modal {
       this.submit();
     };
 
-    this.backInputComp = new InputAreaComponent(this.contentEl, {
+    const backComp = new InputAreaComponent(this.contentEl, {
       description: 'Back',
     })
       .setValue(back ?? '')
       .onChange(this.handleInputChange.bind(this));
-    this.backInputComp.descriptionEl.addClass('better-recall-back-field');
-    this.backInputComp.keyboardListener.onEnter = () => {
+    backComp.descriptionEl?.addClass('better-recall-back-field');
+    backComp.keyboardListener.onEnter = () => {
       if (this.disabled) {
         return;
       }
 
       this.submit();
+    };
+
+    this.inputFields = {
+      front: frontComp,
+      back: backComp,
     };
   }
 
@@ -114,16 +122,24 @@ export abstract class CardModal extends Modal {
   }
 
   protected handleInputChange() {
+    if (!this.inputFields) {
+      return;
+    }
+
     const disabled =
-      this.frontInputComp.getValue().length === 0 ||
-      this.backInputComp.getValue().length === 0;
-    this.buttonsBarComp.setSubmitButtonDisabled(disabled);
+      this.inputFields.front.getValue().length === 0 ||
+      this.inputFields.back.getValue().length === 0;
+    this.buttonsBarComp?.setSubmitButtonDisabled(disabled);
   }
 
   protected get disabled(): boolean {
+    if (!this.inputFields) {
+      return true;
+    }
+
     return (
-      this.frontInputComp.getValue().length === 0 ||
-      this.backInputComp.getValue().length === 0
+      this.inputFields.front.getValue().length === 0 ||
+      this.inputFields.back.getValue().length === 0
     );
   }
 }

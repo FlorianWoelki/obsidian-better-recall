@@ -2,7 +2,6 @@ import { Deck, DeckJsonStructure, jsonObjectToDeck } from '../deck';
 import {
   SpacedRepetitionAlgorithm,
   SpacedRepetitionItem,
-  CardState,
 } from '../../spaced-repetition';
 import BetterRecallPlugin from 'src/main';
 

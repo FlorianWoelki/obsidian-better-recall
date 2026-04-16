@@ -38,7 +38,7 @@ const rowAttributes = {
 };
 
 export class DecksView extends RecallSubView {
-  private rootEl!: HTMLElement;
+  declare private rootEl: HTMLElement;
 
   private boundAddDeck = this.handleAddDeck.bind(this);
   private boundAddItem = this.handleAddItem.bind(this);

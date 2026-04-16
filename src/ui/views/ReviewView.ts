@@ -20,21 +20,21 @@ enum ReviewState {
 }
 
 export class ReviewView extends RecallSubView {
-  private rootEl!: HTMLElement;
-  private contentEl!: HTMLElement;
+  declare private rootEl: HTMLElement;
+  declare private contentEl: HTMLElement;
   private vaultRootPath: string;
 
-  private answerButtonsBarEl!: HTMLElement;
-  private recallButtonsBarEl!: HTMLElement;
+  declare private answerButtonsBarEl: HTMLElement;
+  declare private recallButtonsBarEl: HTMLElement;
 
-  private cardFrontEl!: HTMLElement;
-  private dividerEl!: HTMLElement;
-  private cardBackEl!: HTMLElement;
-  private showAnswerButton!: ButtonComponent;
+  declare private cardFrontEl: HTMLElement;
+  declare private dividerEl: HTMLElement;
+  declare private cardBackEl: HTMLElement;
+  declare private showAnswerButton: ButtonComponent;
 
   private currentItem: SpacedRepetitionItem | null = null;
-  private deck!: Deck;
-  private state!: ReviewState;
+  private deck?: Deck;
+  private state?: ReviewState;
 
   private boundKeyInput = this.handleKeyInput.bind(this);
   private boundInternalLinkClick = this.handleInternalLinkClick.bind(this);

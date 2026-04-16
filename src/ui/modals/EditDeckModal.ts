@@ -5,9 +5,9 @@ import { ButtonsBarComponent } from '../components/ButtonsBarComponent';
 import { InputFieldComponent } from '../components/input/InputFieldComponent';
 
 export class EditDeckModal extends Modal {
-  private buttonsBarComp!: ButtonsBarComponent;
-  private deckNameInputComp!: InputFieldComponent;
-  private deckDescriptionInputComp!: InputFieldComponent;
+  declare private buttonsBarComp: ButtonsBarComponent;
+  declare private deckNameInputComp: InputFieldComponent;
+  declare private deckDescriptionInputComp: InputFieldComponent;
 
   constructor(
     private plugin: BetterRecallPlugin,
@@ -38,7 +38,7 @@ export class EditDeckModal extends Modal {
 
       this.editDeck();
     };
-    this.deckNameInputComp.descriptionEl.addClass(
+    this.deckNameInputComp.descriptionEl?.addClass(
       'better-recall-deck-name-field',
     );
 
@@ -53,7 +53,7 @@ export class EditDeckModal extends Modal {
 
       this.editDeck();
     };
-    this.deckDescriptionInputComp.descriptionEl.addClass(
+    this.deckDescriptionInputComp.descriptionEl?.addClass(
       'better-recall-deck-description-field',
     );
 

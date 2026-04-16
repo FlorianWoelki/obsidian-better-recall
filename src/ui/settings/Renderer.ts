@@ -24,7 +24,7 @@ export class SettingRenderer {
     private containerEl: HTMLElement,
     private onSave: () => Promise<void>,
   ) {
-    this.renderers = new Map([
+    this.renderers = new Map<string, RenderFunction<any>>([
       ['boolean', this.renderBoolean.bind(this)],
       ['number', this.renderNumber.bind(this)],
       ['string', this.renderText.bind(this)],

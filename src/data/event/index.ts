@@ -44,10 +44,9 @@ export class EventEmitter {
       return;
     }
 
-    const idx = entries.findIndex((entry) => entry.listener === listener);
-    if (idx !== -1) {
-      entries.splice(idx, 1);
-    }
+    this.listeners[type] = entries.filter(
+      (entry) => entry.listener !== listener,
+    ) as NonNullable<(typeof this.listeners)[K]>;
   }
 
   emit<K extends EventType>(type: K, payload: EventMap[K]['payload']): void {
