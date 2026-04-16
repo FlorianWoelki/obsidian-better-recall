@@ -115,6 +115,8 @@ export class DecksView extends RecallSubView {
     }
 
     this.refreshNewCardsCount(deckId, deckRowEl);
+    this.refreshLearnCardsCount(deckId, deckRowEl);
+    this.refreshDueCardsCount(deckId, deckRowEl);
   }
 
   private handleAddItem({ payload }: AddItemEvent): void {
