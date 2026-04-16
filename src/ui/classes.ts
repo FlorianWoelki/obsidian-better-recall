@@ -22,7 +22,8 @@ export const DECK_BUTTON = 'better-recall-deck__button';
 
 // Description
 export const P_DESCRIPTION = 'better-recall-description';
-export const CARD_MODAL_DESCRIPTION = 'better-recall-card-modal-description';
+export const CARD_MODAL_DROPDOWN_DESCRIPTION =
+  'better-recall-card-modal-dropdown-description';
 
 // Obsidian
 export const SETTING_ITEM_DESCRIPTION = 'setting-item-description';

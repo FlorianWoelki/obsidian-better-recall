@@ -2,8 +2,10 @@
   margin-bottom: 0.625rem;
 }
 
-.better-recall-card-modal-description {
+.better-recall-card-modal-dropdown-description {
   padding-top: 0;
+  /* Used such that the text is not shrinked */
+  overflow: visible;
 }
 
 .better-recall-description {

@@ -1,7 +1,7 @@
 import { DropdownComponent, Modal } from 'obsidian';
 import BetterRecallPlugin from 'src/main';
 import {
-  CARD_MODAL_DESCRIPTION,
+  CARD_MODAL_DROPDOWN_DESCRIPTION,
   SETTING_ITEM_DESCRIPTION,
 } from 'src/ui/classes';
 import { ButtonsBarComponent } from 'src/ui/components/ButtonsBarComponent';
@@ -56,7 +56,7 @@ export abstract class CardModal extends Modal {
     // Renders the deck dropdown.
     this.optionsContainerEl.createEl('p', {
       text: 'Deck:',
-      cls: cn(SETTING_ITEM_DESCRIPTION, CARD_MODAL_DESCRIPTION),
+      cls: cn(SETTING_ITEM_DESCRIPTION, CARD_MODAL_DROPDOWN_DESCRIPTION),
     });
     this.deckDropdownComp = new DropdownComponent(
       this.optionsContainerEl,
@@ -67,7 +67,7 @@ export abstract class CardModal extends Modal {
   protected renderCardTypeDropdown(): void {
     this.optionsContainerEl.createEl('p', {
       text: 'Type:',
-      cls: cn(SETTING_ITEM_DESCRIPTION, CARD_MODAL_DESCRIPTION),
+      cls: cn(SETTING_ITEM_DESCRIPTION, CARD_MODAL_DROPDOWN_DESCRIPTION),
     });
     const cardTypeDropdown = new DropdownComponent(this.optionsContainerEl)
       .addOptions({ basic: 'Basic' })
