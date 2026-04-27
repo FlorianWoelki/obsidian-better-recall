@@ -191,9 +191,7 @@ export abstract class SpacedRepetitionAlgorithm<T> {
     const now = new Date();
     return (
       item.state === CardState.NEW ||
-      (!!item.nextReviewDate &&
-        item.nextReviewDate <= this.sessionEndTime &&
-        item.nextReviewDate?.toDateString() === now.toDateString())
+      (!!item.nextReviewDate && item.nextReviewDate <= this.getEndOfDay(now))
     );
   }
 

@@ -126,6 +126,17 @@ describe('isDueToday', () => {
     };
     expect(algorithm.isDueToday(notDueItem)).toBe(false);
   });
+
+  it('should return true for overdue items', () => {
+    const pastDate = new Date();
+    pastDate.setDate(pastDate.getDate() - 1);
+    const overdueItem = {
+      ...mockItem,
+      state: CardState.REVIEW,
+      nextReviewDate: pastDate,
+    };
+    expect(algorithm.isDueToday(overdueItem)).toBe(true);
+  });
 });
 
 describe('resetItems', () => {
