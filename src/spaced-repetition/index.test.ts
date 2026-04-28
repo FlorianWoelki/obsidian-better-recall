@@ -1,4 +1,4 @@
-import { vi, describe, expect, it, beforeEach } from 'vitest';
+import { vi, describe, expect, it, beforeEach, afterEach } from 'vitest';
 import {
   CardState,
   CardType,
@@ -103,6 +103,15 @@ describe('startNewSession', () => {
 });
 
 describe('isDueToday', () => {
+  beforeEach(() => {
+    vi.useFakeTimers().setSystemTime(new Date('2026-01-01T12:34:56.789Z'));
+    algorithm.startNewSession();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
   it('should return true for new items', () => {
     expect(algorithm.isDueToday(mockItem)).toBe(true);
   });

@@ -188,10 +188,9 @@ export abstract class SpacedRepetitionAlgorithm<T> {
    * @returns True if the item is due today, false otherwise.
    */
   public isDueToday(item: SpacedRepetitionItem): boolean {
-    const now = new Date();
     return (
       item.state === CardState.NEW ||
-      (!!item.nextReviewDate && item.nextReviewDate <= this.getEndOfDay(now))
+      (!!item.nextReviewDate && item.nextReviewDate <= this.sessionEndTime)
     );
   }
 
