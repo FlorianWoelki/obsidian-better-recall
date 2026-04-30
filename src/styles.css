@@ -26,6 +26,9 @@
   margin-top: 0;
 }
 
+.better-recall-decks-view {
+  overflow: auto;
+}
 .better-recall-decks-view .better-recall-buttons-bar {
   margin-top: 1rem;
 }
