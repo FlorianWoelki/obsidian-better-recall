@@ -255,6 +255,7 @@
   transition: opacity 100ms ease-in-out;
   z-index: 100;
   white-space: nowrap;
+  max-width: 220px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 

@@ -539,12 +539,28 @@ export class DecksView extends RecallSubView {
     const wrapperRect = wrapper.getBoundingClientRect();
     const tooltipRect = tooltip.getBoundingClientRect();
 
+    const gap = 6;
+    const padding = 8;
+
     let left =
       targetRect.left -
       wrapperRect.left +
       targetRect.width / 2 -
       tooltipRect.width / 2;
-    let top = targetRect.top - wrapperRect.top - tooltipRect.height - 6;
+    let top = targetRect.top - wrapperRect.top - tooltipRect.height - gap;
+
+    const minLeft = padding;
+    const maxLeft = wrapperRect.width - tooltipRect.width - padding;
+
+    if (left < minLeft) {
+      left = minLeft;
+    } else if (left > maxLeft) {
+      left = maxLeft;
+    }
+
+    if (top < padding) {
+      top = targetRect.bottom - wrapperRect.top + gap;
+    }
 
     tooltip.style.left = `${left}px`;
     tooltip.style.top = `${top}px`;
