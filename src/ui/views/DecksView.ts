@@ -47,6 +47,8 @@ export class DecksView extends RecallSubView {
   private boundDeleteDeck = this.handleDeleteDeck.bind(this);
   private boundEditDeck = this.handleEditDeck.bind(this);
 
+  private activityGraphsContainer?: HTMLElement;
+
   constructor(plugin: BetterRecallPlugin, recallView: RecallView) {
     super(plugin, recallView);
 
@@ -119,6 +121,7 @@ export class DecksView extends RecallSubView {
     this.refreshNewCardsCount(deckId, deckRowEl);
     this.refreshLearnCardsCount(deckId, deckRowEl);
     this.refreshDueCardsCount(deckId, deckRowEl);
+    this.refreshActivityGraphs();
   }
 
   private handleAddItem({ payload }: AddItemEvent): void {
@@ -127,7 +130,6 @@ export class DecksView extends RecallSubView {
     }
 
     const { deckId } = payload;
-
     const deckRowEl = this.getDeckRowEl(deckId);
     if (!deckRowEl) {
       return;
@@ -136,6 +138,7 @@ export class DecksView extends RecallSubView {
     this.refreshNewCardsCount(deckId, deckRowEl);
     this.refreshLearnCardsCount(deckId, deckRowEl);
     this.refreshDueCardsCount(deckId, deckRowEl);
+    this.refreshActivityGraphs();
   }
 
   private refreshDueCardsCount(deckId: string, deckRowEl: HTMLElement): void {
@@ -337,9 +340,18 @@ export class DecksView extends RecallSubView {
   }
 
   private renderActivityGraphs(): void {
-    const container = this.rootEl.createDiv(
+    this.activityGraphsContainer = this.rootEl.createDiv(
       'better-recall-activity-graphs-container',
     );
+    this.refreshActivityGraphs();
+  }
+
+  private refreshActivityGraphs(): void {
+    if (!this.activityGraphsContainer) {
+      return;
+    }
+
+    this.activityGraphsContainer.empty();
 
     const allCards = this.plugin.decksManager.decksArray.flatMap(
       (deck) => deck.cardsArray,
@@ -356,7 +368,7 @@ export class DecksView extends RecallSubView {
     );
 
     this.renderCombinedActivityGraph(
-      container,
+      this.activityGraphsContainer,
       reviewedCounts,
       scheduledCounts,
     );
