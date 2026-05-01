@@ -377,8 +377,17 @@ export class DecksView extends RecallSubView {
     return counts;
   }
 
+  private getStartOfLocalDay(date: Date): Date {
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  }
+
   private getDateKey(date: Date): string {
-    return date.toISOString().split('T')[0];
+    const localDate = this.getStartOfLocalDay(date);
+    const year = localDate.getFullYear();
+    const month = String(localDate.getMonth() + 1).padStart(2, '0');
+    const day = String(localDate.getDate()).padStart(2, '0');
+    // TODO: Maybe change in the future to be local date.
+    return `${year}-${month}-${day}`;
   }
 
   private renderCombinedActivityGraph(
@@ -461,25 +470,37 @@ export class DecksView extends RecallSubView {
           `better-recall-activity-graph__day--${colorScale}-${level}`,
         );
 
-        dayEl.addEventListener('mouseenter', () => {
+        const parts: string[] = [];
+        if (reviewedCount > 0) {
+          parts.push(`${reviewedCount} reviewed`);
+        }
+        if (scheduledCount > 0) {
+          parts.push(`${scheduledCount} scheduled`);
+        }
+        const tooltipSummary =
+          parts.length > 0 ? parts.join(' · ') : 'No activity';
+        const tooltipLabel = `${key}: ${tooltipSummary}`;
+
+        dayEl.setAttribute('tabindex', '0');
+        dayEl.setAttribute('aria-label', tooltipLabel);
+        dayEl.setAttribute('title', tooltipLabel);
+
+        const showTooltip = () => {
           tooltipDate.setText(key);
-          const parts: string[] = [];
-          if (reviewedCount > 0) {
-            parts.push(`${reviewedCount} reviewed`);
-          }
-          if (scheduledCount > 0) {
-            parts.push(`${scheduledCount} scheduled`);
-          }
-          tooltipCount.setText(
-            parts.length > 0 ? parts.join(' · ') : 'No activity',
-          );
+          tooltipCount.setText(tooltipSummary);
           tooltip.addClass('better-recall-activity-graph__tooltip--visible');
           this.positionTooltip(tooltip, dayEl, wrapper);
-        });
+        };
 
-        dayEl.addEventListener('mouseleave', () => {
+        const hideTooltip = () => {
           tooltip.removeClass('better-recall-activity-graph__tooltip--visible');
-        });
+        };
+
+        dayEl.addEventListener('mouseenter', showTooltip);
+        dayEl.addEventListener('focus', showTooltip);
+
+        dayEl.addEventListener('mouseleave', hideTooltip);
+        dayEl.addEventListener('blur', hideTooltip);
       }
     }
 
@@ -540,7 +561,7 @@ export class DecksView extends RecallSubView {
     const tooltipRect = tooltip.getBoundingClientRect();
 
     const gap = 6;
-    const padding = 8;
+    const minLeft = 8;
 
     let left =
       targetRect.left -
@@ -549,16 +570,13 @@ export class DecksView extends RecallSubView {
       tooltipRect.width / 2;
     let top = targetRect.top - wrapperRect.top - tooltipRect.height - gap;
 
-    const minLeft = padding;
-    const maxLeft = wrapperRect.width - tooltipRect.width - padding;
+    const maxLeft = Math.max(
+      minLeft,
+      wrapperRect.width - tooltipRect.width - minLeft,
+    );
+    left = Math.max(minLeft, Math.min(left, maxLeft));
 
-    if (left < minLeft) {
-      left = minLeft;
-    } else if (left > maxLeft) {
-      left = maxLeft;
-    }
-
-    if (top < padding) {
+    if (top < minLeft) {
       top = targetRect.bottom - wrapperRect.top + gap;
     }
 
