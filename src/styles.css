@@ -227,7 +227,7 @@
   border-radius: var(--radius-s);
 }
 
-.better-recall-activity-graphs-container {
+.better-recall-activity-graph-container {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;

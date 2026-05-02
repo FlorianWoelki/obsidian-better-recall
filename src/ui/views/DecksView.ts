@@ -47,7 +47,7 @@ export class DecksView extends RecallSubView {
   private boundDeleteDeck = this.handleDeleteDeck.bind(this);
   private boundEditDeck = this.handleEditDeck.bind(this);
 
-  private activityGraphsContainer?: HTMLElement;
+  private activityGraphContainer?: HTMLElement;
 
   constructor(plugin: BetterRecallPlugin, recallView: RecallView) {
     super(plugin, recallView);
@@ -64,7 +64,7 @@ export class DecksView extends RecallSubView {
 
     this.renderDecks();
     this.renderButtons();
-    this.renderActivityGraphs();
+    this.renderActivityGraph();
   }
 
   private handleDeleteDeck(): void {
@@ -121,7 +121,7 @@ export class DecksView extends RecallSubView {
     this.refreshNewCardsCount(deckId, deckRowEl);
     this.refreshLearnCardsCount(deckId, deckRowEl);
     this.refreshDueCardsCount(deckId, deckRowEl);
-    this.refreshActivityGraphs();
+    this.refreshActivityGraph();
   }
 
   private handleAddItem({ payload }: AddItemEvent): void {
@@ -138,7 +138,7 @@ export class DecksView extends RecallSubView {
     this.refreshNewCardsCount(deckId, deckRowEl);
     this.refreshLearnCardsCount(deckId, deckRowEl);
     this.refreshDueCardsCount(deckId, deckRowEl);
-    this.refreshActivityGraphs();
+    this.refreshActivityGraph();
   }
 
   private refreshDueCardsCount(deckId: string, deckRowEl: HTMLElement): void {
@@ -339,27 +339,27 @@ export class DecksView extends RecallSubView {
       });
   }
 
-  private renderActivityGraphs(): void {
+  private renderActivityGraph(): void {
     if (!this.plugin.getSettings().isActivityGraphEnabled) {
       return;
     }
 
-    this.activityGraphsContainer = this.rootEl.createDiv(
-      'better-recall-activity-graphs-container',
+    this.activityGraphContainer = this.rootEl.createDiv(
+      'better-recall-activity-graph-container',
     );
-    this.refreshActivityGraphs();
+    this.refreshActivityGraph();
   }
 
-  private refreshActivityGraphs(): void {
+  private refreshActivityGraph(): void {
     if (!this.plugin.getSettings().isActivityGraphEnabled) {
       return;
     }
 
-    if (!this.activityGraphsContainer) {
+    if (!this.activityGraphContainer) {
       return;
     }
 
-    this.activityGraphsContainer.empty();
+    this.activityGraphContainer.empty();
 
     const allCards = this.plugin.decksManager.decksArray.flatMap(
       (deck) => deck.cardsArray,
@@ -376,7 +376,7 @@ export class DecksView extends RecallSubView {
     );
 
     this.renderCombinedActivityGraph(
-      this.activityGraphsContainer,
+      this.activityGraphContainer,
       reviewedCounts,
       scheduledCounts,
     );
