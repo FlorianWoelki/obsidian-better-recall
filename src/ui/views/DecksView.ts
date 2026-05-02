@@ -340,6 +340,10 @@ export class DecksView extends RecallSubView {
   }
 
   private renderActivityGraphs(): void {
+    if (!this.plugin.getSettings().isActivityGraphEnabled) {
+      return;
+    }
+
     this.activityGraphsContainer = this.rootEl.createDiv(
       'better-recall-activity-graphs-container',
     );
@@ -347,6 +351,10 @@ export class DecksView extends RecallSubView {
   }
 
   private refreshActivityGraphs(): void {
+    if (!this.plugin.getSettings().isActivityGraphEnabled) {
+      return;
+    }
+
     if (!this.activityGraphsContainer) {
       return;
     }
