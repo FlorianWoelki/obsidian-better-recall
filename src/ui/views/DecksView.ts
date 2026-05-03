@@ -20,6 +20,7 @@ import {
   DeleteItemEvent,
   EditDeckEvent,
 } from 'src/data/event/events';
+import { SpacedRepetitionItem } from 'src/spaced-repetition';
 
 const visibleClass = 'better-recall-deck-action--visible';
 const rowAttributes = {
@@ -46,6 +47,8 @@ export class DecksView extends RecallSubView {
   private boundDeleteDeck = this.handleDeleteDeck.bind(this);
   private boundEditDeck = this.handleEditDeck.bind(this);
 
+  private activityGraphContainer?: HTMLElement;
+
   constructor(plugin: BetterRecallPlugin, recallView: RecallView) {
     super(plugin, recallView);
 
@@ -61,6 +64,7 @@ export class DecksView extends RecallSubView {
 
     this.renderDecks();
     this.renderButtons();
+    this.renderActivityGraph();
   }
 
   private handleDeleteDeck(): void {
@@ -117,6 +121,7 @@ export class DecksView extends RecallSubView {
     this.refreshNewCardsCount(deckId, deckRowEl);
     this.refreshLearnCardsCount(deckId, deckRowEl);
     this.refreshDueCardsCount(deckId, deckRowEl);
+    this.refreshActivityGraph();
   }
 
   private handleAddItem({ payload }: AddItemEvent): void {
@@ -125,7 +130,6 @@ export class DecksView extends RecallSubView {
     }
 
     const { deckId } = payload;
-
     const deckRowEl = this.getDeckRowEl(deckId);
     if (!deckRowEl) {
       return;
@@ -134,6 +138,7 @@ export class DecksView extends RecallSubView {
     this.refreshNewCardsCount(deckId, deckRowEl);
     this.refreshLearnCardsCount(deckId, deckRowEl);
     this.refreshDueCardsCount(deckId, deckRowEl);
+    this.refreshActivityGraph();
   }
 
   private refreshDueCardsCount(deckId: string, deckRowEl: HTMLElement): void {
@@ -332,6 +337,284 @@ export class DecksView extends RecallSubView {
       .onClick(() => {
         new AddCardModal(this.plugin).open();
       });
+  }
+
+  private renderActivityGraph(): void {
+    if (!this.plugin.getSettings().isActivityGraphEnabled) {
+      return;
+    }
+
+    this.activityGraphContainer = this.rootEl.createDiv(
+      'better-recall-activity-graph-container',
+    );
+    this.refreshActivityGraph();
+  }
+
+  private refreshActivityGraph(): void {
+    if (!this.plugin.getSettings().isActivityGraphEnabled) {
+      return;
+    }
+
+    if (!this.activityGraphContainer) {
+      return;
+    }
+
+    this.activityGraphContainer.empty();
+
+    const allCards = this.plugin.decksManager.decksArray.flatMap(
+      (deck) => deck.cardsArray,
+    );
+
+    const reviewedCounts = this.aggregateDateCounts(
+      allCards,
+      (card) => card.lastReviewDate,
+    );
+
+    const scheduledCounts = this.aggregateDateCounts(
+      allCards,
+      (card) => card.nextReviewDate,
+    );
+
+    this.renderCombinedActivityGraph(
+      this.activityGraphContainer,
+      reviewedCounts,
+      scheduledCounts,
+    );
+  }
+
+  private aggregateDateCounts(
+    cards: SpacedRepetitionItem[],
+    dateExtractor: (card: SpacedRepetitionItem) => Date | undefined,
+  ): Map<string, number> {
+    const counts = new Map<string, number>();
+    cards.forEach((card) => {
+      const date = dateExtractor(card);
+      if (date) {
+        const key = this.getDateKey(date);
+        counts.set(key, (counts.get(key) || 0) + 1);
+      }
+    });
+    return counts;
+  }
+
+  private getStartOfLocalDay(date: Date): Date {
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  }
+
+  private getDateKey(date: Date): string {
+    const localDate = this.getStartOfLocalDay(date);
+    const year = localDate.getFullYear();
+    const month = String(localDate.getMonth() + 1).padStart(2, '0');
+    const day = String(localDate.getDate()).padStart(2, '0');
+    // TODO: Maybe change in the future to be local date using Intl.
+    return `${year}-${month}-${day}`;
+  }
+
+  private renderCombinedActivityGraph(
+    parent: HTMLElement,
+    reviewedCounts: Map<string, number>,
+    scheduledCounts: Map<string, number>,
+  ): void {
+    const wrapper = parent.createDiv('better-recall-activity-graph');
+    wrapper.createEl('h4', {
+      text: 'Activity',
+      cls: 'better-recall-activity-graph__title',
+    });
+
+    const gridContainer = wrapper.createDiv(
+      'better-recall-activity-graph__grid-container',
+    );
+    const grid = gridContainer.createDiv('better-recall-activity-graph__grid');
+
+    const tooltip = wrapper.createDiv('better-recall-activity-graph__tooltip');
+    const tooltipDate = tooltip.createDiv(
+      'better-recall-activity-graph__tooltip-date',
+    );
+    const tooltipCount = tooltip.createDiv(
+      'better-recall-activity-graph__tooltip-count',
+    );
+
+    const endDate = new Date();
+    const startDate = new Date();
+    startDate.setDate(endDate.getDate() - 364);
+    startDate.setDate(startDate.getDate() - startDate.getDay());
+
+    // Calculate day span using UTC midnight timestamps. This avoids off-by-one
+    // errors caused by DST transitions (23h/25h days) and local timezone offsets,
+    // guaranteeing whole-day arithmetic.
+    const endDateUtcMidnight = Date.UTC(
+      endDate.getFullYear(),
+      endDate.getMonth(),
+      endDate.getDate(),
+    );
+    const startDateUtcMidnight = Date.UTC(
+      startDate.getFullYear(),
+      startDate.getMonth(),
+      startDate.getDate(),
+    );
+
+    const totalDays =
+      Math.floor(
+        (endDateUtcMidnight - startDateUtcMidnight) / (1000 * 60 * 60 * 24),
+      ) + 1;
+    const totalWeeks = Math.ceil(totalDays / 7);
+
+    const maxReviewed = Math.max(...Array.from(reviewedCounts.values()), 1);
+    const maxScheduled = Math.max(...Array.from(scheduledCounts.values()), 1);
+
+    for (let week = 0; week < totalWeeks; week++) {
+      const column = grid.createDiv('better-recall-activity-graph__column');
+      for (let day = 0; day < 7; day++) {
+        const currentDate = new Date(startDate);
+        currentDate.setDate(startDate.getDate() + week * 7 + day);
+
+        if (currentDate > endDate) {
+          break;
+        }
+
+        const key = this.getDateKey(currentDate);
+        const reviewedCount = reviewedCounts.get(key) || 0;
+        const scheduledCount = scheduledCounts.get(key) || 0;
+        const dayEl = column.createDiv('better-recall-activity-graph__day');
+
+        let level = 0;
+        let colorScale = 'gray';
+
+        if (reviewedCount > 0) {
+          colorScale = 'green';
+          if (reviewedCount <= maxReviewed * 0.33) {
+            level = 1;
+          } else if (reviewedCount <= maxReviewed * 0.66) {
+            level = 2;
+          } else {
+            level = 3;
+          }
+        } else if (scheduledCount > 0) {
+          colorScale = 'gray';
+          if (scheduledCount <= maxScheduled * 0.33) {
+            level = 1;
+          } else if (scheduledCount <= maxScheduled * 0.66) {
+            level = 2;
+          } else {
+            level = 3;
+          }
+        }
+
+        dayEl.addClass(
+          `better-recall-activity-graph__day--${colorScale}-${level}`,
+        );
+
+        const parts: string[] = [];
+        if (reviewedCount > 0) {
+          parts.push(`${reviewedCount} reviewed`);
+        }
+        if (scheduledCount > 0) {
+          parts.push(`${scheduledCount} scheduled`);
+        }
+        const tooltipSummary =
+          parts.length > 0 ? parts.join(' · ') : 'No activity';
+        const tooltipLabel = `${key}: ${tooltipSummary}`;
+
+        dayEl.setAttribute('aria-label', tooltipLabel);
+        dayEl.setAttribute('title', tooltipLabel);
+
+        const showTooltip = () => {
+          tooltipDate.setText(key);
+          tooltipCount.setText(tooltipSummary);
+          tooltip.addClass('better-recall-activity-graph__tooltip--visible');
+          this.positionTooltip(tooltip, dayEl, wrapper);
+        };
+
+        const hideTooltip = () => {
+          tooltip.removeClass('better-recall-activity-graph__tooltip--visible');
+        };
+
+        dayEl.addEventListener('mouseenter', showTooltip);
+        dayEl.addEventListener('focus', showTooltip);
+
+        dayEl.addEventListener('mouseleave', hideTooltip);
+        dayEl.addEventListener('blur', hideTooltip);
+      }
+    }
+
+    const legendContainer = wrapper.createDiv(
+      'better-recall-activity-graph__legend-container',
+    );
+
+    const reviewedLegend = legendContainer.createDiv(
+      'better-recall-activity-graph__legend',
+    );
+    reviewedLegend.createSpan({
+      text: 'Less',
+      cls: 'better-recall-activity-graph__legend-label',
+    });
+    for (let i = 0; i <= 3; i++) {
+      reviewedLegend.createDiv({
+        cls: `better-recall-activity-graph__day better-recall-activity-graph__day--green-${i}`,
+      });
+    }
+    reviewedLegend.createSpan({
+      text: 'More',
+      cls: 'better-recall-activity-graph__legend-label',
+    });
+    reviewedLegend.createSpan({
+      text: '(Reviewed)',
+      cls: 'better-recall-activity-graph__legend-sublabel',
+    });
+
+    const scheduledLegend = legendContainer.createDiv(
+      'better-recall-activity-graph__legend',
+    );
+    scheduledLegend.createSpan({
+      text: 'Less',
+      cls: 'better-recall-activity-graph__legend-label',
+    });
+    for (let i = 0; i <= 3; i++) {
+      scheduledLegend.createDiv({
+        cls: `better-recall-activity-graph__day better-recall-activity-graph__day--gray-${i}`,
+      });
+    }
+    scheduledLegend.createSpan({
+      text: 'More',
+      cls: 'better-recall-activity-graph__legend-label',
+    });
+    scheduledLegend.createSpan({
+      text: '(Scheduled)',
+      cls: 'better-recall-activity-graph__legend-sublabel',
+    });
+  }
+
+  private positionTooltip(
+    tooltip: HTMLElement,
+    target: HTMLElement,
+    wrapper: HTMLElement,
+  ): void {
+    const targetRect = target.getBoundingClientRect();
+    const wrapperRect = wrapper.getBoundingClientRect();
+    const tooltipRect = tooltip.getBoundingClientRect();
+
+    const gap = 6;
+    const minLeft = 8;
+
+    let left =
+      targetRect.left -
+      wrapperRect.left +
+      targetRect.width / 2 -
+      tooltipRect.width / 2;
+    let top = targetRect.top - wrapperRect.top - tooltipRect.height - gap;
+
+    const maxLeft = Math.max(
+      minLeft,
+      wrapperRect.width - tooltipRect.width - minLeft,
+    );
+    left = Math.max(minLeft, Math.min(left, maxLeft));
+
+    if (top < minLeft) {
+      top = targetRect.bottom - wrapperRect.top + gap;
+    }
+
+    tooltip.style.left = `${left}px`;
+    tooltip.style.top = `${top}px`;
   }
 
   public onClose(): void {

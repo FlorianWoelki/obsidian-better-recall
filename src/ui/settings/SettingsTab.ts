@@ -1,4 +1,4 @@
-import { Setting, PluginSettingTab } from 'obsidian';
+import { Setting, PluginSettingTab, Notice } from 'obsidian';
 import BetterRecallPlugin from 'src/main';
 import {
   AnkiParameters,
@@ -115,6 +115,9 @@ export class SettingsTab extends PluginSettingTab {
 
   display() {
     this.containerEl.empty();
+
+    this.renderActivityGraphToggle();
+
     this.renderSchedulingAlgorithmDropdown();
 
     const currentAlgorithm = this.plugin.getSettings().schedulingAlgorithm;
@@ -126,7 +129,26 @@ export class SettingsTab extends PluginSettingTab {
     }
   }
 
-  private renderSchedulingAlgorithmDropdown() {
+  private renderActivityGraphToggle(): void {
+    new Setting(this.containerEl)
+      .setName('Activity graph')
+      .setDesc(
+        'Show the activity graph on the decks view, displaying reviewed and scheduled cards over time.',
+      )
+      .addToggle((toggle) => {
+        toggle
+          .setValue(this.plugin.getSettings().isActivityGraphEnabled)
+          .onChange(async (value) => {
+            this.plugin.getSettings().isActivityGraphEnabled = value;
+            new Notice(
+              'You need to restart Obsidian to see the change take effect.',
+            );
+            await this.plugin.savePluginData();
+          });
+      });
+  }
+
+  private renderSchedulingAlgorithmDropdown(): void {
     new Setting(this.containerEl)
       .setName('Scheduling Algorithm')
       .setDesc(

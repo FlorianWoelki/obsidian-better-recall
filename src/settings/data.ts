@@ -102,6 +102,7 @@ export interface BetterRecallSettings {
    * @default fsrs
    */
   schedulingAlgorithm: SchedulingAlgorithm;
+  isActivityGraphEnabled: boolean;
 }
 
 let cachedFSRSParameters: ReturnType<typeof generatorParameters> | null = null;
@@ -138,4 +139,5 @@ export const DEFAULT_SETTINGS: BetterRecallSettings = {
     };
   },
   schedulingAlgorithm: SchedulingAlgorithm.FSRS,
+  isActivityGraphEnabled: true,
 };
