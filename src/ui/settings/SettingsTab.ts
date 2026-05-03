@@ -140,7 +140,9 @@ export class SettingsTab extends PluginSettingTab {
           .setValue(this.plugin.getSettings().isActivityGraphEnabled)
           .onChange(async (value) => {
             this.plugin.getSettings().isActivityGraphEnabled = value;
-            new Notice('You need to restart Obsidian to notice the effect.');
+            new Notice(
+              'You need to restart Obsidian to see the change take effect.',
+            );
             await this.plugin.savePluginData();
           });
       });
