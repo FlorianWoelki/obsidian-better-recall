@@ -406,7 +406,7 @@ export class DecksView extends RecallSubView {
     const year = localDate.getFullYear();
     const month = String(localDate.getMonth() + 1).padStart(2, '0');
     const day = String(localDate.getDate()).padStart(2, '0');
-    // TODO: Maybe change in the future to be local date.
+    // TODO: Maybe change in the future to be local date using Intl.
     return `${year}-${month}-${day}`;
   }
 
@@ -439,9 +439,23 @@ export class DecksView extends RecallSubView {
     startDate.setDate(endDate.getDate() - 364);
     startDate.setDate(startDate.getDate() - startDate.getDay());
 
+    // Calculate day span using UTC midnight timestamps. This avoids off-by-one
+    // errors caused by DST transitions (23h/25h days) and local timezone offsets,
+    // guaranteeing whole-day arithmetic.
+    const endDateUtcMidnight = Date.UTC(
+      endDate.getFullYear(),
+      endDate.getMonth(),
+      endDate.getDate(),
+    );
+    const startDateUtcMidnight = Date.UTC(
+      startDate.getFullYear(),
+      startDate.getMonth(),
+      startDate.getDate(),
+    );
+
     const totalDays =
       Math.floor(
-        (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24),
+        (endDateUtcMidnight - startDateUtcMidnight) / (1000 * 60 * 60 * 24),
       ) + 1;
     const totalWeeks = Math.ceil(totalDays / 7);
 
@@ -501,7 +515,6 @@ export class DecksView extends RecallSubView {
           parts.length > 0 ? parts.join(' · ') : 'No activity';
         const tooltipLabel = `${key}: ${tooltipSummary}`;
 
-        dayEl.setAttribute('tabindex', '0');
         dayEl.setAttribute('aria-label', tooltipLabel);
         dayEl.setAttribute('title', tooltipLabel);
 
