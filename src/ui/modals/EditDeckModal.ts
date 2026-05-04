@@ -1,4 +1,4 @@
-import { ButtonComponent, Modal, Scope } from 'obsidian';
+import { ButtonComponent, Modal } from 'obsidian';
 import { Deck } from '../../data/deck';
 import BetterRecallPlugin from '../../main';
 import { ButtonsBarComponent } from '../components/ButtonsBarComponent';

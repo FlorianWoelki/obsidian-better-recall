@@ -14,6 +14,7 @@ export class CreateDeckModal extends Modal {
       if (!event.isComposing && this.deckNameInputComp.getValue().length > 0) {
         this.createDeck();
       }
+      return false;
     });
     this.setTitle('Create new deck');
   }

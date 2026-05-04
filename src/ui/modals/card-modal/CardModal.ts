@@ -1,4 +1,4 @@
-import { DropdownComponent, Modal, Scope } from 'obsidian';
+import { DropdownComponent, Modal } from 'obsidian';
 import BetterRecallPlugin from 'src/main';
 import {
   CARD_MODAL_DROPDOWN_DESCRIPTION,
