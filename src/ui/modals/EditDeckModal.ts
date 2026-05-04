@@ -1,4 +1,4 @@
-import { ButtonComponent, Modal } from 'obsidian';
+import { ButtonComponent, Modal, Scope } from 'obsidian';
 import { Deck } from '../../data/deck';
 import BetterRecallPlugin from '../../main';
 import { ButtonsBarComponent } from '../components/ButtonsBarComponent';
@@ -15,6 +15,12 @@ export class EditDeckModal extends Modal {
   ) {
     super(plugin.app);
     this.setTitle(`Edit deck "${deck.getName()}"`);
+    this.scope.register(['Mod'], 'Enter', (event) => {
+      if (!event.isComposing && !this.saveButtonDisabled) {
+        this.editDeck();
+      }
+      return false;
+    });
   }
 
   onOpen(): void {
@@ -31,13 +37,6 @@ export class EditDeckModal extends Modal {
       .onChange((value) => {
         this.buttonsBarComp.setSubmitButtonDisabled(value.length === 0);
       });
-    this.deckNameInputComp.keyboardListener.onEnter = () => {
-      if (this.saveButtonDisabled) {
-        return;
-      }
-
-      this.editDeck();
-    };
     this.deckNameInputComp.descriptionEl?.addClass(
       'better-recall-deck-name-field',
     );
@@ -46,13 +45,6 @@ export class EditDeckModal extends Modal {
     this.deckDescriptionInputComp = new InputFieldComponent(this.contentEl, {
       description: 'Deck description:',
     }).setValue(this.deck.getDescription());
-    this.deckDescriptionInputComp.keyboardListener.onEnter = () => {
-      if (this.saveButtonDisabled) {
-        return;
-      }
-
-      this.editDeck();
-    };
     this.deckDescriptionInputComp.descriptionEl?.addClass(
       'better-recall-deck-description-field',
     );
@@ -100,8 +92,6 @@ export class EditDeckModal extends Modal {
   }
 
   onClose(): void {
-    this.deckNameInputComp.keyboardListener.cleanup();
-    this.deckDescriptionInputComp.keyboardListener.cleanup();
     super.onClose();
     this.contentEl.empty();
   }
