@@ -10,6 +10,12 @@ export class CreateDeckModal extends Modal {
 
   constructor(private plugin: BetterRecallPlugin) {
     super(plugin.app);
+    this.scope.register(['Mod'], 'Enter', (event) => {
+      if (!event.isComposing && this.deckNameInputComp.getValue().length > 0) {
+        this.createDeck();
+      }
+      return false;
+    });
     this.setTitle('Create new deck');
   }
 
@@ -27,9 +33,6 @@ export class CreateDeckModal extends Modal {
       .onChange((value) => {
         this.buttonsBarComp.setSubmitButtonDisabled(value.length === 0);
       });
-    this.deckNameInputComp.keyboardListener.onEnter = () => {
-      this.createDeck();
-    };
     this.deckNameInputComp.descriptionEl?.addClass(
       'better-recall-deck-name-field',
     );
@@ -38,13 +41,6 @@ export class CreateDeckModal extends Modal {
     this.deckDescriptionInputComp = new InputFieldComponent(this.contentEl, {
       description: 'Description (optional):',
     }).setPlaceholder('A lovely CS learning experience.');
-    this.deckDescriptionInputComp.keyboardListener.onEnter = () => {
-      if (this.deckNameInputComp.getValue().length === 0) {
-        return;
-      }
-
-      this.createDeck();
-    };
     this.deckDescriptionInputComp.descriptionEl?.addClass(
       'better-recall-deck-description-field',
     );
@@ -70,8 +66,6 @@ export class CreateDeckModal extends Modal {
   }
 
   onClose(): void {
-    this.deckNameInputComp.keyboardListener.cleanup();
-    this.deckDescriptionInputComp.keyboardListener.cleanup();
     super.onClose();
     this.contentEl.empty();
   }

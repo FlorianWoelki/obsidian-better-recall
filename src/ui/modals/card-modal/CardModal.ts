@@ -21,6 +21,12 @@ export abstract class CardModal extends Modal {
 
   constructor(protected plugin: BetterRecallPlugin) {
     super(plugin.app);
+    this.scope.register(['Mod'], 'Enter', (event) => {
+      if (!event.isComposing && !this.disabled) {
+        this.submit();
+      }
+      return false;
+    });
   }
 
   onOpen(): void {
@@ -34,8 +40,6 @@ export abstract class CardModal extends Modal {
   }
 
   onClose(): void {
-    this.inputFields?.front.keyboardListener.cleanup();
-    this.inputFields?.back.keyboardListener.cleanup();
     super.onClose();
     this.plugin.decksManager.save();
     this.contentEl.empty();
@@ -81,13 +85,6 @@ export abstract class CardModal extends Modal {
     })
       .setValue(front ?? '')
       .onChange(this.handleInputChange.bind(this));
-    frontComp.keyboardListener.onEnter = () => {
-      if (this.disabled) {
-        return;
-      }
-
-      this.submit();
-    };
 
     const backComp = new InputAreaComponent(this.contentEl, {
       description: 'Back',
@@ -95,13 +92,6 @@ export abstract class CardModal extends Modal {
       .setValue(back ?? '')
       .onChange(this.handleInputChange.bind(this));
     backComp.descriptionEl?.addClass('better-recall-back-field');
-    backComp.keyboardListener.onEnter = () => {
-      if (this.disabled) {
-        return;
-      }
-
-      this.submit();
-    };
 
     this.inputFields = {
       front: frontComp,
