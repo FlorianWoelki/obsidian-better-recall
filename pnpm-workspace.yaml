@@ -1,2 +1,3 @@
+minimumReleaseAge: 10080
 allowBuilds:
   esbuild: false
