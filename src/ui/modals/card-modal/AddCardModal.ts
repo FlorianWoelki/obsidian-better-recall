@@ -29,6 +29,7 @@ export class AddCardModal extends CardModal {
 
     this.inputFields.front.setValue('');
     this.inputFields.back.setValue('');
+    this.buttonsBarComp.setSubmitButtonDisabled(true);
 
     const card = this.plugin.algorithm.createNewCard(uuidv4(), {
       front,
